@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<html lang="zxx">
+  <!-- Mirrored from munarcloud.com/user/index.php by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 31 Aug 2022 14:01:40 GMT -->
+  <!-- Added by HTTrack --><meta
+    http-equiv="content-type"
+    content="text/html;charset=UTF-8"
+  /><!-- /Added by HTTrack -->
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -8,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Open Account - criptify</title>
+    <title>Login - munarcloud</title>
     <!-- favicon -->
     <link
       rel="shortcut icon"
@@ -25,13 +29,16 @@
     <link rel="stylesheet" href="../assets/css/animate.css" />
     <!-- Owl Carousel -->
     <link rel="stylesheet" href="../assets/css/owl.carousel.min.css" />
-    <link rel="stylesheet" href="../ssets/css/swiper.min.html" />
+    <link
+      rel="stylesheet"
+      href="ahttps://app.munarcloud.com/ssets/css/swiper.min.css"
+    />
     <!-- magnific popup -->
     <link rel="stylesheet" href="../assets/css/magnific-popup.css" />
-    <!-- stylesheet -->
-    <link rel="stylesheet" href="../assets/css/style9e369e36.css?v" />
     <script src="../../unpkg.com/sweetalert%402.1.2/dist/sweetalert.min.js"></script>
 
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style9e369e36.css?v" />
     <!-- responsive -->
     <link rel="stylesheet" href="../assets/css/responsive.css" />
     <link
@@ -465,10 +472,10 @@
                         >
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="signup.html">Register</a>
+                        <a class="nav-link" href="signup.php">Register</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="login.html">Login</a>
+                        <a class="nav-link" href="login-2.html">Login</a>
                       </li>
                     </ul>
                   </div>
@@ -480,24 +487,39 @@
       </div>
     </div>
     <!-- header end -->
-    <form style="margin: auto;" action="userdashboard/index.html" method="post">
-     	<h2>SIGN UP</h2>
-          <label>User Name</label>
-               <input type="text" id="userInp" name="uname"  placeholder="User Name"<br>
-	  <label>Fullname</label>
-               <input type="text" id="nameInp" name="uname" placeholder="User Name"><br>
+    <form style="margin: auto;" action="index.php" method="post">
+     	<h2>LOGIN</h2>
+     	<?php if (isset($_GET['error'])) { ?>
+     		<p class="error"><?php echo $_GET['error']; ?></p>
+     	<?php } ?>
+     	<label>User Name</label>
+     	<input type="text" name="uname" placeholder="User Name"><br>
 
+     	<label>Password</label>
+     	<input type="password" name="password" placeholder="Password"><br>
 
-         <label>Password</label>
-         <input type="password" id="passInp" name="password" placeholder="Password"><br>
-
-         <label>Email</label>
-	 <input type="email" id="emailInp" name="email" placeholder="email"><br>
-
-     	<button type="submit" id="sub-btn">Sign Up</button>
-          <a href="login.html" class="ca">Already have an account?</a>
+     	<button type="submit">Login</button>
+          <a href="signup.php" class="ca">Create an account</a>
      </form>
-              
+
+              <div id="social-login">
+                <div class="d-flex align-items-center my-4">
+                  <hr class="flex-grow-1" />
+                  <span class="mx-2">OR</span>
+                  <hr class="flex-grow-1" />
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <button
+                      onclick="location.href='signup.php'"
+                      type="button"
+                      class="btn btn-block btn-outline-success"
+                    >
+                      <i class="fa fa-user"></i> Register your account
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -507,14 +529,18 @@
     <div class="footer">
       <div
         class="footer-top"
-        style="background-image: url(../localhost/btcc/images/background/footer-bg.html) background-size: cover;">
+        style="
+          background-image: url(../localhost/btcc/images/background/footer-bg.html);
+          background-size: cover;
+        "
+      >
         <div class="container">
           <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6">
               <div class="about-area">
                 <img src="../assets/img/logo4.png" alt="" />
                 <p>
-                  criptify Is a digital investment company that soaked
+                  munarcloud Limited Is a digital investment company that soaked
                   his focus on trading and hedging top cap digital assets like
                   Bitcoin, Bitcoin Cash, Ethereum, Litecoin & Ripple.
                 </p>
@@ -618,7 +644,7 @@
               class="col-xl-6 col-lg-6 d-xl-flex d-lg-flex align-items-center"
             >
               <div class="copyright">
-                <p>© 2021. All rights reserved by criptify.com</p>
+                <p>© 2020. All rights reserved by munarcloud.com</p>
               </div>
             </div>
             <div class="col-xl-6 col-lg-6">
@@ -636,56 +662,7 @@
       </div>
     </div>
     <!-- footer end -->
-    <script type="module">
-	        // SETTING UP FIREBASE DB
-	        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
-	          // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-	          const firebaseConfig = {
-	          apiKey: "AIzaSyACQcdYNFIvnnahAUWQQJhioJYMYrrW_VE",
-	          authDomain: "insure-8082d.firebaseapp.com",
-	          databaseURL: "https://insure-8082d-default-rtdb.firebaseio.com",
-	          projectId: "insure-8082d",
-	          storageBucket: "insure-8082d.appspot.com",
-	          messagingSenderId: "524758809898",
-	          appId: "1:524758809898:web:f7272e81bb646540917253",
-	          measurementId: "G-7EJ4WHW8NV"
-        	  };
 
-	        const app = initializeApp(firebaseConfig);
-
-	        import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
-		const db = getDatabase()
-
-	       //REFERENCES
-	       const username = document.getElementById('userInp');
-	       const email = document.getElementById('emailInp');
-	       const password = document.getElementById('passInp');
-	       const fullname = document.getElementById('nameInp')
-	       const submitBtn = document.getElementById('sub-btn')
-
-	//VALIDATION
-	const validation=()=>{
-	    let nameRegex = /[a-zA-Z\s]+/;
-	    let email = /[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com/;
-	    let usernameRegex = /[a-zA-Z0-9]{5,}/;
-
-	    if(!nameRegex.test(name.value)){
-	        alert('The name should only contain alphabets');
-	        return;
-	    }
-	    if(!email.test(email.value)){
-	        alert('Please enter a valid name');
-	        return;
-	    }
-	    if(!usernameRegex.test(username.value)){
-	        alert('Username can only be alhanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
-	        return;
-	    }
-	}
-
-	//REGISTER USER TO FIREBASE
-
-      </script>
     <!-- jquery -->
     <script src="../assets/js/jquery-3.3.1.min.js"></script>
     <script src="../assets/js/jquery-migrate-3.0.1.js"></script>
@@ -752,4 +729,6 @@
       });
     </script>
   </body>
+
+  <!-- Mirrored from munarcloud.com/user/index.php by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 31 Aug 2022 14:03:02 GMT -->
 </html>
