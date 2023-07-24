@@ -475,7 +475,7 @@
                         <a class="nav-link" href="signup.php">Register</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="login-2.html">Login</a>
+                        <a class="nav-link" href="login.html">Login</a>
                       </li>
                     </ul>
                   </div>
@@ -493,12 +493,12 @@
      		<p class="error"><?php echo $_GET['error']; ?></p>
      	<?php } ?>
      	<label>User Name</label>
-     	<input type="text" name="uname" placeholder="User Name"><br>
+     	<input type="text" id="userInp" name="uname" placeholder="User Name"><br>
 
      	<label>Password</label>
-     	<input type="password" name="password" placeholder="Password"><br>
+     	<input type="password" id="passInp" name="password" placeholder="Password"><br>
 
-     	<button type="submit">Login</button>
+     	<button type="submit" id="sub-btn">Login</button>
           <a href="signup.php" class="ca">Create an account</a>
      </form>
 
