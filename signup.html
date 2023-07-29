@@ -654,6 +654,7 @@
 	        const app = initializeApp(firebaseConfig);
 
 	        import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+
 		const db = getDatabase()
 
 	       //REFERENCES
@@ -664,26 +665,73 @@
 	       const submitBtn = document.getElementById('sub-btn')
 
 	//VALIDATION
-	const validation=()=>{
-	    let nameRegex = /[a-zA-Z\s]+/;
-	    let email = /[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com/;
-	    let usernameRegex = /[a-zA-Z0-9]{5,}/;
+	function isEmptyOrSpaces(str){
+    return str === null || str.match(/^ *$/) !== null;
+}
 
-	    if(!nameRegex.test(name.value)){
-	        alert('The name should only contain alphabets');
-	        return;
-	    }
-	    if(!email.test(email.value)){
-	        alert('Please enter a valid name');
-	        return;
-	    }
-	    if(!usernameRegex.test(username.value)){
-	        alert('Username can only be alhanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
-	        return;
-	    }
+function Validation(){
+    let nameRegex = /^[a-zA-Z\s]+$/;
+    let emailRegex = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
+    let usernameRegex = /^[a-zA-Z0-9]{5,}$/;
+
+if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(password.value) || isEmptyOrSpaces(email.value)){
+    alert("You cannot leave any field empty");
+    return false;
+}
+
+    if(!nameRegex.test(fullname.value)){
+        alert('The name should only contain alphabets');
+        return false;
+    }
+    if(!emailRegex.test(email.value)){
+        alert('Please enter a valid email');
+        return false;
+    }
+    if(!usernameRegex.test(username.value)){
+        alert('Username can only be alphanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
+        return false;
+    }
+    return true;
+}
+
+//REGISTER USER TO FIREBASE
+
+	function RegisterUser(){
+	   if(!Validation()){
+	    return;
+	   };
+	    const dbRef = ref(db);
+	    get(child(dbRef, "UsersList/"+username.value)).then((snapshot)=>{
+	        if(snapshot.exists()){
+	            alert("Account already exists!")
+	        }else{
+	            set(ref(db, "UsersList/"+username.value),
+	            {
+	                fullname: fullname.value,
+	                username: username.value,
+	                email: email.value,
+	                password: encPass()
+
+	            }
+	            )
+	            .then(()=>{
+	                alert("User registered successfully")
+	            })
+	            .catch((error)=>{
+	                alert("error" + error)
+	            })
+	        }
+	    });
 	}
-
-	//REGISTER USER TO FIREBASE
+	
+	//ENCRYPT PASSWORD
+	function encPass(){
+	    var pass123 = CryptoJS.AES.encrypt(password.value, password.value);
+	    return pass123.toString();
+	}
+	
+	//ASSIGN EVENTS
+	submitBtn.addEventListener("click", RegisterUser);
 
       </script>
     <!-- jquery -->
