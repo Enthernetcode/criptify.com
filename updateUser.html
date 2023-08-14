@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h2 id="use">user</h2>
+
+        <select id="adm">
+            <option value="false">isAdmin false</option>
+            <option value="true">isAdmin true</option>
+        </select>
+
+        <input id="bal" type="number" placeholder="change balance">
+        <button id="btn">Update</button>
+        <button id="btn-del">Delete</button>
+    </div>
+    
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, update, remove} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    var adm, bal, use, btn, btnDel;
+    adm = document.getElementById('adm');
+    bal = document.getElementById('bal');
+    btn = document.getElementById('btn');
+    btnDel = document.getElementById('btn-del');
+    use = document.getElementById('use');
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cript-82a4e.firebaseapp.com",
+        databaseURL: "https://cript-82a4e-default-rtdb.firebaseio.com",
+        projectId: "cript-82a4e",
+        storageBucket: "cript-82a4e.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+      };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+    //   // Function to fetch user by username
+    //   const urlParams = new URLSearchParams(window.location.search);
+    //     const username = urlParams.get('username');
+    // const getUser =  async (username) =>  {
+    //     const usersRef = ref(db, 'UsersList');
+    //         const snapshot = await get(usersRef);
+    //         if (snapshot.exists()) {
+    //             const users = snapshot.val();
+
+    //             // Find the user by username locally
+    //             const user = Object.values(users).find(user => user.username === username);
+    //             console.log(user)
+    //             adm.value=user.isAdmin
+    //             bal.value = user.balance
+    //             use.innerText = user.username
+    //         }else{
+    //             console.log('none')
+    //         }
+    //     }
+    //      getUser(username)
+    const urlParams = new URLSearchParams(window.location.search);
+         const username = urlParams.get('username');
+    use.innerText=username
+    const userRef = ref(db, `UsersList/${username}`);
+      const updateUser = async() =>  {
+        try {
+     await update(userRef, {
+        balance: bal.value,
+        isAdmin: adm.value
+      });
+     
+      alert('User data updated successfully');
+      window.location="admin.html";
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      alert('Error updating user data. Please try again.');
+    }
+  }
+
+ 
+    const usersRef = ref(db, `UsersList/${username}`);
+    const deleteUser = async() => {
+      try {
+     await remove(usersRef);
+     
+      alert('User data removed successfully');
+      window.location="admin.html";
+    } catch (error) {
+      console.error('Error removing user data:', error);
+      alert('Error temoving user data. Please try again.');
+    }
+}
+
+      btn.addEventListener('click', updateUser)
+      btnDel.addEventListener('click', deleteUser)
+
+    </script>
+</body>
+</html>

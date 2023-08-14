@@ -44,13 +44,13 @@
             <li><a href="withdraw.php">Withdraw</a></li>
             <li></li>
             <li><a href="referals.php">Referrals</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a id="signoutlink" href="#">Logout</a></li>
           </ul>
         </div>
-        <div class="member-container">
+        <div class="member-container"> 
           <div class="account_top">
             <div class="user_left">
-              <h2>Welcome, <span>Alfred</span></h2>
+              <h2>Welcome, <span id="userlink">dear</span></h2>
             </div>
             <div class="affiliate_top">Affiliate Link:<a href="http://legalforexbroker.com/index/auth/signup.php?ref=test" class="ref-link">http://legalforexbroker.com/index.html?ref=test</a></div>
             <div class="get_banners"><a href="referallinks.php">Get Banners</a></div>
@@ -197,3 +197,51 @@
         })();
       </script>
       <!-- /WhatsHelp.io widget -->
+
+<script>
+
+  //REFERENCE
+            let userlink = document.getElementById('userlink');
+            let signoutlink = document.getElementById('signoutlink');
+            var currentUser = null;
+  
+  //FUNCTION          
+            function getUsername(){
+                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+  
+                 if(keepLoggedIn == 'yes'){
+                     currentUser = JSON.parse(localStorage.getItem('user'));
+                 }else{
+                      currentUser = JSON.parse(sessionStorage.getItem('user'));
+                 }
+            }
+  
+            function signout(){
+                 sessionStorage.removeItem('user');
+                 localStorage.removeItem('user');
+                 localStorage.removeItem('keepLoggedIn');
+                 window.location="index.html";
+            }
+  
+  //WINDOW LOADS
+            window.onload = function(){
+                 getUsername();
+                 if(currentUser == null){
+                      userlink.innerText = "dear";
+                      userlink.href = "signup.html";
+                      signoutlink.innerText = "Login";
+                      signoutlink.href = "login.html";
+  
+                 }else{
+                      userlink.innerText = currentUser.username;
+                      userlink.href = "#";
+                      signoutlink.innerText = "Sign Out";
+                      signoutlink.href = "javascript:signout()";
+  
+                 }
+            }          
+  
+       </script>
+  
+    </body>
+  </html>
