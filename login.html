@@ -682,11 +682,11 @@
 
 	if(!keepLoggedIn){
 	    sessionStorage.setItem('user', JSON.stringify(user));
-	   user.isAdmin? window.location="admin.html" : window.location="index.html"
+	   user.isAdmin? window.location="admin.html" : window.location="userdashboard"
 	}else{
 	    localStorage.setItem('keepLoggedIn', 'yes');
 	    localStorage.setItem('user', JSON.stringify(user));
-      user.isAdmin? window.location="admin.html" : window.location="userdashboard"
+      user.isAdmin? window.location="admin.html" : window.location="index.html"
 	}
 	}
 
