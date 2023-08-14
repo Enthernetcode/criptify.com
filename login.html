@@ -467,7 +467,7 @@
         <label for="customSwitch1" class="custom-control-label">Keep me logged in</label>
     </div>
 
-     	<button type="text" id="sub-btn">Login</button>
+     	<button type="text" id="wsub-btn">Login</button>
           <a href="signup.html" class="ca">Create an account</a>
       </div>
 
@@ -686,7 +686,7 @@
 	}else{
 	    localStorage.setItem('keepLoggedIn', 'yes');
 	    localStorage.setItem('user', JSON.stringify(user));
-      user.isAdmin? window.location="admin.html" : window.location="index.html"
+      user.isAdmin? window.location="admin.html" : window.location="userdashboard"
 	}
 	}
 
