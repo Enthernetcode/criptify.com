@@ -83,7 +83,7 @@
                 <br><br><br>
                 <br><br>
                 <font color="red" size="5">
-                  <marquee>Ensure to copy address properly and email a prove screenshot to info@criptify.com to avoid payment error
+                  <marquee>Ensure to copy address properly and email a prove screenshot to info@cooperatefinance.com to avoid payment error
                   </marquee>
                 </font><br><br><br><br>
               </div>
@@ -121,7 +121,7 @@
         <div class="footerInner">
           <div class="ctn-footer-top">
             <div class="ctn-ft-left">
-              <p>&copy; 2022 criptify.com All Rights Reserved.</p>
+              <p>&copy; 2022 cooperatefinance.com All Rights Reserved.</p>
             </div>
             <div class="ctn-ft-mid">
               <a href=""><img src="styles/images/ft-top-ic1.png"></a>

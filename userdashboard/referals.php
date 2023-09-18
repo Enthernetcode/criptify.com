@@ -109,7 +109,7 @@
 	<div class="footerInner">
 		<div class="ctn-footer-top">
 			<div class="ctn-ft-left">
-				<p>© 2022 munarcloud.com All Rights Reserved.</p>
+				<p>© 2022 cooperatefinance.com All Rights Reserved.</p>
 			</div>
 			<div class="ctn-ft-mid">
 				<a href=""><img src="styles/images/ft-top-ic1.png"></a>
