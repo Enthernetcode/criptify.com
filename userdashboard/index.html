@@ -45,7 +45,7 @@
   <div class="user_left">
     <h2>Welcome, <span id="userlink" href="#">User</span></h2>
   </div>
-  <div class="affiliate_top">Affiliate Link:<a href="http:s://cooperatefinance/userdashboard//signup.html?ref=test" class="ref-link">http://legalforexbroker.com/index.html?ref=test</a></div>
+  <div class="affiliate_top">Affiliate Link:<a href="# http:s://cooperatefinance/userdashboard//signup.html?ref=test" class="ref-link"></a></div>
   <div class="get_banners"><a href="referals.html">Get Banners</a></div>
 </div>
 <div class="member_right">
@@ -110,7 +110,7 @@
     <div class="links"><a href="deposit.html">Make A Deposit</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part2"> <span class="imageblock"></span>
-    <h4 id="user.balance" href="#">$1,900,000.00</h4>
+    <h4 id="userbal" href="#">$1,900,000.00</h4>
     <p>YOUR BALANCE</p>
     <div class="links"><a href="withdraw.html">Withdraw Funds</a></div>
   </div>
@@ -227,7 +227,7 @@ $(document).ready(function() {
   </script> 
 <!--script src="//code.tidio.co/yl5qxh3kvmuslkmwjcz6bm7tnawlmxx9.js" async></script>
 <!-- WhatsHelp.io widget -->
-<script type="text/javascript">
+<!--script type="text/javascript">
     (function () {
         var options = {
             whatsapp: "+1(321)529-9586", 
@@ -281,6 +281,7 @@ $(document).ready(function() {
                  }else{
                       userlink.innerText = currentUser.username;
                       userlink.href = "#";
+                      userbal.innerText = currentUser.balance;
                       signoutlink.innerText = "Sign Out";
                       signoutlink.href = "javascript:signout()";
   
