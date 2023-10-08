@@ -397,6 +397,9 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
 	                password: encPass(),
                   isAdmin:false,
                   balance: 0,
+                  date : new Date().toISOString().slice(0, 10),
+                  deposit : 0,
+                  bonus : 0,
                   code: code.value
 
 
