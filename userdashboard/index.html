@@ -105,17 +105,17 @@
 </div>  
 <div class="account_overview_wrap">
   <div class="ctn-invesment-part ctn-invesment-part1"> <span class="imageblock"></span>
-    <h4>$0.00</h4>
+    <h4 id="userdep" >$0.00</h4>
     <p>ACTIVE DEPOSITS</p>
     <div class="links"><a href="deposit.html">Make A Deposit</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part2"> <span class="imageblock"></span>
-    $<h4 id="userbal" href="#">$1,900,000.00</h4>
+    $<h4 id="userbal" href="#">$0.00</h4>
     <p>YOUR BALANCE</p>
     <div class="links"><a href="withdraw.html">Withdraw Funds</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part3"> <span class="imageblock"></span>
-    <h4>$0.00</h4>
+    <h4 id="userbon" >$0.00</h4>
     <p>ADDED BONUS</p>
     <div class="links"><a href="deposit.html">My Deposits</a></div>
   </div>
@@ -283,6 +283,10 @@ $(document).ready(function() {
                       userlink.href = "#";
                       usernam.innerText = currentUser.username;
                       userbal.innerText = currentUser.balance;
+                      userwal.innerText = currentUser.withdrawal;
+                      userdep.innerText = currentUser.deposit;
+                      userdate.innerText = currentUser.date;
+                      userbon.innerText = currentUser.bonus;
                       signoutlink.innerText = "Sign Out";
                       signoutlink.href = "javascript:signout()";
   
