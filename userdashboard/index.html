@@ -91,7 +91,7 @@
    <div class="user-info">
         <div class="ctn-invesment-part ctn-invesment-part1">
           <p>Your username:</p>
-          <h4 id="userlink" href="#">User</h4>
+          <h4 id="usernam" href="#">User</h4>
         </div>
         <div class="ctn-invesment-part ctn-invesment-part2">
           <p>Registration Date:</p>
@@ -105,17 +105,17 @@
 </div>  
 <div class="account_overview_wrap">
   <div class="ctn-invesment-part ctn-invesment-part1"> <span class="imageblock"></span>
-    <h4>$900,000.00</h4>
+    <h4>$0.00</h4>
     <p>ACTIVE DEPOSITS</p>
     <div class="links"><a href="deposit.html">Make A Deposit</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part2"> <span class="imageblock"></span>
-    <h4 id="userbal" href="#">$1,900,000.00</h4>
+    $<h4 id="userbal" href="#">$1,900,000.00</h4>
     <p>YOUR BALANCE</p>
     <div class="links"><a href="withdraw.html">Withdraw Funds</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part3"> <span class="imageblock"></span>
-    <h4>$56780</h4>
+    <h4>$0.00</h4>
     <p>ADDED BONUS</p>
     <div class="links"><a href="deposit.html">My Deposits</a></div>
   </div>
@@ -125,12 +125,12 @@
 <div class="account_stat">
   <div class="contentLeft">
     <div class="ctn-inves-row invers-part5">
-      <p>$500000</p>
+      <p>$0.00</p>
       <h1>Last Deposit</h1>
     </div>
 
     <div class="ctn-inves-row invers-part8">
-      <p>$800000.00</p>
+      <p>$0.00</p>
       <h1>Withdrawal</h1>
     </div>
   </div>
@@ -281,6 +281,7 @@ $(document).ready(function() {
                  }else{
                       userlink.innerText = currentUser.username;
                       userlink.href = "#";
+                      usernam.innerText = currentUser.username;
                       userbal.innerText = currentUser.balance;
                       signoutlink.innerText = "Sign Out";
                       signoutlink.href = "javascript:signout()";
