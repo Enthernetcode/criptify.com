@@ -96,27 +96,27 @@
         </div>
         <div class="ctn-invesment-part ctn-invesment-part2">
           <p>Registration Date:</p>
-          <h4>2022-09-02 09:07:43</h4>
+          <h4 id="userdate">2022-09-02 09:07:43</h4>
         </div>
         <div class="ctn-invesment-part ctn-invesment-part3">
           <p>Last Access:</p>
-          <h4 id="userdate">2022-09-02 15:07:04</h4>
+          <h4>2022-09-02 15:07:04</h4>
         </div>
       </div>
 </div>  
 <div class="account_overview_wrap">
   <div class="ctn-invesment-part ctn-invesment-part1"> <span class="imageblock"></span>
-    <h4 id="userdep" href="#">$0.00</h4>
+    <h4>$</h4><h4 id="userdep" href="#">$0.00</h4>
     <p>ACTIVE DEPOSITS</p>
     <div class="links"><a href="deposit.html">Make A Deposit</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part2"> <span class="imageblock"></span>
-    $<h4 id="userbal" href="#">$0.00</h4>
+    <h4>$</h4><h4 id="userbal" href="#">$0.00</h4>
     <p>YOUR BALANCE</p>
     <div class="links"><a href="withdraw.html">Withdraw Funds</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part3"> <span class="imageblock"></span>
-    <h4 id="userbon" href="#">$0.00</h4>
+    <h4>$</h4><h4 id="userbon" href="#">$0.00</h4>
     <p>ADDED BONUS</p>
     <div class="links"><a href="deposit.html">My Deposits</a></div>
   </div>
@@ -131,8 +131,8 @@
     </div>
 
     <div class="ctn-inves-row invers-part8">
-      <p>$0.00</p>
-      <h1 id="userwal" href="#">Withdrawal</h1>
+      <p>$</p><p id="userwal">$0.00</p>
+      <h1>Withdrawal</h1>
     </div>
   </div>
 </div>
@@ -274,6 +274,11 @@ $(document).ready(function() {
             window.onload = function(){
                  getUsername();
                  if(currentUser == null){
+                      alert("Must be logged in to veiw this page!")
+                  window.location="login.html";
+                    })
+                    .catch((error)=>{
+                        alert("error" + error)
                       userlink.innerText = "dear";
                       userlink.href = "signup.html";
                       signoutlink.innerText = "Login";
