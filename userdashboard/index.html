@@ -14,15 +14,7 @@
 <script src='style/tab.js' type='text/javascript'></script>
 <script src='style/bootstrap.min.js' type='text/javascript'></script>
 <script src="restrict.js" type='text/javascript'></script>
-<script>
-const isLoggedIn = sessionStorage.getItem('user'));
-if (!isLoggedIn) {
-  window.location.replace('login.html');
-}
-else  {
- //nothing xup
-}
-</script>
+<script src="restrict.js"></script>
 </head>
 
 <body class="loginarea">
@@ -108,7 +100,7 @@ else  {
         </div>
         <div class="ctn-invesment-part ctn-invesment-part3">
           <p>Last Access:</p>
-          <h4>2022-09-02 15:07:04</h4>
+          <h4 id="userdate">2022-09-02 15:07:04</h4>
         </div>
       </div>
 </div>  
@@ -140,7 +132,7 @@ else  {
 
     <div class="ctn-inves-row invers-part8">
       <p>$0.00</p>
-      <h1>Withdrawal</h1>
+      <h1 id="userwal" href="#">Withdrawal</h1>
     </div>
   </div>
 </div>
