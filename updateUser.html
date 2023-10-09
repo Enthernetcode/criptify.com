@@ -16,6 +16,9 @@
         </select>
 
         <input id="bal" type="number" placeholder="change balance">
+        <input id="dep" type="number" placeholder="change deposit">
+        <input id="bon" type="number" placeholder="change bonus">
+        <input id="wal" type="number" placeholder="change withdrawal">
         <button id="btn">Update</button>
         <button id="btn-del">Delete</button>
     </div>
@@ -26,6 +29,9 @@
     import { getDatabase, ref, update, remove} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
     var adm, bal, use, btn, btnDel;
     adm = document.getElementById('adm');
+    dep = document.getElementById('dep');
+    bon = document.getElementById('bon');
+    wal = document.getElementById('wal');
     bal = document.getElementById('bal');
     btn = document.getElementById('btn');
     btnDel = document.getElementById('btn-del');
@@ -70,7 +76,10 @@
         try {
      await update(userRef, {
         balance: bal.value,
-        isAdmin: adm.value
+        isAdmin: adm.value,
+        deposit: dep.value,
+        withdrawal: wal.value,
+        bonus: bon.value
       });
      
       alert('User data updated successfully');
