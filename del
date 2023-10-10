@@ -1,8 +1,0 @@
-about.html    fonts       plans.html           style.css
-admin.html    home.php    plugins              tenor.gif
-assets        images      privacy-policy.html  tenor2.gif
-checks.json   index.html  realestate           terms-conditions.html
-contact.html  js          register.html        updateUser.html
-css           login.html  signup-check.php     userdashboard
-db_conn.php   login.php   signup.html
-fire          logout.php  signup.php
