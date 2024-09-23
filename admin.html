@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avoid Danger</title>
+</head>
+<body>
+    <h1>Welcome to the admin page</h1>
+    <div id="user-list"></div>
+
+    <script type="module">
+        // SETTING UP FIREBASE DB
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+	          // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+      };
+     
+        const app = initializeApp(firebaseConfig);
+
+        const db = getDatabase();
+  
+  // Get a reference to the "usersList" node
+  const usersRef = ref(db, 'UsersList');
+  
+   
+  // Fetch users data once
+  get(usersRef)
+    .then(snapshot => {
+      const usersData = snapshot.val();
+      const userListContainer = document.getElementById('user-list');
+      
+      // Iterate through the users
+      for (const username in usersData) {
+        if (usersData.hasOwnProperty(username)) {
+          const userData = usersData[username];
+          const userElement = document.createElement('div');
+          userElement.innerHTML = `<p>Username: ${username}</p><p>User Data: ${JSON.stringify(userData)}</p><button class="update-button">Update User</button>`;
+          userListContainer.appendChild(userElement);
+
+            // Add event listener to the button
+ const updateButton = userElement.querySelector('.update-button');
+          updateButton.addEventListener('click',  function redirectToUpdatePage() {
+            
+    window.location.href = `updateUser.html?username=${encodeURIComponent(username)}`;
+  });
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching users:', error);
+    });
+
+
+
+
+ 
+        </script>
+</body>
+</html>
