@@ -212,7 +212,7 @@
                     <button type="submit" id="sub-btn">Register</button>
                     <p><a href="signin.html">Have an account already? Login</a></p>
                 </form-->
-                <form action="#" method="post">
+                <form>
    <input type="email" id="emailInp" name="emailInp" placeholder="E-mail Address" required>
    <input type="text" id="nameInp" name="nameInp" placeholder="Full Name" required>
    <input type="text" id="userInp" name="username" placeholder="Username" required>
@@ -233,7 +233,7 @@
    </select>
    <input type="text" id="referrer" name="referrer" placeholder="Referrer Username (optional)">
    <input type="text" id="code" name="code" placeholder="Sign-up Code" required>
-   <button type="submit" id="sub-btn">Register</button>
+   <button type="button" id="sub-btn">Register</button>
 </form>
 
             </div>
@@ -336,50 +336,48 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
 }
 
 //REGISTER USER TO FIREBASE
+function RegisterUser(event) {
+    event.preventDefault(); // Prevents form from submitting and reloading the page
 
-    function RegisterUser(){
-       if(!Validation()){
+    if (!Validation()) {
         return;
-       };
-        const dbRef = ref(db);
-        get(child(dbRef, "UsersList/"+username.value)).then((snapshot)=>{
-            if(snapshot.exists()){
-                alert("Account already exists!")
-            }else{
-                set(ref(db, "UsersList/"+username.value),
-                {
-                    fullname: fullname.value,
-                    username: username.value,
-                    email: email.value,
-                    password: encPass(),
-                    phoneNumber: phone.value,
-                    country: country.value,
-                    state: state.value,
-                    invest: invest.value,
-                    refferer: refer.value
-                    isAdmin:false,
-                    balance: 0,
-                    date : new Date().toISOString().slice(0, 10),
-                    deposit : 0,
-                    withdrawal : 0,
-                    last_date : 0,
-                    bonus : 0,
-                    code: code.value
-
-
-                }
-                )
-                .then(()=>{
-                    alert("User registered successfully")
-                  window.location="userdashboard/index.html";
-                })
-                .catch((error)=>{
-                    alert("error" + error)
-                })
-            }
-        });
     }
-    
+
+    const dbRef = ref(db);
+    get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
+        if (snapshot.exists()) {
+            alert("Account already exists!");
+        } else {
+            set(ref(db, "UsersList/" + username.value), {
+                fullname: fullname.value,
+                username: username.value,
+                email: email.value,
+                password: encPass(),
+                phoneNumber: phone.value,
+                country: country.value,
+                state: state.value,
+                invest: invest.value,
+                refferer: refer.value,
+                isAdmin: false,
+                balance: 0,
+                date: new Date().toISOString().slice(0, 10),
+                deposit: 0,
+                withdrawal: 0,
+                last_date: 0,
+                bonus: 0,
+                code: code.value
+            })
+            .then(() => {
+                alert("User registered successfully");
+                window.location = "userdashboard/index.html";
+            })
+            .catch((error) => {
+                alert("Error: " + error);
+            });
+        }
+    });
+}
+
     //ENCRYPT PASSWORD
     function encPass(){
         var pass123 = CryptoJS.AES.encrypt(password.value, password.value);
