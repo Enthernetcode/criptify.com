@@ -59,7 +59,7 @@
             color: #fff;
         }
 
-        /* Update Button Styling */
+        /* Button Styling */
         .update-button {
             background-color: #ff5050;
             color: #fff;
@@ -72,6 +72,20 @@
 
         .update-button:hover {
             background-color: #e64545;
+        }
+
+        .delete-button {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-button:hover {
+            background-color: #e74c3c;
         }
     </style>
 </head>
@@ -98,17 +112,17 @@
     <script type="module">
         // Setting up Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+        import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
-        authDomain: "cooperate-finance.firebaseapp.com",
-        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-        projectId: "cooperate-finance",
-        storageBucket: "cooperate-finance.appspot.com",
-        messagingSenderId: "1017369894509",
-        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
-      };
+            authDomain: "cooperate-finance.firebaseapp.com",
+            databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+            projectId: "cooperate-finance",
+            storageBucket: "cooperate-finance.appspot.com",
+            messagingSenderId: "1017369894509",
+            appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+        };
         
         const app = initializeApp(firebaseConfig);
         const db = getDatabase();
@@ -116,10 +130,12 @@
         // Get user data and populate table
         const usersRef = ref(db, 'UsersList');
         
-        get(usersRef)
-            .then(snapshot => {
+        const fetchUsersData = async () => {
+            try {
+                const snapshot = await get(usersRef);
                 const usersData = snapshot.val();
                 const userListContainer = document.getElementById('user-list');
+                userListContainer.innerHTML = ''; // Clear previous entries
                 
                 // Iterate through users and create table rows
                 for (const username in usersData) {
@@ -133,7 +149,10 @@
                             <td>${userData.email || 'N/A'}</td>
                             <td>${userData.phone || 'N/A'}</td>
                             <td>${userData.accountType || 'Standard'}</td>
-                            <td><button class="update-button">Update User</button></td>
+                            <td>
+                                <button class="update-button">Update User</button>
+                                <button class="delete-button">Delete User</button>
+                            </td>
                         `;
                         userListContainer.appendChild(row);
 
@@ -142,12 +161,31 @@
                         updateButton.addEventListener('click', function() {
                             window.location.href = `updateUser.html?username=${encodeURIComponent(username)}`;
                         });
+
+                        // Add event listener to the delete button
+                        const deleteButton = row.querySelector('.delete-button');
+                        deleteButton.addEventListener('click', async function() {
+                            const confirmation = confirm(`Are you sure you want to delete user ${username}?`);
+                            if (confirmation) {
+                                try {
+                                    await remove(ref(db, `UsersList/${username}`));
+                                    alert(`User ${username} deleted successfully.`);
+                                    fetchUsersData(); // Refresh the user list
+                                } catch (error) {
+                                    console.error('Error deleting user:', error);
+                                    alert('Error deleting user. Please try again.');
+                                }
+                            }
+                        });
                     }
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching users:', error);
-            });
+            }
+        };
+
+        // Initial fetch of users data
+        fetchUsersData();
     </script>
 </body>
 </html>
