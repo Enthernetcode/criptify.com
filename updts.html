@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Page Styling */
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Update User Container */
+        .update-user-container {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e1f26;
+            margin-bottom: 20px;
+        }
+
+        /* Input and Button Styling */
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            margin: 5px 1%;
+            background-color: #1e1f26;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="update-user-container">
+        <h2 id="use">User</h2>
+
+        <select id="adm">
+            <option value="false">isAdmin false</option>
+            <option value="true">isAdmin true</option>
+        </select>
+
+        <input id="bal" type="number" placeholder="Change balance">
+        <input id="dep" type="number" placeholder="Change deposit">
+        <input id="bon" type="number" placeholder="Change bonus">
+        <input id="wal" type="number" placeholder="Change withdrawal">
+        
+        <div style="display: flex; justify-content: space-between;">
+            <button id="btn">Update</button>
+            <button id="btn-del">Delete</button>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getDatabase, ref, update, remove, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+        
+        const adm = document.getElementById('adm');
+        const dep = document.getElementById('dep');
+        const bon = document.getElementById('bon');
+        const wal = document.getElementById('wal');
+        const bal = document.getElementById('bal');
+        const btn = document.getElementById('btn');
+        const btnDel = document.getElementById('btn-del');
+        const use = document.getElementById('use');
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        
+        // Fetch user data
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        use.innerText = username;
+
+        const userRef = ref(db, `UsersList/${username}`);
+        
+        const fetchUserData = async () => {
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                bal.value = userData.balance || 0;
+                dep.value = userData.deposit || 0;
+                bon.value = userData.bonus || 0;
+                wal.value = userData.withdrawal || 0;
+                adm.value = userData.isAdmin ? "true" : "false";
+            } else {
+                console.log('No user data found');
+            }
+        };
+
+        const updateUser = async () => {
+            try {
+                await update(userRef, {
+                    balance: bal.value,
+                    isAdmin: adm.value === "true",
+                    deposit: dep.value,
+                    withdrawal: wal.value,
+                    bonus: bon.value
+                });
+                alert('User data updated successfully');
+                window.location = "admin.html";
+            } catch (error) {
+                console.error('Error updating user data:', error);
+                alert('Error updating user data. Please try again.');
+            }
+        };
+
+        const deleteUser = async () => {
+            try {
+                await remove(userRef);
+                alert('User data removed successfully');
+                window.location = "admin.html";
+            } catch (error) {
+                console.error('Error removing user data:', error);
+                alert('Error removing user data. Please try again.');
+            }
+        };
+
+        btn.addEventListener('click', updateUser);
+        btnDel.addEventListener('click', deleteUser);
+
+        // Fetch user data on load
+        fetchUserData();
+    </script>
+</body>
+</html>
