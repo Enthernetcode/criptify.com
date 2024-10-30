@@ -98,10 +98,10 @@
           <p>Registration Date:</p>
           <h4 id="userdate">2022-09-02 09:07:43</h4>
         </div>
-        <div class="ctn-invesment-part ctn-invesment-part3">
+        <!--div class="ctn-invesment-part ctn-invesment-part3">
           <p>Last Access:</p>
           <h4>2022-09-02 15:07:04</h4>
-        </div>
+        </div-->
       </div>
 </div>  
 <div class="account_overview_wrap">
@@ -298,11 +298,12 @@ s0.parentNode.insertBefore(s1,s0);
             window.onload = function(){
                  getUsername();
                  if(currentUser == null){
-//                      alert("Must be logged in to veiw this page!")
-//                  window.location="https://cooperatefinance.com/login.html";
-//                    })
-//                    .catch((error)=>{
-//                        alert("error" + error)
+                      alert("Must be logged in to veiw this page!")
+                  window.location="https://cooperatefinance.com/signin.html";
+                    })
+                    .catch((error)=>{
+                        alert("error" + error)
+                        
                       userlink.innerText = "dear";
                       userlink.href = "signup.html";
                       signoutlink.innerText = "Login";
