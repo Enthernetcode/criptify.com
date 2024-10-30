@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoid Danger - Admin Page</title>
+    <title>Admin Dashboard - Cooperate Finance</title>
     <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Page Styling */
         body {
             background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
             padding: 20px;
+        }
+
+        /* Admin Panel Container */
+        .admin-panel {
+            width: 80%;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         h1 {
@@ -18,34 +38,50 @@
             margin-bottom: 20px;
         }
 
-        .user-list {
-            max-width: 600px;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .user-item {
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        table, th, td {
+            border: 1px solid #ddd;
         }
 
-        .user-item:last-child {
-            border-bottom: none;
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1e1f26;
+            color: #fff;
+        }
+
+        /* Button Styling */
+        .update-button {
+            background-color: #ff5050;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .update-button:hover {
+            background-color: #e64545;
         }
 
         .delete-button {
             background-color: #c0392b;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .delete-button:hover {
@@ -54,15 +90,30 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to the Admin Page</h1>
-    <div class="user-list" id="user-list"></div>
+    <div class="admin-panel">
+        <h1>Welcome to the Admin Dashboard</h1>
+        
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Account Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-list">
+                <!-- User data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
 
     <script type="module">
-        // SETTING UP FIREBASE DB
+        // Setting up Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
         import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-
-        // Firebase Configuration
+        
         const firebaseConfig = {
             apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
             authDomain: "cooperate-finance.firebaseapp.com",
@@ -72,58 +123,64 @@
             messagingSenderId: "1017369894509",
             appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
         };
-
+        
         const app = initializeApp(firebaseConfig);
         const db = getDatabase();
 
-        // Get a reference to the "UsersList" node
+        // Get user data and populate table
         const usersRef = ref(db, 'UsersList');
-
-        // Fetch users data once
+        
         const fetchUsersData = async () => {
             try {
                 const snapshot = await get(usersRef);
                 const usersData = snapshot.val();
                 const userListContainer = document.getElementById('user-list');
                 userListContainer.innerHTML = ''; // Clear previous entries
-
-                // Iterate through the users
+                
+                // Iterate through users and create table rows
                 for (const username in usersData) {
                     if (usersData.hasOwnProperty(username)) {
                         const userData = usersData[username];
-                        const userElement = document.createElement('div');
-                        userElement.className = 'user-item';
-                        userElement.innerHTML = `
-                            <div>
-                                <strong>Username:</strong> ${username}<br>
-                                <strong>User Data:</strong> ${JSON.stringify(userData)}
-                            </div>
-                            <button class="update-button" onclick="redirectToUpdatePage('${username}')">Update User</button>
-                            <button class="delete-button" onclick="deleteUser('${username}')">Delete User</button>
+                        
+                        // Define row with data
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${username}</td>
+                            <td>${userData.email || 'N/A'}</td>
+                            <td>${userData.phone || 'N/A'}</td>
+                            <td>${userData.accountType || 'Standard'}</td>
+                            <td>
+                                <button class="update-button">Update User</button>
+                                <button class="delete-button">Delete User</button>
+                            </td>
                         `;
-                        userListContainer.appendChild(userElement);
+                        userListContainer.appendChild(row);
+
+                        // Add event listener to the update button
+                        const updateButton = row.querySelector('.update-button');
+                        updateButton.addEventListener('click', function() {
+                            window.location.href = `updateUser.html?username=${encodeURIComponent(username)}`;
+                        });
+
+                        // Add event listener to the delete button
+                        const deleteButton = row.querySelector('.delete-button');
+                        deleteButton.addEventListener('click', async function() {
+                            const confirmation = confirm(`Are you sure you want to delete user ${username}?`);
+                            if (confirmation) {
+                                try {
+                                    await remove(ref(db, `UsersList/${username}`));
+                                    alert(`User ${username} deleted successfully.`);
+                                    fetchUsersData(); // Refresh the user list
+                                } catch (error) {
+                                    console.error('Error deleting user:', error);
+                                    alert('Error deleting user. Please try again.');
+                                }
+                            }
+                        });
                     }
                 }
             } catch (error) {
                 console.error('Error fetching users:', error);
-            }
-        };
-
-        // Function to redirect to update user page
-        window.redirectToUpdatePage = function(username) {
-            window.location.href = `updateUser.html?username=${encodeURIComponent(username)}`;
-        };
-
-        // Function to delete a user
-        window.deleteUser = async function(username) {
-            const userRefToDelete = ref(db, `UsersList/${username}`);
-            try {
-                await remove(userRefToDelete);
-                alert(`User ${username} deleted successfully.`);
-                fetchUsersData(); // Refresh the user list
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                alert('Error deleting user. Please try again.');
             }
         };
 
