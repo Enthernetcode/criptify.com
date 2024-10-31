@@ -88,6 +88,20 @@
             background-color: #e74c3c;
         }
     </style>
+    <script>
+// Function to check admin login status
+function checkAdminAuth() {
+    const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
+
+    // Redirect to login page if not logged in
+    if (isAdminLoggedIn !== "true") {
+        window.location.href = "admin_login.html";
+    }
+}
+
+// Run the check function on page load
+window.onload = checkAdminAuth;
+</script>
 </head>
 <body>
     <div class="admin-panel">
