@@ -25,11 +25,13 @@
 
         /* Admin Panel Container */
         .admin-panel {
-            width: 80%;
+            width: 100%;
+            max-width: 900px;
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            margin-top: 20px;
         }
 
         h1 {
@@ -60,8 +62,7 @@
         }
 
         /* Button Styling */
-        .update-button {
-            background-color: #ff5050;
+        .update-button, .delete-button, .logout-button {
             color: #fff;
             border: none;
             padding: 8px 12px;
@@ -70,41 +71,82 @@
             font-size: 14px;
         }
 
-        .update-button:hover {
-            background-color: #e64545;
+        .update-button {
+            background-color: #ff5050;
         }
 
         .delete-button {
             background-color: #c0392b;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
+        }
+
+        .logout-button {
+            background-color: #333;
+            float: right;
+            margin-bottom: 10px;
+        }
+
+        .update-button:hover {
+            background-color: #e64545;
         }
 
         .delete-button:hover {
             background-color: #e74c3c;
         }
+
+        .logout-button:hover {
+            background-color: #555;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, th, td {
+                display: block;
+                width: 100%;
+            }
+
+            th, td {
+                text-align: right;
+                padding: 10px;
+                position: relative;
+            }
+
+            th::before, td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+
+            th, td[data-label]:before {
+                content: attr(data-label);
+            }
+        }
     </style>
     <script>
-// Function to check admin login status
-function checkAdminAuth() {
-    const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
+        // Function to check admin login status
+        function checkAdminAuth() {
+            const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
 
-    // Redirect to login page if not logged in
-    if (isAdminLoggedIn !== "true") {
-        window.location.href = "admin_login.html";
-    }
-}
+            // Redirect to login page if not logged in
+            if (isAdminLoggedIn !== "true") {
+                window.location.href = "admin_login.html";
+            }
+        }
 
-// Run the check function on page load
-window.onload = checkAdminAuth;
-</script>
+        // Function to log out admin
+        function logoutAdmin() {
+            sessionStorage.removeItem("adminLoggedIn");
+            window.location.href = "admin_login.html";
+        }
+
+        // Run the check function on page load
+        window.onload = checkAdminAuth;
+    </script>
 </head>
 <body>
     <div class="admin-panel">
+        <button class="logout-button" onclick="logoutAdmin()">Logout</button>
         <h1>Welcome to the Admin Dashboard</h1>
         
         <table id="user-table">
@@ -160,12 +202,12 @@ window.onload = checkAdminAuth;
                         // Define row with data
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${username}</td>
-                            <td>${userData.email || 'N/A'}</td>
-                            <td>${userData.phoneNumber || 'N/A'}</td>
-                            <td>${userData.invest || 'Standard'}</td>
-                            <td>${userData.country || 'N/A'}</td>
-                            <td>
+                            <td data-label="Username">${username}</td>
+                            <td data-label="Email">${userData.email || 'N/A'}</td>
+                            <td data-label="Phone">${userData.phoneNumber || 'N/A'}</td>
+                            <td data-label="Account Type">${userData.invest || 'Standard'}</td>
+                            <td data-label="Country">${userData.country || 'N/A'}</td>
+                            <td data-label="Actions">
                                 <button class="update-button">Update User</button>
                                 <button class="delete-button">Delete User</button>
                             </td>
