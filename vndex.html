@@ -104,19 +104,19 @@
     const auth = firebase.auth();
 
     // Check if user is logged in
-    window.onload = function(){
-        document.querySelector('.loading-spinner').style.display = 'block';
+    //window.onload = function(){
+//        document.querySelector('.loading-spinner').style.display = 'block';
 
-        auth.onAuthStateChanged((user) => {
-            if (user) {
+//        auth.onAuthStateChanged((user) => {
+            //if (user) {
                 // User is signed in, load user data
-                getUsername(user.uid);
-            } else {
+              //  getUsername(user.uid);
+            //} else {
                 // Redirect to login if not logged in
-                window.location.href = 'login.html';
-            }
-        });
-    };
+              //  window.location.href = 'login.html';
+            //}
+        //});
+    //};
 
     function getUsername(userId) {
         db.collection("users").doc(userId).get()
