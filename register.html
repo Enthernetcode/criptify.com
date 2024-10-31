@@ -155,6 +155,20 @@
             text-align: center;
             padding: 10px;
         }
+           /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -363,7 +377,7 @@ function RegisterUser(event) {
                 isAdmin: false,
                 balance: 0,
                 date: new Date().toISOString().slice(0, 10),
-                lastAccessTime: new Date().toISOString().slice(0, 10),
+                last_date: new Date().toISOString().slice(0, 10),
                 deposit: 0,
                 withdrawal: 0,
                 last_date: 0,
