@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Account Page</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href='style/bootstrap.min.css' rel='stylesheet'>
+    <link href='style/custom.css' rel='stylesheet'>
+    <link href='style/default.css' rel='stylesheet'>
+    <link href='style/tab.css' rel='stylesheet'>
+    <link rel="icon" href="../styles/images/favicon.png">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src='style/jquery.js'></script>
+    <script src='style/setting2.js'></script>
+    <script src='style/tab.js'></script>
+    <script src='style/bootstrap.min.js'></script>
+    <script src="restrict.js"></script>
+    
+    <style>
+        /* Default and Responsive Styles */
+        body, html { font-family: 'Open Sans', sans-serif; margin: 0; padding: 0; }
+        .wrapper-account { max-width: 1200px; margin: auto; padding: 20px; }
+        .inside_inner_account { display: none; }
+        .loading-spinner { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+        
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .member_wrap, .member_right { width: 100%; }
+            .navbar, .account_overview_wrap, .account_top { display: flex; flex-direction: column; align-items: center; }
+            .member-container { padding: 10px; }
+        }
+        @media (max-width: 480px) {
+            .account_overview_wrap .ctn-invesment-part { width: 100%; padding: 10px; }
+            h2, h3, p { font-size: 14px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper-account">
+    <div class="headerContainer">
+        <div class="headerInner">
+            <div class="hdRight">
+                <div class="mainNavRight">
+                    <div class="navbar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-spinner">
+        <img src="styles/images/spinner.gif" alt="Loading...">
+    </div>
+
+    <div class="inside_inner_account">
+        <div class="member_wrap">
+            <div class="membersidebar">
+                <ul>
+                    <li><a href="customer.html">My Account</a></li>
+                    <li><a href="deposit.html">Deposit</a></li>
+                    <li><a href="deposit_history.html">Deposits History</a></li>
+                    <li><a href="withdraw.html">Withdraw</a></li>
+                    <li><a href="referals.html">Referrals</a></li>
+                    <li><a id="signoutlink" href="#">Logout</a></li>
+                </ul>
+            </div>
+            <div class="member-container">
+                <div class="account_top">
+                    <h2>Welcome, <span id="userlink">User</span></h2>
+                </div>
+                <h3 class="account_main">Account Overview</h3>
+                <div class="account_overview_wrap">
+                    <div class="user-info">
+                        <div class="ctn-invesment-part">
+                            <p>Your username:</p>
+                            <h4 id="usernam">User</h4>
+                        </div>
+                        <div class="ctn-invesment-part">
+                            <p>Last Access:</p>
+                            <h4 id="lastAccessDate">Loading...</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+         apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "785120987896",
+        appId: "1:785120987896:web:9c97861dfd6f908112c90d"
+      };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Check if user is logged in
+    window.onload = function(){
+        document.querySelector('.loading-spinner').style.display = 'block';
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, load user data
+                getUsername(user.uid);
+            } else {
+                // Redirect to login if not logged in
+                window.location.href = 'login.html';
+            }
+        });
+    };
+
+    function getUsername(userId) {
+        db.collection("users").doc(userId).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    document.getElementById("userlink").innerText = userData.username;
+                    document.getElementById("usernam").innerText = userData.username;
+                    document.getElementById("lastAccessDate").innerText = userData.lastAccess.toDate().toLocaleString();
+
+                    updateLastAccess(userId);
+                    document.querySelector('.loading-spinner').style.display = 'none';
+                    document.querySelector('.inside_inner_account').style.display = 'block';
+                } else {
+                    console.error("No user data found!");
+                }
+            })
+            .catch((error) => console.error("Error fetching user data:", error));
+    }
+
+    // Function to update last access time in Firebase
+    function updateLastAccess(userId) {
+        const lastAccessTime = new Date();
+
+        db.collection("users").doc(userId).update({
+            lastAccess: firebase.firestore.Timestamp.fromDate(lastAccessTime)
+        })
+        .then(() => {
+            document.getElementById("lastAccessDate").innerText = lastAccessTime.toLocaleString();
+            console.log("Last access updated successfully!");
+        })
+        .catch((error) => {
+            console.error("Error updating last access:", error);
+        });
+    }
+</script>
+</body>
+</html>
