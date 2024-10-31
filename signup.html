@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <title>Create Account - Cooperate Finance</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body and Wrapper */
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background-color: #1e1f26;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .header .menu {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .header .button {
+            background-color: #ff5050;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Main content */
+        .create-account-container {
+            background-color: #1e1f26;
+            padding: 50px 0;
+            text-align: center;
+            color: white;
+            flex: 1;
+            background-image: url('your-background-image.jpg'); /* Replace with actual image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Overlay effect */
+        .create-account-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 31, 38, 0.8); /* Dark overlay */
+            z-index: 1;
+        }
+
+        /* Account Creation Box */
+        .create-account-box {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            background-color: #2a2b38;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .create-account-box h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .create-account-box input[type="text"],
+        .create-account-box input[type="email"],
+        .create-account-box input[type="password"],
+        .create-account-box select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background: #1e1f26;
+            color: #fff;
+        }
+        .create-account-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5050;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .create-account-box a {
+            color: #bbb;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1e1f26;
+            color: #bbb;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .footer div {
+            margin: 10px;
+            max-width: 250px;
+        }
+        .footer a {
+            color: #bbb;
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+        }
+        .footer .footer-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .footer-bottom {
+            background-color: #ff5050;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Header -->
+        <div class="header">
+            <a href="#" class="logo">Cooperate Finance</a>
+            <div class="menu">
+                <a href="index.html">Home</a>
+                <a href="aboutus.html">About Us</a>
+                <a href="#">FAQ</a>
+                <a href="contact-us.html">Contact Us</a>
+                <a href="#">Portfolio</a>
+                <a href="signin.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+            <a href="#" class="button">Open an account</a>
+        </div>
+
+        <!-- Create Account Section -->
+        <div class="create-account-container">
+            <div class="create-account-box">
+                <h2>Create Account</h2>
+                <form>
+                    <input type="email" id="emailInp" name="emailInp" placeholder="E-mail Address" required>
+                    <input type="text" id="nameInp" name="nameInp" placeholder="Full Name" required>
+                    <input type="text" id="userInp" name="username" placeholder="Username" required>
+                    <input type="password" id="passInp" name="passInp" placeholder="Password" required>
+                    <input type="text" id="phone" name="phone" placeholder="Phone Number" required>
+                    <select id="country" name="country" required>
+                        <option value="">Country</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="United States">United States</option>
+                        <option value="Canada">Canada</option>
+                    </select>
+                    <input type="text" id="state" name="state" placeholder="State" required>
+                    <select id="investment" name="investment" required>
+                        <option value="">Choose ROI</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <input type="text" id="referrer" name="referrer" placeholder="Referrer Username (optional)">
+                    <input type="text" id="code" name="code" placeholder="Sign-up Code" required>
+                    <button type="button" id="sub-btn">Register</button>
+                    <p><a href="signin.html">Have an account already? Login</a></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>
+                <p>We provide exceptional investment advice and services, tailored to each client's objectives and risk tolerance. We constantly strive to implement innovative trading technology and data-driven insights to optimize portfolio performance.</p>
+            </div>
+            <div>
+                <p class="footer-title">More Information</p>
+                <a href="#">Home</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">About Us</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Login</a>
+                <a href="#">Register</a>
+            </div>
+            <div>
+                <p class="footer-title">Contact Info</p>
+                <p>support@Cooperatefinance.com</p>
+                <p>3 Minerva Court, Leeds, England, LS1 3JB</p>
+                <p>North Central, Toronto, ON, Canada</p>
+            </div>
+            <div>
+                <p>Cooperate Finance is regulated by the UK House Company and EU Securities and Exchange Commission...</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; Copyright Cooperate Finance. All Rights Reserved.</p>
+        </div>
+    </div>
+
+<script type="module">
+            // SETTING UP FIREBASE DB
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+              // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+        apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "785120987896",
+        appId: "1:785120987896:web:9c97861dfd6f908112c90d"
+      };
+            const app = initializeApp(firebaseConfig);
+
+            import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+        const db = getDatabase()
+
+           //REFERENCES
+           const username = document.getElementById('userInp');
+           const email = document.getElementById('emailInp');
+           const password = document.getElementById('passInp');
+           const fullname = document.getElementById('nameInp');
+           const submitBtn = document.getElementById('sub-btn');
+           const phone = document.getElementById('phone');
+           const country = document.getElementById('country');
+           const state = document.getElementById('state');
+           const invest = document.getElementById('investment');
+           const refer = document.getElementById('referrer');
+           const code = document.getElementById('code');
+           const x = "901b567";
+
+    //VALIDATION
+    function isEmptyOrSpaces(str){
+      return str === null || str.match(/^ *$/) !== null;
+}
+
+function Validation(){
+    let nameRegex = /^[a-zA-Z\s]+$/;
+    let emailRegex = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
+    let usernameRegex = /^[a-zA-Z0-9]{5,}$/;
+
+if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(password.value) || isEmptyOrSpaces(email.value)  || isEmptyOrSpaces(code.value)){
+    alert("You cannot leave any field empty");
+    return false;
+}
+
+    if(!nameRegex.test(fullname.value)){
+        alert('The name should only contain alphabets');
+        return false;
+    }
+    if(!emailRegex.test(email.value)){
+        alert('Please enter a valid email');
+        return false;
+    }
+    if(!usernameRegex.test(username.value)){
+        alert('Username can only be alphanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
+        return false;
+    }
+    if(code.value!==x){
+       alert('Wrong sign up code , please contact the admin');
+       return false;
+    }
+    return true;
+}
+
+//REGISTER USER TO FIREBASE
+function RegisterUser(event) {
+//    event.preventDefault(); // Prevents form from submitting and reloading the page
+
+    if (!Validation()) {
+        return;
+    }
+
+    const dbRef = ref(db);
+    get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
+        if (snapshot.exists()) {
+            alert("Account already exists!");
+        } else {
+            set(ref(db, "UsersList/" + username.value), {
+                fullname: fullname.value,
+                username: username.value,
+                email: email.value,
+                password: encPass(),
+                phoneNumber: phone.value,
+                country: country.value,
+                state: state.value,
+                invest: invest.value,
+                refferer: refer.value,
+                isAdmin: false,
+                balance: 0,
+                date: new Date().toISOString().slice(0, 10),
+                last_date: new Date().toISOString().slice(0, 10),
+                deposit: 0,
+                withdrawal: 0,
+                last_date: 0,
+                bonus: 0,
+                code: code.value
+            })
+            .then(() => {
+                alert("User registered successfully");
+                window.location = "userdashboard/index.html";
+            })
+            .catch((error) => {
+                alert("Error: " + error);
+            });
+        }
+    });
+}
+
+    //ENCRYPT PASSWORD
+    function encPass(){
+        var pass123 = CryptoJS.AES.encrypt(password.value, password.value);
+        return pass123.toString();
+    }
+    
+    //ASSIGN EVENTS
+    submitBtn.addEventListener("click", RegisterUser);
+
+    </script>
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/664de6ff9a809f19fb33ac86/1hug4sm66';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+</body>
+</html>
