@@ -202,20 +202,6 @@
 </div>
 
 <script type='text/javascript'>
-    // Firebase Configuration
-    const firebaseConfig = {
-         apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
-        authDomain: "cooperate-finance.firebaseapp.com",
-        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-        projectId: "cooperate-finance",
-        storageBucket: "cooperate-finance.appspot.com",
-        messagingSenderId: "785120987896",
-        appId: "1:785120987896:web:9c97861dfd6f908112c90d"
-      };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-
     // Assume getUsername is defined and fetches the user data
     window.onload = function(){
         // Show loading spinner
@@ -251,23 +237,7 @@
             document.querySelector('.loading-spinner').style.display = 'none';
             document.querySelector('.inside_inner_account').style.display = 'block';
         }
-    };
-
-    // Function to update last access time in Firebase
-    function updateLastAccess(userId) {
-        const lastAccessTime = new Date();
-
-        db.collection("users").doc(userId).update({
-            lastAccess: firebase.firestore.Timestamp.fromDate(lastAccessTime)
-        })
-        .then(() => {
-            document.getElementById("lastAccessDate").innerText = lastAccessTime.toLocaleString();
-            console.log("Last access updated successfully!");
-        })
-        .catch((error) => {
-            console.error("Error updating last access:", error);
-        });
-    }
+    };    
 </script>
 </body>
 </html>

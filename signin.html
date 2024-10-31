@@ -284,6 +284,22 @@ if(!keepLoggedIn){
 }
 }
 
+// Function to update last access time in Firebase
+    function updateLastAccess(userId) {
+        const lastAccessTime = new Date();
+
+        db.collection("users").doc(userId).update({
+            lastAccess: firebase.firestore.Timestamp.fromDate(lastAccessTime)
+        })
+        .then(() => {
+            document.getElementById("lastAccessDate").innerText = lastAccessTime.toLocaleString();
+            console.log("Last access updated successfully!");
+        })
+        .catch((error) => {
+            console.error("Error updating last access:", error);
+        });
+    }
+
 //ASSIGN EVENTS
 submitBtn.addEventListener("click", AuthenticateUser);
 
