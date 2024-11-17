@@ -265,10 +265,15 @@ $(document).ready(function() {
 
         // Check if the currentUser is null
         if(currentUser == null){
-            userlink.innerText = "dear";
-            userlink.href = "https://cooperatefinance.com/register.html";
-            signoutlink.innerText = "Login";
-            signoutlink.href = "login.html";
+            alert("Must be logged in to veiw this page!")
+                  window.location="login.html";
+                    })
+                    .catch((error)=>{
+                        alert("error" + error)
+                      userlink.innerText = "dear";
+                      userlink.href = "https://cooperatefinance.com/signup.html";
+                      signoutlink.innerText = "Login";
+                      signoutlink.href = "https://cooperatefinance.com/signin.html";
 
             // Hide spinner and show content
             document.querySelector('.loading-spinner').style.display = 'none';
