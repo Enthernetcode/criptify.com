@@ -293,7 +293,7 @@ if(!keepLoggedIn){
     window.location="index.html";
 }else{
     localStorage.setItem('keepLoggedIn', 'yes');
-    sessionStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
     window.location="index.html";
 }
 }
