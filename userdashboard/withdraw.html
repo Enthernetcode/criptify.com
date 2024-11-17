@@ -362,19 +362,15 @@ span.price {
 
 <script src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
 
-<script>
-
+<script type="text/javascript">
 //REFERENCE
             let userlink = document.getElementById('userlink');
-            let signoutlink = document.getElementById('signoutlink');
-            var currentUser = null;
+            let signoutlink = document.getElementById('signoutlink');                               var currentUser = null;
 
   //FUNCTION
-            function getUsername(){
-                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+            function getUsername(){                                                                      let keepLoggedIn = localStorage.getItem('keepLoggedIn')
 
-                 if(keepLoggedIn == 'yes'){
-                     currentUser = JSON.parse(localStorage.getItem('user'));
+                 if(keepLoggedIn == 'yes'){                                                                  currentUser = JSON.parse(localStorage.getItem('user'));
                  }else{
                       currentUser = JSON.parse(sessionStorage.getItem('user'));
                  }
@@ -387,8 +383,7 @@ span.price {
         document.querySelector('.inside_inner_account').style.display = 'none';
 
         getUsername();
-
-        // Check if the currentUser is null
+                                                                                                // Check if the currentUser is null
         if(currentUser == null){
             userlink.innerText = "dear";
             userlink.href = "https://cooperatefinance.com/register.html";
@@ -398,22 +393,18 @@ span.price {
             // Hide spinner and show content
             document.querySelector('.loading-spinner').style.display = 'none';
             document.querySelector('.inside_inner_account').style.display = 'block';
-        } else {
-            // Set user data
+        } else {                                                                                    // Set user data
             userlink.innerText = currentUser.username;
-            userlink.href = "#";
-            usernam.innerText = currentUser.username;
+            userlink.href = "#";                                                                    usernam.innerText = currentUser.username;
             userbal.innerText = currentUser.balance;
             userwal.innerText = currentUser.withdrawal;
             userdep.innerText = currentUser.deposit;
             userdate.innerText = currentUser.date;
             userldate.innerText = currentUser.lastAccessDate;
             userbon.innerText = currentUser.bonus;
-            signoutlink.innerText = "Sign Out";
-            signoutlink.href = "javascript:signout()";
+            signoutlink.innerText = "Sign Out";                                                     signoutlink.href = "javascript:signout()";
 
-            // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
+            // Hide spinner and show content                                                        document.querySelector('.loading-spinner').style.display = 'none';
             document.querySelector('.inside_inner_account').style.display = 'block';
         }
     };
