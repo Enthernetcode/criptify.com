@@ -14,6 +14,19 @@
 <script src='style/tab.js' type='text/javascript'></script>
 <script src='style/bootstrap.min.js' type='text/javascript'></script>
 <script src="restrict.js" type='text/javascript'></script>
+<style>
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .inside_inner_account {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="loginarea">
@@ -43,7 +56,7 @@
 <div class="member-container">
 <div class="account_top">
   <div class="user_left">
-    <h2>Welcome, <span>test</span></h2>
+    <h2>Welcome, <span id="userlink">test</span></h2>
   </div>
   <div class="affiliate_top">Affiliate Link:<a href="http://legalforexbroker.com/index/auth/signup.html?ref=test" class="ref-link">http://legalforexbroker.com/index.html?ref=test</a></div>
   <div class="get_banners"><a href="referals.html">Get Banners</a></div>
@@ -91,31 +104,31 @@
    <div class="user-info">
         <div class="ctn-invesment-part ctn-invesment-part1">
           <p>Your username:</p>
-          <h4>test</h4>
+          <h4 id="usernam">test</h4>
         </div>
         <div class="ctn-invesment-part ctn-invesment-part2">
           <p>Registration Date:</p>
-          <h4>2022-09-02 09:07:43</h4>
+          <h4 id="userdate">2022-09-02 09:07:43</h4>
         </div>
-        <div class="ctn-invesment-part ctn-invesment-part3">
+        <!--div class="ctn-invesment-part ctn-invesment-part3">
           <p>Last Access:</p>
           <h4>2022-09-02 15:07:04</h4>
-        </div>
+        </div-->
       </div>
 </div>  
 <div class="account_overview_wrap">
   <div class="ctn-invesment-part ctn-invesment-part1"> <span class="imageblock"></span>
-    <h4>$0</h4>
+    <h4 id="userdep">$0</h4>
     <p>ACTIVE DEPOSITS</p>
     <div class="links"><a href="deposit.html">Make A Deposit</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part2"> <span class="imageblock"></span>
-    <h4>$0</h4>
+    <h4 id="userbal">$0</h4>
     <p>YOUR BALANCE</p>
     <div class="links"><a href="withdraw.html">Withdraw Funds</a></div>
   </div>
   <div class="ctn-invesment-part ctn-invesment-part3"> <span class="imageblock"></span>
-    <h4>$0</h4>
+    <h4 id="userbon">$0</h4>
     <p>ADDED BONUS</p>
     <div class="links"><a href="deposit.html">My Deposits</a></div>
   </div>
@@ -125,12 +138,12 @@
 <div class="account_stat">
   <div class="contentLeft">
     <div class="ctn-inves-row invers-part5">
-      <p>$0</p>
+      <p id="userdep">$0</p>
       <h1>Last Deposit</h1>
     </div>
 
     <div class="ctn-inves-row invers-part8">
-      <p>0.00</p>
+      <p id="userwal">0.00</p>
       <h1>Withdrawal</h1>
     </div>
   </div>
@@ -225,24 +238,62 @@ $(document).ready(function() {
 
 
   </script> 
-<script src="//code.tidio.co/yl5qxh3kvmuslkmwjcz6bm7tnawlmxx9.js" async></script>
-<!-- WhatsHelp.io widget -->
-<script type="text/javascript">
-    (function () {
-        var options = {
-            whatsapp: "+1(321)529-9586", 
-            text: "Hello, how may we help you? Just send us a message now to get assistance.",
-            abid:"+1(321)529-9586",// WhatsApp number
-           
-            call_to_action: "Message us", // Call to action
-            position: "left", // Position may be 'right' or 'left'
-        };
-        var proto = document.location.protocol, host = "whatshelp.io", url = proto + "//static." + host;
-        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = url + '/widget-send-button/js/init.js';
-        s.onload = function () { WhWidgetSendButton.init(host, proto, options); };
-        var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);
-    })();
-</script>
-<!-- /WhatsHelp.io widget --> </body>
+<script>
+//REFERENCE
+            let userlink = document.getElementById('userlink');
+            let signoutlink = document.getElementById('signoutlink');
+            var currentUser = null;
+
+  //FUNCTION
+            function getUsername(){
+                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+
+                 if(keepLoggedIn == 'yes'){
+                     currentUser = JSON.parse(localStorage.getItem('user'));
+                 }else{
+                      currentUser = JSON.parse(sessionStorage.getItem('user'));
+                 }
+            }
+
+    // Assume getUsername is defined and fetches the user data
+    window.onload = function(){
+        // Show loading spinner
+        document.querySelector('.loading-spinner').style.display = 'block';
+        document.querySelector('.inside_inner_account').style.display = 'none';
+
+        getUsername();
+
+        // Check if the currentUser is null
+        if(currentUser == null){
+            userlink.innerText = "dear";
+            userlink.href = "https://cooperatefinance.com/register.html";
+            signoutlink.innerText = "Login";
+            signoutlink.href = "login.html";
+
+            // Hide spinner and show content
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.querySelector('.inside_inner_account').style.display = 'block';
+        } else {
+            // Set user data
+            userlink.innerText = currentUser.username;
+            userlink.href = "#";
+            usernam.innerText = currentUser.username;
+            userbal.innerText = currentUser.balance;
+            userwal.innerText = currentUser.withdrawal;
+            userdep.innerText = currentUser.deposit;
+            userdate.innerText = currentUser.date;
+            userldate.innerText = currentUser.lastAccessDate;
+            userbon.innerText = currentUser.bonus;
+            signoutlink.innerText = "Sign Out";
+            signoutlink.href = "javascript:signout()";
+
+            // Hide spinner and show content
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.querySelector('.inside_inner_account').style.display = 'block';
+        }
+    };
+       </script>
+
+</body>
 </html>
  

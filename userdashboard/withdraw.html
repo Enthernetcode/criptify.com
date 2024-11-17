@@ -15,6 +15,19 @@
 <script src='style/bootstrap.min.js' type='text/javascript'></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="restrict.js" type='text/javascript'></script>
+<style>
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .inside_inner_account {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="loginarea" style="zoom: 1;">
@@ -33,18 +46,6 @@
     </div>
   </div>
  </div>
- 
- 
- 
- 
- 
-
-
- 
- 
- 
- 
-
 <html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Withdrawal</title>
@@ -171,58 +172,9 @@ span.price {
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
-
-
-
-
-
-
-<!--<script>-->
-<!--function validateForm() {-->
-<!--  var x = document.forms["myForm"]["balance"].value;-->
-<!--  if (x == "0.00") {-->
-<!--    alert("Your Balance is too low make a deposit");-->
-<!--    return false;-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
-
-<!--<script>-->
-<!--function validateForm() {-->
-<!--  var x = document.forms["frank"]["balance"].value;-->
-<!--  if (x == "0.00") {-->
-<!--    alert("Your Balance is too low make a deposit");-->
-<!--    return false;-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
-
-<!--<script>-->
-<!--function validateForm() {-->
-<!--  var x = document.forms["franks"]["balance"].value;-->
-<!--  if (x == "0.00") {-->
-<!--    alert("Your Balance is too low make a deposit");-->
-<!--    return false;-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
-
-
-
-
-
-
-
-
 <body>
-    
-
-      
-
-
-
 <h2 align="center" style="color:white;"><b>Make a Withdrawal Request.</b></h2>
-<h6 align="center" style="color:white;">Available Balance: <b>$0.00</b></h6>
+<h6 align="center" style="color:white;">Available Balance: <b id="userbal">$0.00</b></h6>
 <h6 align="center" style="color:white;">Withdrawal: <b>$0.00 </b></h6>
 <br>
 <p align="center" style="color:white;">Withdrawal/<a href="customer.html"style="color:yellow;">Home</a></p><br>
@@ -409,26 +361,62 @@ span.price {
 
 
 <script src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
-<!-- WhatsHelp.io widget -->
-<script type="text/javascript">
-    (function () {
-        var options = {
-            whatsapp: "+1(321)529-9586", 
-            text: "Hello, how may we help you? Just send us a message now to get assistance.",
-            abid:"+1(321)529-9586",// WhatsApp number
-           
-            call_to_action: "Message us", // Call to action
-            position: "left", // Position may be 'right' or 'left'
-        };
-        var proto = document.location.protocol, host = "whatshelp.io", url = proto + "//static." + host;
-        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = url + '/widget-send-button/js/init.js';
-        s.onload = function () { WhWidgetSendButton.init(host, proto, options); };
-        var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);
-    })();
-</script>
-<!-- /WhatsHelp.io widget -->
 
+<script>
 
+//REFERENCE
+            let userlink = document.getElementById('userlink');
+            let signoutlink = document.getElementById('signoutlink');
+            var currentUser = null;
 
+  //FUNCTION
+            function getUsername(){
+                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+
+                 if(keepLoggedIn == 'yes'){
+                     currentUser = JSON.parse(localStorage.getItem('user'));
+                 }else{
+                      currentUser = JSON.parse(sessionStorage.getItem('user'));
+                 }
+            }
+
+    // Assume getUsername is defined and fetches the user data
+    window.onload = function(){
+        // Show loading spinner
+        document.querySelector('.loading-spinner').style.display = 'block';
+        document.querySelector('.inside_inner_account').style.display = 'none';
+
+        getUsername();
+
+        // Check if the currentUser is null
+        if(currentUser == null){
+            userlink.innerText = "dear";
+            userlink.href = "https://cooperatefinance.com/register.html";
+            signoutlink.innerText = "Login";
+            signoutlink.href = "login.html";
+
+            // Hide spinner and show content
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.querySelector('.inside_inner_account').style.display = 'block';
+        } else {
+            // Set user data
+            userlink.innerText = currentUser.username;
+            userlink.href = "#";
+            usernam.innerText = currentUser.username;
+            userbal.innerText = currentUser.balance;
+            userwal.innerText = currentUser.withdrawal;
+            userdep.innerText = currentUser.deposit;
+            userdate.innerText = currentUser.date;
+            userldate.innerText = currentUser.lastAccessDate;
+            userbon.innerText = currentUser.bonus;
+            signoutlink.innerText = "Sign Out";
+            signoutlink.href = "javascript:signout()";
+
+            // Hide spinner and show content
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.querySelector('.inside_inner_account').style.display = 'block';
+        }
+    };
+       </script>
 
    </html>
