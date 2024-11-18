@@ -231,61 +231,37 @@ $(document).ready(function() {
   //REFERENCE
             let userlink = document.getElementById('userlink');
             let signoutlink = document.getElementById('signoutlink');
-            let usernam = document.getElementById('username');
-            let userbal = document.getElementById('userbalance');
-            let userwal = document.getElementById('userwallet');
-            let userdep = document.getElementById('userdeposit');
-            let userdate = document.getElementById('userdate');
-            let userbon = document.getElementById('userbonus');
             var currentUser = null;
   
-  //FUNCTION          
-            function getUsername(){
-                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
-  
-                 if(keepLoggedIn == 'yes'){
-                     currentUser = JSON.parse(localStorage.getItem('user'));
-                 }else{
-                      currentUser = JSON.parse(sessionStorage.getItem('user'));
-                 }
-            }
-  
-            function signout(){
-                 sessionStorage.removeItem('user');
-                 localStorage.removeItem('user');
-                 localStorage.removeItem('keepLoggedIn');
-                 window.location="login.html";
-            }
-  
-  //WINDOW LOADS
-            window.onload = function(){
-                 getUsername();
-                 if(currentUser == null){
-                      alert("Must be logged in to veiw this page!")
-                  window.location="login.html";
-                    })
-                    .catch((error)=>{
-                        alert("error" + error)
-                      userlink.innerText = "dear";
-                      userlink.href = "/signup.html";
-                      signoutlink.innerText = "Login";
-                      signoutlink.href = "/signin.html";
-  
-                 }else{
-                      userlink.innerText = currentUser.username;
-                      userlink.href = "#";
-                      usernam.innerText = currentUser.username;
-                      userbal.innerText = currentUser.balance;
-                      userwal.innerText = currentUser.withdrawal;
-                      userdep.innerText = currentUser.deposit;
-                      userdate.innerText = currentUser.date;
-                      userbon.innerText = currentUser.bonus;
-                      signoutlink.innerText = "Sign Out";
-                      signoutlink.href = "javascript:signout()";
-  
-                 }
-            }          
-  
+window.onload = function(){
+    document.querySelector('.loading-spinner').style.display = 'block';
+    document.querySelector('.inside_inner_account').style.display = 'none';
+
+    getUsername();
+
+    // Check if the currentUser is null
+    if(currentUser == null){
+        alert("Must be logged in to view this page!");
+        window.location = "login.html";
+    } else {
+        // Set user data
+        userlink.innerText = currentUser.username;
+        userlink.href = "#";
+        usernam.innerText = currentUser.username;
+        userbal.innerText = currentUser.balance;
+        userwal.innerText = currentUser.withdrawal;
+        userdep.innerText = currentUser.deposit;
+        userdate.innerText = currentUser.date;
+        userldate.innerText = currentUser.lastAccessDate;
+        userbon.innerText = currentUser.bonus;
+        signoutlink.innerText = "Sign Out";
+        signoutlink.href = "javascript:signout()";
+
+        // Hide spinner and show content
+        document.querySelector('.loading-spinner').style.display = 'none';
+        document.querySelector('.inside_inner_account').style.display = 'block';
+    }
+};  
        </script>
 </body> 
 </html>
