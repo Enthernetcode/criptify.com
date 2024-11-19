@@ -229,115 +229,91 @@
             <p>&copy; Copyright Cooperate Finance. All Rights Reserved.</p>
         </div>
     </div>
-     <script type="module">
-        // SETTING UP FIREBASE DB
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+<script type="module">
+    // SETTING UP FIREBASE DB
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+    import { getDatabase, ref, set, child, get, update } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
-          authDomain: "cooperate-finance.firebaseapp.com",
-          databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-          projectId: "cooperate-finance",
-          storageBucket: "cooperate-finance.appspot.com",
-          messagingSenderId: "785120987896",
-          appId: "1:785120987896:web:9c97861dfd6f908112c90d"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "785120987896",
+        appId: "1:785120987896:web:9c97861dfd6f908112c90d"
+    };
 
-        const app = initializeApp(firebaseConfig);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
 
-        import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+    // REFERENCES
+    const username = document.getElementById('userInp');
+    const password = document.getElementById('passInp');
+    const submitBtn = document.getElementById('sub-btn');
 
-        const db = getDatabase()
+    // AUTHENTICATION FUNCTION
+    function AuthenticateUser(event) {
+        event.preventDefault();  // Prevents form from submitting and reloading the page
+        const dbRef = ref(db);
 
-        //REFERENCES
-        const username = document.getElementById('userInp');
-        const password = document.getElementById('passInp');
-        const submitBtn = document.getElementById('sub-btn')
-
-//AUTHENTIFICATION
-
-function AuthenticateUser(event) {
-    event.preventDefault();  // Prevents form from submitting and reloading the page
-    const dbRef = ref(db);
-
-    get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
-        if (snapshot.exists()) {
-            alert("Logged in successful");
-            let dbpass = decPass(snapshot.val().password);
-            if (dbpass == password.value) {
-                login(snapshot.val());
+        get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
+            if (snapshot.exists()) {
+                alert("Logged in successfully");
+                let dbpass = decPass(snapshot.val().password);
+                if (dbpass === password.value) {
+                    login(snapshot.val());
+                    updateLastAccess(username.value);  // Call function to update the last access date
+                } else {
+                    alert("Username or password is invalid!");
+                }
             } else {
                 alert("Username or password is invalid!");
             }
-        } else {
-            alert("Username or password is invalid!");
-        }
-    }).catch(error => {
-        console.error("Error reading data: ", error);
-    });
-}
-
-
-//DECRYPT PASSWORD
-function decPass(dbpass){
-    var pass123 = CryptoJS.AES.decrypt(dbpass, password.value);
-    return pass123.toString(CryptoJS.enc.Utf8);
-}
-
-//LOGIN
-function login(user){
-let keepLoggedIn = document.getElementById('customSwitch1').checked;
-
-if(!keepLoggedIn){
-    sessionStorage.setItem('user', JSON.stringify(user));
-    window.location="userdashboard/index.html";
-}else{
-    localStorage.setItem('keepLoggedIn', 'yes');
-    localStorage.setItem('user', JSON.stringify(user));
-    window.location="userdashboard/index.html";
-}
-}
-
-// Function to update last access time in Firebase
-    function updateLastAccess(userId) {
-        const lastAccessTime = new Date();
-
-        db.collection("users").doc(userId).update({
-            lastAccess: firebase.firestore.Timestamp.fromDate(lastAccessTime)
-        })
-        .then(() => {
-            document.getElementById("lastAccessDate").innerText = lastAccessTime.toLocaleString();
-            console.log("Last access updated successfully!");
-        })
-        .catch((error) => {
-            console.error("Error updating last access:", error);
+        }).catch(error => {
+            console.error("Error reading data: ", error);
         });
     }
 
-//ASSIGN EVENTS
-submitBtn.addEventListener("click", AuthenticateUser);
+    // DECRYPT PASSWORD FUNCTION
+    function decPass(dbpass) {
+        var pass123 = CryptoJS.AES.decrypt(dbpass, password.value);
+        return pass123.toString(CryptoJS.enc.Utf8);
+    }
 
-      </script>
-<!--Start of Tawk.to Script->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6617113b1ec1082f04e0ffe6/1hr51ml4r';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
+    // LOGIN FUNCTION
+    function login(user) {
+        let keepLoggedIn = document.getElementById('customSwitch1').checked;
+
+        if (!keepLoggedIn) {
+            sessionStorage.setItem('user', JSON.stringify(user));
+            window.location = "userdashboard/index.html";
+        } else {
+            localStorage.setItem('keepLoggedIn', 'yes');
+            localStorage.setItem('user', JSON.stringify(user));
+            window.location = "userdashboard/index.html";
+        }
+    }
+
+    // FUNCTION TO UPDATE LAST ACCESS DATE
+    function updateLastAccess(userId) {
+        const lastAccessTime = new Date().toISOString(); // Use ISO string for compatibility
+        const userRef = ref(db, "UsersList/" + userId);
+
+        update(userRef, {
+            lastAccess: lastAccessTime
+        })
+        .then(() => {
+            console.log("Last access date updated successfully!");
+        })
+        .catch((error) => {
+            console.error("Error updating last access date:", error);
+        });
+    }
+
+    // ASSIGN EVENT
+    submitBtn.addEventListener("click", AuthenticateUser);
 </script>
-<!--End of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagN>
-s1.async=true;                                                        s1.src='https://embed.tawk.to/664de6ff9a809f19fb33ac86/1hug4sm66';
-s1.charset='UTF-8';                                                   s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);                                    })();                                                                 </script>
-
 </body>
 </html>
