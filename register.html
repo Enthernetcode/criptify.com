@@ -492,14 +492,15 @@
         </div>
     </div>
 <script type="module">
-	(function(){
-            emailjs.init("BVUOlzj2CdQNf6Gsp");
-        })();
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
-            // SETTING UP FIREBASE DB
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-              // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-            const firebaseConfig = {
+    (function(){
+        emailjs.init("BVUOlzj2CdQNf6Gsp");
+    })();
+
+    const firebaseConfig = {
         apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
         authDomain: "cooperate-finance.firebaseapp.com",
         databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
@@ -507,166 +508,162 @@
         storageBucket: "cooperate-finance.appspot.com",
         messagingSenderId: "785120987896",
         appId: "1:785120987896:web:9c97861dfd6f908112c90d"
-      };
-            const app = initializeApp(firebaseConfig);
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
 
-            import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    // REFERENCES
+    const username = document.getElementById('userInp');
+    const email = document.getElementById('emailInp');
+    const password = document.getElementById('passInp');
+    const fullname = document.getElementById('nameInp');
+    const submitBtn = document.getElementById('sub-btn');
+    const phone = document.getElementById('phone');
+    const country = document.getElementById('country');
+    const state = document.getElementById('state');
+    const invest = document.getElementById('investment');
+    const refer = document.getElementById('referrer');
+    const otpcode = document.getElementById('otp_code');
+    const code = document.getElementById('code');
+    const x = "901b567";
+    let otp; // Added global declaration for OTP
 
-        const db = getDatabase()
-
-           //REFERENCES
-           const username = document.getElementById('userInp');
-           const email = document.getElementById('emailInp');
-           const password = document.getElementById('passInp');
-           const fullname = document.getElementById('nameInp');
-           const submitBtn = document.getElementById('sub-btn');
-           const phone = document.getElementById('phone');
-           const country = document.getElementById('country');
-           const state = document.getElementById('state');
-           const invest = document.getElementById('investment');
-           const refer = document.getElementById('referrer');
-           const otpcode = document.getElementById('otp_code');
-           const code = document.getElementById('code');
-           const x = "901b567";
-
-    //VALIDATION
-    function isEmptyOrSpaces(str){
-      return str === null || str.match(/^ *$/) !== null;
-}
-
-function Validation(){
-    let nameRegex = /^[a-zA-Z\s]+$/;
-    let emailRegex = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
-    let usernameRegex = /^[a-zA-Z0-9]{5,}$/;
-
-if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(password.value) || isEmptyOrSpaces(email.value)  || isEmptyOrSpaces(code.value)){
-    alert("You cannot leave any field empty");
-    return false;
-}
-
-    if(!nameRegex.test(fullname.value)){
-        alert('The name should only contain alphabets');
-        return false;
+    // VALIDATION
+    function isEmptyOrSpaces(str) {
+        return str === null || str.match(/^ *$/) !== null;
     }
-    if(!emailRegex.test(email.value)){
-        alert('Please enter a valid email');
-        return false;
+
+    function Validation() {
+        let nameRegex = /^[a-zA-Z\s]+$/;
+        let emailRegex = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
+        let usernameRegex = /^[a-zA-Z0-9]{5,}$/;
+
+        if (isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(password.value) || isEmptyOrSpaces(email.value) || isEmptyOrSpaces(code.value)) {
+            alert("You cannot leave any field empty");
+            return false;
+        }
+
+        if (!nameRegex.test(fullname.value)) {
+            alert('The name should only contain alphabets');
+            return false;
+        }
+        if (!emailRegex.test(email.value)) {
+            alert('Please enter a valid email');
+            return false;
+        }
+        if (!usernameRegex.test(username.value)) {
+            alert('Username can only be alphanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
+            return false;
+        }
+        if (code.value !== x) {
+            alert('Wrong sign up code, please contact the admin');
+            return false;
+        }
+        if (otpcode.value !== otp) {
+            alert('Wrong OTP code, please retry or contact the admin');
+            return false;
+        }
+        return true;
     }
-    if(!usernameRegex.test(username.value)){
-        alert('Username can only be alphanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
-        return false;
-    }
-    if(code.value!==x){
-       alert('Wrong sign up code , please contact the admin');
-       return false;
-    }
-    if(otpcode.value!==otp){
-       alert('Wrong otp code , please retry or  contact the admin');
-       return false;
-    }
-    return true;
-}
 
     function generateOTP(length = 6) {
-            let otp = '';
-            const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-            const charactersLength = characters.length;
-            
-            for (let i = 0; i < length; i++) {
-                otp += characters.charAt(Math.floor(Math.random() * charactersLength));
-            }
-            
-            return otp;
+        otp = ''; // Corrected scope of otp
+        const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const charactersLength = characters.length;
+
+        for (let i = 0; i < length; i++) {
+            otp += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
 
-window.sendOTP = function() {
-            const emailInput = document.getElementById('emailInp').value;
-            const otpCode = generateOTP();
-            const fname = document.getElementById('userInp').value;
-
-            if (!emailInput) {
-                alert('Please enter an email address.');
-                return;
-            }
-            if (!fname) {
-                alert('Please enter an fullname address.');
-                return;
-            }
-
-            // Sending the OTP via Email.js
-            const serviceID = 'service_1vvxdzj';  // Replace with your Email.js service ID
-            const templateID = 'template_rjdwxve';  // Replace with your Email.js template ID
-            const templateParams = {
-                user_email: emailInput,
-                otp_code: otpCode,
-                name: fname
-            };
-
-            emailjs.send(serviceID, templateID, templateParams)
-                .then(response => {
-                    alert('OTP sent successfully!');
-                    console.log('Success:', response.status, response.text);
-                }, error => {
-                    alert('Failed to send OTP. Please try again.');
-                    console.log('Error:', error);
-                });
-        }
-
-//REGISTER USER TO FIREBASE
-function RegisterUser(event) {
-
-    if (!Validation()) {
-        return;
+        return otp;
     }
 
-    const dbRef = ref(db);
-    get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
-        if (snapshot.exists()) {
-            alert("Account already exists!");
-        } else {
-            set(ref(db, "UsersList/" + username.value), {
-                fullname: fullname.value,
-                username: username.value,
-                email: email.value,
-                password: encPass(),
-                phoneNumber: phone.value,
-                country: country.value,
-                state: state.value,
-                invest: invest.value,
-                refferer: refer.value,
-                isAdmin: false,
-                balance: 0,
-                date: new Date().toISOString().slice(0, 10),
-                last_date: new Date().toISOString().slice(0, 10),
-                deposit: 0,
-                withdrawal: 0,
-                bonus: 0,
-                code: code.value
-            })
-            .then(() => {
-                alert("User registered successfully");
-                window.location = "userdashboard/index.html";
-            })
-            .catch((error) => {
-                alert("Error: " + error);
-            });
-        }
-    });
-}
+    window.sendOTP = function() {
+        const emailInput = document.getElementById('emailInp').value;
+        const otpCode = generateOTP();
+        const fname = document.getElementById('userInp').value;
 
-    //ENCRYPT PASSWORD
-    function encPass(){
-        var pass123 = CryptoJS.AES.encrypt(password.value, password.value);
+        if (!emailInput) {
+            alert('Please enter an email address.');
+            return;
+        }
+        if (!fname) {
+            alert('Please enter a fullname.');
+            return;
+        }
+
+        // Sending the OTP via Email.js
+        const serviceID = 'service_1vvxdzj';  // Replace with your Email.js service ID
+        const templateID = 'template_rjdwxve';  // Replace with your Email.js template ID
+        const templateParams = {
+            user_email: emailInput,
+            otp_code: otpCode,
+            name: fname
+        };
+
+        emailjs.send(serviceID, templateID, templateParams)
+            .then(response => {
+                alert('OTP sent successfully!');
+                console.log('Success:', response.status, response.text);
+            }, error => {
+                alert('Failed to send OTP. Please try again.');
+                console.log('Error:', error);
+            });
+    }
+
+    // REGISTER USER TO FIREBASE
+    function RegisterUser(event) {
+        if (!Validation()) {
+            return;
+        }
+
+        const dbRef = ref(db);
+        get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
+            if (snapshot.exists()) {
+                alert("Account already exists!");
+            } else {
+                set(ref(db, "UsersList/" + username.value), {
+                    fullname: fullname.value,
+                    username: username.value,
+                    email: email.value,
+                    password: encPass(),
+                    phoneNumber: phone.value,
+                    country: country.value,
+                    state: state.value,
+                    invest: invest.value,
+                    refferer: refer.value,
+                    isAdmin: false,
+                    balance: 0,
+                    date: new Date().toISOString().slice(0, 10),
+                    last_date: new Date().toISOString().slice(0, 10),
+                    deposit: 0,
+                    withdrawal: 0,
+                    bonus: 0,
+                    code: code.value
+                })
+                .then(() => {
+                    alert("User registered successfully");
+                    window.location = "userdashboard/index.html";
+                })
+                .catch((error) => {
+                    alert("Error: " + error);
+                });
+            }
+        });
+    }
+
+    // ENCRYPT PASSWORD
+    function encPass() {
+        var pass123 = CryptoJS.AES.encrypt(password.value, password.value); // Ensure CryptoJS is available
         return pass123.toString();
     }
-    
-    //ASSIGN EVENTS
-//    submitBtn.addEventListener("click", RegisterUser);
-    submitBtn.addEventListener("click", function(event) {
-    event.preventDefault();  // Prevent form submission
-    RegisterUser(event);
-});
 
+    // ASSIGN EVENTS
+    submitBtn.addEventListener("click", function(event) {
+        event.preventDefault();  // Prevent form submission
+        RegisterUser(event);
+    });
+</script>
     </script>
   </body>
 </html>
