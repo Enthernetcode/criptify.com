@@ -224,42 +224,6 @@
         <div class="create-account-container">
             <div class="create-account-box">
                 <h2>Create Account</h2>
-                <!--form action="#" method="post">
-                    <input type="email" name="emailInp" id="emailInp" placeholder="E-mail Address" required>
-                    <input type="text" name="nameInp" id="nameInp" placeholder="Full Name" required>
-                    <input type="text" name="nameInp" id="" placeholder="Username" required>
-                    <input type="password" name="passInp" id="passInp" placeholder="Password" required>
-                    <input type="password" name="confirm_password" placeholder="Retype Password" required>
-                    <input type="text" name="phone" id="phone" placeholder="Phone Number" required>
-                    
-                    <!-- Country dropdown -->
-                    <!--select name="country" id"country" required>
-                        <option value="">Country</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="United States">United States</option>
-                        <option value="Canada">Canada</option>
-                        <!-- Add more countries as needed -->
-                    <!--/select>
-
-                    <!-- State dropdown -->
-                    <!--input type="text" name="state" id="state" placeholder="State" required>
-
-                    <!-- Investment ROI dropdown -->
-                    <!--select name="investment" id="investment" required>
-                        <option value="">Choose ROI</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-
-                    <input type="text" name="referrer" id="referrer" placeholder="Referrer Username (optional)">
-
-                    <label><input type="checkbox" name="terms" required> I agree to terms and conditions</label>
-
-                    <button type="submit" id="sub-btn">Register</button>
-                    <p><a href="signin.html">Have an account already? Login</a></p>
-                </form-->
-                <form>
    <input type="email" id="emailInp" name="emailInp" placeholder="E-mail Address" required>
    <input type="text" id="nameInp" name="nameInp" placeholder="Full Name" required>
    <input type="text" id="userInp" name="username" placeholder="Username" required>
@@ -567,7 +531,7 @@
 
     function generateOTP(length = 6) {
         otp = ''; // Corrected scope of otp
-        const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const characters = '0123456789';
         const charactersLength = characters.length;
 
         for (let i = 0; i < length; i++) {
