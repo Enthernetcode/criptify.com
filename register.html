@@ -580,7 +580,7 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
 function sendOTP() {
             const emailInput = document.getElementById('emailInp').value;
             const otpCode = generateOTP();
-            const fullname = document.getElementById('nameInp');
+            const name = document.getElementById('nameInp');
 
             if (!emailInput) {
                 alert('Please enter an email address.');
@@ -592,7 +592,8 @@ function sendOTP() {
             const templateID = 'template_rjdwxve';  // Replace with your Email.js template ID
             const templateParams = {
                 user_email: emailInput,
-                otp_code: otpCode
+                otp_code: otpCode,
+                name: name
             };
 
             emailjs.send(serviceID, templateID, templateParams)
