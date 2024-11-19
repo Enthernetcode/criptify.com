@@ -579,7 +579,7 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
             return otp;
         }
 
-function sendOTP() {
+window.sendOTP = function() {
             const emailInput = document.getElementById('emailInp').value;
             const otpCode = generateOTP();
             const name = document.getElementById('nameInp');
