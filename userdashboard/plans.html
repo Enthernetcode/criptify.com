@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahern Finance Investment Packs</title>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f4f4f4;
+}
+
+header {
+    text-align: center;
+    padding: 1rem;
+    background-color: #222;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.pack {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    padding: 1rem;
+    width: 300px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.pack h3 {
+    margin-top: 0;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Specific pack colors */
+.starter {
+    border-top: 5px solid red;
+}
+
+.silver {
+    border-top: 5px solid green;
+}
+
+.gold {
+    border-top: 5px solid brown;
+}
+
+.diamond {
+    border-top: 5px solid gold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pack {
+        width: 90%;
+    }
+}
+</style>
+</head>
+<body>
+    <header>
+        <h1>Cooperate Finance</h1>
+        <h2>Global Investment Mandate</h2>
+    </header>
+    <main class="container">
+        <div class="pack starter">
+            <h3>Starter Pack</h3>
+            <p>$500 - $5,999</p>
+            <p>6% weekly ROI</p>
+            <p>8% compounding</p>
+            <p>6% referral bonus</p>
+            <button>Invest</button>
+        </div>
+        <div class="pack silver">
+            <h3>Silver Pack</h3>
+            <p>$6,000 - $18,999</p>
+            <p>8% weekly ROI</p>
+            <p>10% compounding</p>
+            <p>6% referral bonus</p>
+            <button>Invest</button>
+        </div>
+        <div class="pack gold">
+            <h3>Gold Pack</h3>
+            <p>$19,000 - $49,999</p>
+            <p>10% weekly ROI</p>
+            <p>12% compounding</p>
+            <p>6% referral bonus</p>
+            <button>Invest</button>
+        </div>
+        <div class="pack diamond">
+            <h3>Diamond Pack</h3>
+            <p>$50,000 - Unlimited</p>
+            <p>12% weekly ROI</p>
+            <p>14% compounding</p>
+            <p>6% referral bonus</p>
+            <button>Invest</button>
+        </div>
+    </main>
+</body>
+</html>
