@@ -582,10 +582,14 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
 window.sendOTP = function() {
             const emailInput = document.getElementById('emailInp').value;
             const otpCode = generateOTP();
-            const name = document.getElementById('nameInp');
+            const fname = document.getElementById('nameInp');
 
             if (!emailInput) {
                 alert('Please enter an email address.');
+                return;
+            }
+            if (!fname) {
+                alert('Please enter an fullname address.');
                 return;
             }
 
@@ -595,7 +599,7 @@ window.sendOTP = function() {
             const templateParams = {
                 user_email: emailInput,
                 otp_code: otpCode,
-                name: name
+                name: fname
             };
 
             emailjs.send(serviceID, templateID, templateParams)
@@ -610,7 +614,7 @@ window.sendOTP = function() {
 
 //REGISTER USER TO FIREBASE
 function RegisterUser(event) {
-    event.preventDefault(); // Prevents form from submitting and reloading the page
+//    event.preventDefault(); // Prevents form from submitting and reloading the page
 
     if (!Validation()) {
         return;
