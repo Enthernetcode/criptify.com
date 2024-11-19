@@ -202,57 +202,55 @@
 </div>
 
 <script type='text/javascript'>
-//REFERENCE
-            let userlink = document.getElementById('userlink');
-            let signoutlink = document.getElementById('signoutlink');
-            var currentUser = null;
+    // REFERENCES
+    let userlink = document.getElementById('userlink');
+    let signoutlink = document.getElementById('signoutlink');
+    var currentUser = null;
 
-  //FUNCTION
-            function getUsername(){
-                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+    // FUNCTION TO GET USERNAME
+    function getUsername() {
+        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
 
-                 if(keepLoggedIn == 'yes'){
-                     currentUser = JSON.parse(localStorage.getItem('user'));
-                 }else{
-                      currentUser = JSON.parse(sessionStorage.getItem('user'));
-                 }
-            }
+        if (keepLoggedIn === 'yes') {
+            currentUser = JSON.parse(localStorage.getItem('user'));
+        } else {
+            currentUser = JSON.parse(sessionStorage.getItem('user'));
+        }
+    }
 
-    // Assume getUsername is defined and fetches the user data
-    window.onload = function(){
+    // ON PAGE LOAD
+    window.onload = function() {
         // Show loading spinner
         document.querySelector('.loading-spinner').style.display = 'block';
         document.querySelector('.inside_inner_account').style.display = 'none';
 
+        // Get the current user data
         getUsername();
 
-        // Check if the currentUser is null
-        if(currentUser == null){
-            alert("Must be logged in to veiw this page!")
-                  window.location="login.html";
-                    }
-            // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
-        } else {
-            // Set user data
-            userlink.innerText = currentUser.username;
-            userlink.href = "#";
-            usernam.innerText = currentUser.username;
-            userbal.innerText = currentUser.balance;
-            userwal.innerText = currentUser.withdrawal;
-            userdep.innerText = currentUser.deposit;
-            userdate.innerText = currentUser.date;
-            userldate.innerText = currentUser.lastAccessDate;
-            userbon.innerText = currentUser.bonus;
-            signoutlink.innerText = "Sign Out";
-            signoutlink.href = "javascript:signout()";
-
-            // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
+        // Check if currentUser is null
+        if (currentUser == null) {
+            alert("Must be logged in to view this page!");
+            window.location = "login.html";
+            return;  // Stop further execution if user is not logged in
         }
-    };    
+
+        // If user is logged in, populate user data and update links
+        userlink.innerText = currentUser.username;
+        userlink.href = "#";
+        document.getElementById('usernam').innerText = currentUser.username;  // Ensure the correct ID is used
+        document.getElementById('userbal').innerText = currentUser.balance;
+        document.getElementById('userwal').innerText = currentUser.withdrawal;
+        document.getElementById('userdep').innerText = currentUser.deposit;
+        document.getElementById('userdate').innerText = currentUser.date;
+        document.getElementById('userldate').innerText = currentUser.lastAccessDate;
+        document.getElementById('userbon').innerText = currentUser.bonus;
+        signoutlink.innerText = "Sign Out";
+        signoutlink.href = "javascript:signout()";
+
+        // Hide spinner and show content
+        document.querySelector('.loading-spinner').style.display = 'none';
+        document.querySelector('.inside_inner_account').style.display = 'block';
+    };
 </script>
 </body>
 </html>
