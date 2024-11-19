@@ -67,7 +67,7 @@
                 <div class="user_left">
                     <h2>Welcome, <span id="userlink" href="#">User</span></h2>
                 </div>
-                <div class="affiliate_top">Affiliate Link:<a href="http://cooperatefinance/userdashboard/signup.html?ref=test" class="ref-link"></a></div>
+                <!--div class="affiliate_top">Affiliate Link:<a href="http://cooperatefinance/userdashboard/signup.html?ref=test" class="ref-link"></a></div-->
                 <div class="get_banners"><a href="referals.html">Get Banners</a></div>
             </div>
             <div class="member_right">
@@ -209,14 +209,19 @@
 
     // FUNCTION TO GET USERNAME
     function getUsername() {
-        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+    let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+    const userData = keepLoggedIn === 'yes' 
+        ? localStorage.getItem('user') 
+        : sessionStorage.getItem('user');
 
-        if (keepLoggedIn === 'yes') {
-            currentUser = JSON.parse(localStorage.getItem('user'));
-        } else {
-            currentUser = JSON.parse(sessionStorage.getItem('user'));
-        }
+    try {
+        currentUser = JSON.parse(userData);
+    } catch (error) {
+        console.error("Failed to parse user data:", error);
+        currentUser = null;
+       }
     }
+
 
     // FUNCTION TO FETCH USER DATA FROM THE DATABASE
     async function fetchUserDataFromDatabase(userId) {
@@ -250,11 +255,19 @@
             getUsername();
 
             // Check if currentUser is null
-            if (currentUser == null) {
-                alert("Must be logged in to view this page!");
-                window.location = "login.html";
-                return; // Stop further execution if user is not logged in
-            }
+            if (!currentUser || !currentUser.username) {
+              alert("Invalid user data. Please log in again.");
+              window.location = "login.html";
+              return;
+            } 
+
+
+         function signout() {
+          localStorage.removeItem('user');
+          sessionStorage.removeItem('user');
+          localStorage.removeItem('keepLoggedIn');
+          window.location = "login.html";
+              }
 
             // Fetch updated data from the database
             const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);

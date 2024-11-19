@@ -47,7 +47,7 @@
 <div class="member-container">
 <div class="account_top">
   <div class="user_left">
-    <h2>Welcome, <span>test</span></h2>
+    <h2>Welcome, <span id="userlink">test</span></h2>
   </div>
   <div class="affiliate_top">Affiliate Link:<a href="http://legalforexbroker.com/index/auth/signup.html?ref=test" class="ref-link">https://legalforexbroker.com/index.html?ref=test</a></div>
   <div class="get_banners"><a href="referals.html">Get Banners</a></div>
@@ -296,24 +296,101 @@ $(document).ready(function() {
 <script src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
 <!-- WhatsHelp.io widget -->
 <script type="text/javascript">
-    (function () {
-        var options = {
-            whatsapp: "+1(321)529-9586", 
-            text: "Hello, how may we help you? Just send us a message now to get assistance.",
-            abid:"+1(321)529-9586",// WhatsApp number
-           
-            call_to_action: "Message us", // Call to action
-            position: "left", // Position may be 'right' or 'left'
-        };
-        var proto = document.location.protocol, host = "whatshelp.io", url = proto + "//static." + host;
-        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = url + '/widget-send-button/js/init.js';
-        s.onload = function () { WhWidgetSendButton.init(host, proto, options); };
-        var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);
-    })();
+ // REFERENCES
+    let userlink = document.getElementById('userlink');
+    let signoutlink = document.getElementById('signoutlink');
+    var currentUser = null;
+
+    // FUNCTION TO GET USERNAME
+    function getUsername() {
+        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+
+        if (keepLoggedIn === 'yes') {
+            currentUser = JSON.parse(localStorage.getItem('user'));
+        } else {
+            currentUser = JSON.parse(sessionStorage.getItem('user'));
+        }
+    }
+
+    // FUNCTION TO FETCH USER DATA FROM THE DATABASE
+    async function fetchUserDataFromDatabase(userId) {
+        try {
+            // Replace with your actual database fetching logic (example using Firebase)
+            const dbRef = ref(db); // Ensure `db` and `ref` are correctly initialized in your environment
+
+            let snapshot = await get(child(dbRef, "UsersList/" + userId));
+            if (snapshot.exists()) {
+                return snapshot.val(); // Returns updated user data
+            } else {
+                console.warn("User not found in the database");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from the database:", error);
+            return null;
+        }
+    }
+
+    // ON PAGE LOAD
+    window.onload = async function () {
+        try {
+            // Show loading spinner
+            let spinner = document.querySelector('.loading-spinner');
+            let accountContent = document.querySelector('.inside_inner_account');
+            if (spinner) spinner.style.display = 'block';
+            if (accountContent) accountContent.style.display = 'none';
+
+            // Get the current user data
+            getUsername();
+
+            // Check if currentUser is null
+            if (currentUser == null) {
+                alert("Must be logged in to view this page!");
+                window.location = "login.html";
+                return; // Stop further execution if user is not logged in
+            }
+
+            // Fetch updated data from the database
+            const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+
+            if (updatedUserData) {
+                // Update the currentUser with the latest data
+                currentUser = updatedUserData;
+
+                // Optionally, update session or localStorage with the latest data
+                let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+                if (keepLoggedIn === 'yes') {
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                } else {
+                    sessionStorage.setItem('user', JSON.stringify(currentUser));
+                }
+
+                // Populate user data and update links
+                if (userlink) {
+                    userlink.innerText = currentUser.username;
+                    userlink.href = "#";
+                }
+                document.getElementById('userdep')?.innerText = currentUser.deposit ?? 'N/A';
+                document.getElementById('userdate')?.innerText = currentUser.date ?? 'N/A';
+                document.getElementById('userldate')?.innerText = currentUser.lastAccessDate ?? 'N/A';
+                if (signoutlink) {
+                    signoutlink.innerText = "Sign Out";
+                    signoutlink.href = "javascript:signout()";
+                }
+            } else {
+                alert("Error: Could not fetch user data");
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+        } finally {
+            // Hide spinner and show content
+            let spinner = document.querySelector('.loading-spinner');
+            let accountContent = document.querySelector('.inside_inner_account');
+            if (spinner) spinner.style.display = 'none';
+            if (accountContent) accountContent.style.display = 'block';
+        }
+    };
 </script>
-<!-- /WhatsHelp.io widget -->
-	
-	
 	
 	
 	</body></html>

@@ -239,68 +239,102 @@ $(document).ready(function() {
 
   </script> 
 <script type="text/javascript">
-//REFERENCE
-            let userlink = document.getElementById('userlink');
-            let signoutlink = document.getElementById('signoutlink');
-            let usernam = document.getElementById('username');
-            let userbal = document.getElementById('userbalance');
-            let userwal = document.getElementById('userwallet');
-            let userdep = document.getElementById('userdeposit');
-            let userdate = document.getElementById('userdate');
-            let userbon = document.getElementById('userbonus');
-            var currentUser = null;
+ // REFERENCES
+    let userlink = document.getElementById('userlink');
+    let signoutlink = document.getElementById('signoutlink');
+    var currentUser = null;
 
-  //FUNCTION
-            function getUsername(){
-                 let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+    // FUNCTION TO GET USERNAME
+    function getUsername() {
+        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
 
-                 if(keepLoggedIn == 'yes'){
-                     currentUser = JSON.parse(localStorage.getItem('user'));
-                 }else{
-                      currentUser = JSON.parse(sessionStorage.getItem('user'));
-                 }
+        if (keepLoggedIn === 'yes') {
+            currentUser = JSON.parse(localStorage.getItem('user'));
+        } else {
+            currentUser = JSON.parse(sessionStorage.getItem('user'));
+        }
+    }
+
+    // FUNCTION TO FETCH USER DATA FROM THE DATABASE
+    async function fetchUserDataFromDatabase(userId) {
+        try {
+            // Replace with your actual database fetching logic (example using Firebase)
+            const dbRef = ref(db); // Ensure `db` and `ref` are correctly initialized in your environment
+
+            let snapshot = await get(child(dbRef, "UsersList/" + userId));
+            if (snapshot.exists()) {
+                return snapshot.val(); // Returns updated user data
+            } else {
+                console.warn("User not found in the database");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from the database:", error);
+            return null;
+        }
+    }
+
+    // ON PAGE LOAD
+    window.onload = async function () {
+        try {
+            // Show loading spinner
+            let spinner = document.querySelector('.loading-spinner');
+            let accountContent = document.querySelector('.inside_inner_account');
+            if (spinner) spinner.style.display = 'block';
+            if (accountContent) accountContent.style.display = 'none';
+
+            // Get the current user data
+            getUsername();
+
+            // Check if currentUser is null
+            if (currentUser == null) {
+                alert("Must be logged in to view this page!");
+                window.location = "login.html";
+                return; // Stop further execution if user is not logged in
             }
 
-    // Assume getUsername is defined and fetches the user data
-    window.onload = function(){
-        // Show loading spinner
-        document.querySelector('.loading-spinner').style.display = 'block';
-        document.querySelector('.inside_inner_account').style.display = 'none';
+            // Fetch updated data from the database
+            const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
 
-        getUsername();
+            if (updatedUserData) {
+                // Update the currentUser with the latest data
+                currentUser = updatedUserData;
 
-        // Check if the currentUser is null
-        if(currentUser == null){
-            alert("Must be logged in to veiw this page!")
-                  window.location="login.html";
-                    })
-                    .catch((error)=>{
-                        alert("error" + error)
-                      userlink.innerText = "dear";
-                      userlink.href = "https://cooperatefinance.com/signup.html";
-                      signoutlink.innerText = "Login";
-                      signoutlink.href = "https://cooperatefinance.com/signin.html";
+                // Optionally, update session or localStorage with the latest data
+                let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+                if (keepLoggedIn === 'yes') {
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                } else {
+                    sessionStorage.setItem('user', JSON.stringify(currentUser));
+                }
 
+                // Populate user data and update links
+                if (userlink) {
+                    userlink.innerText = currentUser.username;
+                    userlink.href = "#";
+                }
+                document.getElementById('usernam')?.innerText = currentUser.username ?? 'N/A';
+                document.getElementById('userbal')?.innerText = currentUser.balance ?? 'N/A';
+                document.getElementById('userwal')?.innerText = currentUser.withdrawal ?? 'N/A';
+                document.getElementById('userdep')?.innerText = currentUser.deposit ?? 'N/A';
+                document.getElementById('userdate')?.innerText = currentUser.date ?? 'N/A';
+                document.getElementById('userldate')?.innerText = currentUser.lastAccessDate ?? 'N/A';
+                document.getElementById('userbon')?.innerText = currentUser.bonus ?? 'N/A';
+                if (signoutlink) {
+                    signoutlink.innerText = "Sign Out";
+                    signoutlink.href = "javascript:signout()";
+                }
+            } else {
+                alert("Error: Could not fetch user data");
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+        } finally {
             // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
-        } else {
-            // Set user data
-            userlink.innerText = currentUser.username;
-            userlink.href = "#";
-            usernam.innerText = currentUser.username;
-            userbal.innerText = currentUser.balance;
-            userwal.innerText = currentUser.withdrawal;
-            userdep.innerText = currentUser.deposit;
-            userdate.innerText = currentUser.date;
-            userldate.innerText = currentUser.lastAccessDate;
-            userbon.innerText = currentUser.bonus;
-            signoutlink.innerText = "Sign Out";
-            signoutlink.href = "javascript:signout()";
-
-            // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
+            let spinner = document.querySelector('.loading-spinner');
+            let accountContent = document.querySelector('.inside_inner_account');
+            if (spinner) spinner.style.display = 'none';
+            if (accountContent) accountContent.style.display = 'block';
         }
     };
        </script>
