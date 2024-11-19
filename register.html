@@ -610,7 +610,7 @@ function sendOTP() {
 
 //REGISTER USER TO FIREBASE
 function RegisterUser(event) {
-//    event.preventDefault(); // Prevents form from submitting and reloading the page
+    event.preventDefault(); // Prevents form from submitting and reloading the page
 
     if (!Validation()) {
         return;
@@ -637,7 +637,6 @@ function RegisterUser(event) {
                 last_date: new Date().toISOString().slice(0, 10),
                 deposit: 0,
                 withdrawal: 0,
-                last_date: 0,
                 bonus: 0,
                 code: code.value
             })
