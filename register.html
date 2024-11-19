@@ -582,7 +582,7 @@ if(isEmptyOrSpaces(fullname.value) || isEmptyOrSpaces(username.value) || isEmpty
 window.sendOTP = function() {
             const emailInput = document.getElementById('emailInp').value;
             const otpCode = generateOTP();
-            const fname = document.getElementById('nameInp');
+            const fname = document.getElementById('userInp').value;
 
             if (!emailInput) {
                 alert('Please enter an email address.');
@@ -614,7 +614,6 @@ window.sendOTP = function() {
 
 //REGISTER USER TO FIREBASE
 function RegisterUser(event) {
-//    event.preventDefault(); // Prevents form from submitting and reloading the page
 
     if (!Validation()) {
         return;
@@ -662,19 +661,12 @@ function RegisterUser(event) {
     }
     
     //ASSIGN EVENTS
-    submitBtn.addEventListener("click", RegisterUser);
+//    submitBtn.addEventListener("click", RegisterUser);
+    submitBtn.addEventListener("click", function(event) {
+    event.preventDefault();  // Prevent form submission
+    RegisterUser(event);
+});
 
     </script>
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/664de6ff9a809f19fb33ac86/1hug4sm66';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
   </body>
 </html>
