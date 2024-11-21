@@ -51,12 +51,12 @@
       <div class="member_wrap">
         <div class="membersidebar">
           <ul>
-            <li><a href="customer.php">My Account</a></li>
-            <li><a href="deposit.php">Deposit</a></li>
-            <li><a href="deposit_history.php">Deposits History</a></li>
-            <li><a href="withdraw.php">Withdraw</a></li>
+            <li><a href="customer.html">My Account</a></li>
+            <li><a href="deposit.html">Deposit</a></li>
+            <li><a href="deposit_history.html">Deposits History</a></li>
+            <li><a href="withdraw.html">Withdraw</a></li>
             <li></li>
-            <li><a href="referals.php">Referrals</a></li>
+            <li><a href="planss.html">plans</a></li>
             <li><a id="signoutlink" href="#">Logout</a></li>
           </ul>
         </div>
@@ -185,8 +185,85 @@
       </script>
 <script type="text/javascript">
 
- 
-       </script>
+ <script type="text/javascript">
+    // Function to update user deposit with history tracking
+    async function depositAmount(amount) {
+        try {
+            if (!currentUser || !currentUser.username) {
+                alert("Invalid user session. Please log in again.");
+                window.location = "login.html";
+                return;
+            }
+
+            // Ensure the amount is a valid number
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid deposit amount.");
+                return;
+            }
+
+            // Reference to the database
+            const dbRef = ref(db); // Ensure `db` is correctly initialized
+            const userId = currentUser.username;
+
+            // Fetch the latest user data to ensure consistency
+            const updatedUserData = await fetchUserDataFromDatabase(userId);
+            if (!updatedUserData) {
+                alert("Error: Could not fetch user data.");
+                return;
+            }
+
+            // Update the deposit and balance
+            const newDeposit = (updatedUserData.deposit || 0) + parseFloat(amount);
+            const newBalance = (updatedUserData.balance || 0) + parseFloat(amount);
+
+            // Prepare the new deposit entry
+            const newDepositEntry = {
+                date: new Date().toISOString().slice(0, 10), // e.g., "2024-11-21"
+                time: new Date().toLocaleTimeString(),      // e.g., "14:35:22"
+                amount: parseFloat(amount)
+            };
+
+            // Update the deposit history
+            const updatedDepositHistory = updatedUserData.depositHistory || [];
+            updatedDepositHistory.push(newDepositEntry);
+
+            // Update the database with new values
+            await update(child(dbRef, "UsersList/" + userId), {
+                deposit: newDeposit,
+                balance: newBalance,
+                depositHistory: updatedDepositHistory // Save the updated history
+            });
+
+            // Reflect the updated values in the UI and local data
+            currentUser.deposit = newDeposit;
+            currentUser.balance = newBalance;
+            currentUser.depositHistory = updatedDepositHistory;
+
+            // Update session or localStorage
+            let keepLoggedIn = localStorage.getItem("keepLoggedIn");
+            if (keepLoggedIn === "yes") {
+                localStorage.setItem("user", JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem("user", JSON.stringify(currentUser));
+            }
+
+            // Update the UI
+            document.getElementById("userdep").innerText = newDeposit.toFixed(2);
+            document.getElementById("userbal").innerText = newBalance.toFixed(2);
+
+            alert("Deposit successful!");
+        } catch (error) {
+            console.error("Error during deposit:", error);
+            alert("An error occurred while processing your deposit. Please try again later.");
+        }
+    }
+
+    // Example: Hook up the deposit function to a button
+    document.getElementById("depositButton").addEventListener("click", function () {
+        const depositInput = document.getElementById("depositInput").value;
+        depositAmount(parseFloat(depositInput));
+    });
+</script>
 
     </body>
   </html>

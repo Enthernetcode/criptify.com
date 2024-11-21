@@ -457,9 +457,9 @@
     </div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getDatabase, ref, set, update, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
-    (function(){
+    (function() {
         emailjs.init("BVUOlzj2CdQNf6Gsp");
     })();
 
@@ -489,7 +489,9 @@
     const otpcode = document.getElementById('otp_code');
     const code = document.getElementById('code');
     const x = "901b567";
-    let otp; // Added global declaration for OTP
+    let otp;
+
+    const BONUS_AMOUNT = 50; // Bonus amount for referrals
 
     // VALIDATION
     function isEmptyOrSpaces(str) {
@@ -515,7 +517,7 @@
             return false;
         }
         if (!usernameRegex.test(username.value)) {
-            alert('Username can only be alphanumeric\n-Username must contain at least 5 characters\n-Username cannot contain empty spaces');
+            alert('Username must contain at least 5 alphanumeric characters without spaces');
             return false;
         }
         if (code.value !== x) {
@@ -530,7 +532,7 @@
     }
 
     function generateOTP(length = 6) {
-        otp = ''; // Corrected scope of otp
+        otp = '';
         const characters = '0123456789';
         const charactersLength = characters.length;
 
@@ -556,8 +558,8 @@
         }
 
         // Sending the OTP via Email.js
-        const serviceID = 'service_1vvxdzj';  // Replace with your Email.js service ID
-        const templateID = 'template_rjdwxve';  // Replace with your Email.js template ID
+        const serviceID = 'service_1vvxdzj';
+        const templateID = 'template_rjdwxve';
         const templateParams = {
             user_email: emailInput,
             otp_code: otpCode,
@@ -574,58 +576,102 @@
             });
     }
 
+    // CREDIT REFERRAL BONUS
+    async function creditReferralBonus(referrerUsername) {
+        const dbRef = ref(db);
+        try {
+            const referrerSnapshot = await get(child(dbRef, "UsersList/" + referrerUsername));
+            if (!referrerSnapshot.exists()) {
+                console.warn("Invalid referral code: Referrer not found.");
+                return false;
+            }
+
+            const referrerData = referrerSnapshot.val();
+            const newBonus = (referrerData.bonus || 0) + BONUS_AMOUNT;
+            const newBalance = (referrerData.balance || 0) + BONUS_AMOUNT;
+
+            await update(child(dbRef, "UsersList/" + referrerUsername), {
+                bonus: newBonus,
+                balance: newBalance
+            });
+
+            console.log(`Bonus of ${BONUS_AMOUNT} credited to ${referrerUsername}`);
+            return true;
+        } catch (error) {
+            console.error("Error crediting referral bonus:", error);
+            return false;
+        }
+    }
+
     // REGISTER USER TO FIREBASE
-    function RegisterUser(event) {
+    async function RegisterUser(event) {
         if (!Validation()) {
             return;
         }
 
         const dbRef = ref(db);
-        get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
+        const referralCode = refer.value;
+
+        try {
+            const snapshot = await get(child(dbRef, "UsersList/" + username.value));
             if (snapshot.exists()) {
                 alert("Account already exists!");
-            } else {
-                set(ref(db, "UsersList/" + username.value), {
-                    fullname: fullname.value,
-                    username: username.value,
-                    email: email.value,
-                    password: encPass(),
-                    phoneNumber: phone.value,
-                    country: country.value,
-                    state: state.value,
-                    invest: invest.value,
-                    refferer: refer.value,
-                    isAdmin: false,
-                    balance: 0,
-                    date: new Date().toISOString().slice(0, 10),
-                    last_date: new Date().toISOString().slice(0, 10),
-                    deposit: 0,
-                    withdrawal: 0,
-                    bonus: 0,
-                    code: code.value
-                })
-                .then(() => {
-                    alert("User registered successfully");
-                    window.location = "userdashboard/index.html";
-                })
-                .catch((error) => {
-                    alert("Error: " + error);
-                });
+                return;
             }
-        });
+
+            // Register the new user
+            await set(ref(db, "UsersList/" + username.value), {
+                fullname: fullname.value,
+                username: username.value,
+                email: email.value,
+                password: encPass(),
+                phoneNumber: phone.value,
+                country: country.value,
+                state: state.value,
+                invest: invest.value,
+                refferer: referralCode || null,
+                isAdmin: false,
+                balance: 0,
+                date: new Date().toISOString().slice(0, 10),
+                last_date: new Date().toISOString().slice(0, 10),
+                deposit: 0,
+                withdrawal: 0,
+                bonus: 0,
+                depositHistory: [],
+                code: code.value
+            });
+
+            alert("User registered successfully");
+
+            // Credit referral bonus if valid referral is provided
+            if (referralCode) {
+                const success = await creditReferralBonus(referralCode);
+                if (success) {
+                    alert(`Referral bonus credited to ${referralCode}!`);
+                } else {
+                    alert(`Invalid referral code: Could not credit bonus.`);
+                }
+            }
+
+            window.location = "userdashboard/index.html";
+        } catch (error) {
+            console.error("Error registering user:", error);
+            alert("An error occurred during registration. Please try again later.");
+        }
     }
 
     // ENCRYPT PASSWORD
     function encPass() {
-        var pass123 = CryptoJS.AES.encrypt(password.value, password.value); // Ensure CryptoJS is available
+        const pass123 = CryptoJS.AES.encrypt(password.value, password.value);
         return pass123.toString();
     }
 
     // ASSIGN EVENTS
     submitBtn.addEventListener("click", function(event) {
-        event.preventDefault();  // Prevent form submission
+        event.preventDefault();
         RegisterUser(event);
     });
-    </script>
+</script>
+
   </body>
 </html>
