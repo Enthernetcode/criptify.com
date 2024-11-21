@@ -293,103 +293,88 @@ $(document).ready(function() {
 			$(this).toggleClass('rotate');
 		});
 </script>
-<script src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
-<!-- WhatsHelp.io widget -->
 <script type="text/javascript">
- // REFERENCES
-    let userlink = document.getElementById('userlink');
-    let signoutlink = document.getElementById('signoutlink');
-    var currentUser = null;
-
-    // FUNCTION TO GET USERNAME
-    function getUsername() {
-        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-
-        if (keepLoggedIn === 'yes') {
-            currentUser = JSON.parse(localStorage.getItem('user'));
-        } else {
-            currentUser = JSON.parse(sessionStorage.getItem('user'));
-        }
-    }
-
-    // FUNCTION TO FETCH USER DATA FROM THE DATABASE
-    async function fetchUserDataFromDatabase(userId) {
+    // Function to fetch and render deposit history
+    async function renderDepositHistory() {
         try {
-            // Replace with your actual database fetching logic (example using Firebase)
-            const dbRef = ref(db); // Ensure `db` and `ref` are correctly initialized in your environment
-
-            let snapshot = await get(child(dbRef, "UsersList/" + userId));
-            if (snapshot.exists()) {
-                return snapshot.val(); // Returns updated user data
-            } else {
-                console.warn("User not found in the database");
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching data from the database:", error);
-            return null;
-        }
-    }
-
-    // ON PAGE LOAD
-    window.onload = async function () {
-        try {
-            // Show loading spinner
-            let spinner = document.querySelector('.loading-spinner');
-            let accountContent = document.querySelector('.inside_inner_account');
-            if (spinner) spinner.style.display = 'block';
-            if (accountContent) accountContent.style.display = 'none';
-
-            // Get the current user data
-            getUsername();
-
-            // Check if currentUser is null
-            if (currentUser == null) {
-                alert("Must be logged in to view this page!");
+            if (!currentUser || !currentUser.username) {
+                alert("Invalid user session. Please log in again.");
                 window.location = "login.html";
-                return; // Stop further execution if user is not logged in
+                return;
             }
 
-            // Fetch updated data from the database
-            const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+            // Fetch the latest user data from the database
+            const dbRef = ref(db); // Ensure `db` is correctly initialized
+            const userId = currentUser.username;
 
-            if (updatedUserData) {
-                // Update the currentUser with the latest data
-                currentUser = updatedUserData;
-
-                // Optionally, update session or localStorage with the latest data
-                let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-                if (keepLoggedIn === 'yes') {
-                    localStorage.setItem('user', JSON.stringify(currentUser));
-                } else {
-                    sessionStorage.setItem('user', JSON.stringify(currentUser));
-                }
-
-                // Populate user data and update links
-                if (userlink) {
-                    userlink.innerText = currentUser.username;
-                    userlink.href = "#";
-                }
-                document.getElementById('userdep')?.innerText = currentUser.deposit ?? 'N/A';
-                document.getElementById('userdate')?.innerText = currentUser.date ?? 'N/A';
-                document.getElementById('userldate')?.innerText = currentUser.lastAccessDate ?? 'N/A';
-                if (signoutlink) {
-                    signoutlink.innerText = "Sign Out";
-                    signoutlink.href = "javascript:signout()";
-                }
-            } else {
-                alert("Error: Could not fetch user data");
+            const updatedUserData = await fetchUserDataFromDatabase(userId);
+            if (!updatedUserData) {
+                alert("Error: Could not fetch user data.");
+                return;
             }
+
+            // Get deposit history from the user data
+            const depositHistory = updatedUserData.depositHistory || []; // Default to an empty array if no history exists
+
+            // Select the container where the history will be displayed
+            const historyContainer = document.getElementById("depositHistoryContainer");
+            if (!historyContainer) {
+                console.error("Deposit history container not found in the DOM.");
+                return;
+            }
+
+            // Clear the container
+            historyContainer.innerHTML = "";
+
+            // Check if the history is empty
+            if (depositHistory.length === 0) {
+                historyContainer.innerHTML = "<p>No deposit history available.</p>";
+                return;
+            }
+
+            // Create a table for the history
+            let historyTable = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Populate the table rows with deposit records
+            depositHistory.forEach((record) => {
+                const { date, time, amount } = record; // Adjust based on your database schema
+                historyTable += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${time}</td>
+                        <td>${amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            historyTable += `
+                    </tbody>
+                </table>
+            `;
+
+            // Add the table to the container
+            historyContainer.innerHTML = historyTable;
+
         } catch (error) {
-            console.error("An error occurred:", error);
-        } finally {
-            // Hide spinner and show content
-            let spinner = document.querySelector('.loading-spinner');
-            let accountContent = document.querySelector('.inside_inner_account');
-            if (spinner) spinner.style.display = 'none';
-            if (accountContent) accountContent.style.display = 'block';
+            console.error("Error fetching deposit history:", error);
+            alert("An error occurred while fetching your deposit history. Please try again later.");
         }
-    };
+    }
+
+    // Example: Hook up the function to load on page load or a button click
+    document.getElementById("viewHistoryButton").addEventListener("click", function () {
+        renderDepositHistory();
+    });
 </script>
 	
 	
