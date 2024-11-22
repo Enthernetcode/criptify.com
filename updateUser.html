@@ -103,7 +103,7 @@
         <input id="wal" type="number" placeholder="Change withdrawal" />
 
          <label for="lst">last seen:</label>
-        <input id="lst" type="number" placeholder="Change withdrawal" />
+        <input id="lst" type="number" placeholder="Change lastseen" />
 
         <div class="button-container">
             <button id="btn">Update</button>
@@ -147,7 +147,7 @@
                     document.getElementById('dep').value = userData.deposit || 0;
                     document.getElementById('bon').value = userData.bonus || 0;
                     document.getElementById('wal').value = userData.withdrawal || 0;
-                    document.getElementById('lst').value = userData.last_date || 0;
+                    document.getElementById('lst').value = userData.lastDate || 0;
                 } else {
                     console.log('No user data found');
                 }
