@@ -302,7 +302,7 @@
         const userRef = ref(db, "UsersList/" + userId);
 
         update(userRef, {
-            lastAccess: lastAccessTime
+            lastDate: lastAccessTime
         })
         .then(() => {
             console.log("Last access date updated successfully!");
