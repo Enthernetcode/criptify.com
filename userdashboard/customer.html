@@ -288,20 +288,6 @@
     async function displayReferralLink() {
         console.log("Generating referral link for:", currentUser.username);
 
-        if (!currentUser || !currentUser.username) {
-            console.error("No valid user found. Unable to generate referral link.");
-            alert("Invalid user data. Please log in again.");
-            return;
-        }
-
-        try {
-            const userRef = ref(db, `UsersList/${currentUser.username}`);
-            const snapshot = await get(userRef);
-
-            if (snapshot.exists()) {
-                const userData = snapshot.val();
-                console.log("User data fetched for referral:", userData);
-
                 // Generate the referral link
                 const referralLink = `http://cooperatefinance.com/register.html?ref=${currentUser.username}`;
                 console.log("Generated referral link:", referralLink);
@@ -310,13 +296,6 @@
                 const referralLinkElement = document.getElementById('referralLink');
                 referralLinkElement.innerText = referralLink;
                 referralLinkElement.href = referralLink;
-            } else {
-                alert("User not found. Unable to generate referral link.");
-            }
-        } catch (error) {
-            console.error("Error generating referral link:", error);
-            alert("An error occurred while generating the referral link.");
-        }
     }
 
     // Function to copy referral link to clipboard
