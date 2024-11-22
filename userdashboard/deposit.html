@@ -149,7 +149,7 @@
         </div>
       </div> <!-- end bot footer -->
 
-      <script type="text/javascript">
+      <!--script type="text/javascript">
         $(document).ready(function() {
 
           $('.accordion>dl>dt>a').click(function() {
@@ -182,10 +182,23 @@
           $('.menu').toggleClass('mobile');
           $(this).toggleClass('rotate');
         });
-      </script>
-<script type="text/javascript">
+      </script-->
+ <script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
- <script type="text/javascript">
+    console.log("Starting script...");
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
     // Function to update user deposit with history tracking
     async function depositAmount(amount) {
         try {
