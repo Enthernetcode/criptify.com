@@ -202,7 +202,7 @@
 </div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
     console.log("Starting script...");
 
@@ -296,6 +296,85 @@
         window.location = "login.html";
     }
 
+    // Function to handle withdrawal
+    async function handleWithdrawal(amount) {
+        console.log("Processing withdrawal:", amount);
+
+        if (!currentUser || !currentUser.username) {
+            alert("User not logged in. Please log in to proceed.");
+            return;
+        }
+
+        // Fetch user data from the database
+        const userData = await fetchUserDataFromDatabase(currentUser.username);
+        if (!userData) {
+            alert("Failed to fetch user data.");
+            return;
+        }
+
+        // Check if the withdrawal amount is valid
+        if (amount <= 0) {
+            alert("Please enter a valid amount to withdraw.");
+            return;
+        }
+
+        // Check if user has sufficient funds
+        const currentBalance = parseFloat(userData.balance);
+        if (amount > currentBalance) {
+            alert("Insufficient funds.");
+            return;
+        }
+
+        // Update the user's balance and withdrawal history
+        const updatedBalance = currentBalance - amount;
+        const withdrawalHistoryRef = ref(db, `UsersList/${currentUser.username}/withdrawalHistory`);
+
+        try {
+            // Update balance
+            await update(ref(db, `UsersList/${currentUser.username}`), {
+                balance: updatedBalance
+            });
+
+            // Add to withdrawal history
+            const newWithdrawal = {
+                amount: amount,
+                date: new Date().toISOString(),
+                balanceAfter: updatedBalance
+            };
+
+            await push(withdrawalHistoryRef, newWithdrawal);
+
+            // Update local storage/session storage
+            currentUser.balance = updatedBalance;
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            // Update UI
+            document.getElementById('userbal').innerText = updatedBalance.toFixed(2);
+            document.getElementById('userwal').innerText = (parseFloat(userData.withdrawal || 0) + amount).toFixed(2);
+
+            alert("Withdrawal successful!");
+
+        } catch (error) {
+            console.error("Error processing withdrawal:", error);
+            alert("An error occurred while processing your withdrawal.");
+        }
+    }
+
+    // Event listener for withdrawal button
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+        const amount = parseFloat(prompt("Enter amount to withdraw:"));
+        if (!isNaN(amount) && amount > 0) {
+            handleWithdrawal(amount);
+        } else {
+            alert("Invalid amount entered.");
+        }
+    });
+
     // Page load event handler
     window.onload = async function () {
         console.log("Page loaded. Initializing...");
@@ -354,6 +433,8 @@
         if (spinner) spinner.style.display = 'none';
         if (accountContent) accountContent.style.display = 'block';
     };
+</script>
+
 </script>
 </body>
 </html>
