@@ -362,59 +362,126 @@ a
 
 <script src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
 
-<script type="text/javascript">
-//REFERENCE
-            let userlink = document.getElementById('userlink');
-            let signoutlink = document.getElementById('signoutlink');
-            let usernam = document.getElementById('username');
-            let userbal = document.getElementById('userbalance');
-            let userwal = document.getElementById('userwallet');
-            let userdep = document.getElementById('userdeposit');
-            let userdate = document.getElementById('userdate');
-            let userbon = document.getElementById('userbonus');
-            var currentUser = null;
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, child, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
-  //FUNCTION
-            function getUsername(){                                                                      let keepLoggedIn = localStorage.getItem('keepLoggedIn')
+    // Firebase Initialization (your existing setup)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
 
-                 if(keepLoggedIn == 'yes'){                                                                  currentUser = JSON.parse(localStorage.getItem('user'));
-                 }else{
-                      currentUser = JSON.parse(sessionStorage.getItem('user'));
-                 }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+
+    // Existing getUsername function
+    function getUsername() {
+        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+        const userData = keepLoggedIn === 'yes'
+            ? localStorage.getItem('user')
+            : sessionStorage.getItem('user');
+        currentUser = JSON.parse(userData);
+    }
+
+    // New Withdrawal Function
+    async function withdraw(amount) {
+        console.log("Initiating withdrawal of:", amount);
+
+        if (!currentUser || !currentUser.username) {
+            alert("User not logged in. Please log in to perform withdrawals.");
+            return;
+        }
+
+        if (amount <= 0) {
+            alert("Invalid withdrawal amount. Please enter a positive value.");
+            return;
+        }
+
+        const userId = currentUser.username;
+        const userRef = ref(db, `UsersList/${userId}`);
+
+        try {
+            // Fetch current balance
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+                alert("User data not found in the database.");
+                return;
             }
 
-    // Assume getUsername is defined and fetches the user data
-    window.onload = function(){
-        // Show loading spinner
-        document.querySelector('.loading-spinner').style.display = 'block';
-        document.querySelector('.inside_inner_account').style.display = 'none';
+            const userData = snapshot.val();
+            const currentBalance = parseFloat(userData.balance || 0);
+            const currentWithdrawals = parseFloat(userData.withdrawal || 0);
 
+            if (amount > currentBalance) {
+                alert("Insufficient funds.");
+                return;
+            }
+
+            // Calculate updated values
+            const updatedBalance = currentBalance - amount;
+            const updatedWithdrawals = currentWithdrawals + amount;
+
+            // Update the database
+            await update(userRef, {
+                balance: updatedBalance,
+                withdrawal: updatedWithdrawals
+            });
+
+            // Update currentUser and UI
+            currentUser.balance = updatedBalance;
+            currentUser.withdrawal = updatedWithdrawals;
+
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            document.getElementById('userbal').innerText = updatedBalance.toFixed(2);
+            document.getElementById('userwal').innerText = updatedWithdrawals.toFixed(2);
+
+            alert("Withdrawal successful!");
+        } catch (error) {
+            console.error("Error during withdrawal:", error);
+            alert("An error occurred while processing the withdrawal.");
+        }
+    }
+
+    // Page load handler
+    window.onload = async function () {
         getUsername();
-                                                                                                // Check if the currentUser is null
-        if(currentUser == null){
-            userlink.innerText = "dear";
-            userlink.href = "https://cooperatefinance.com/register.html";
-            signoutlink.innerText = "Login";
-            signoutlink.href = "login.html";
+        if (!currentUser) {
+            alert("No user found. Please log in.");
+            window.location = "login.html";
+            return;
+        }
 
-            // Hide spinner and show content
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
-        } else {                                                                                    // Set user data
-            userlink.innerText = currentUser.username;
-            userlink.href = "#";                                                                    usernam.innerText = currentUser.username;
-            userbal.innerText = currentUser.balance;
-            userwal.innerText = currentUser.withdrawal;
-            userdep.innerText = currentUser.deposit;
-            userdate.innerText = currentUser.date;
-            userldate.innerText = currentUser.lastAccessDate;
-            userbon.innerText = currentUser.bonus;
-            signoutlink.innerText = "Sign Out";                                                     signoutlink.href = "javascript:signout()";
-
-            // Hide spinner and show content                                                        document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('.inside_inner_account').style.display = 'block';
+        const userData = await fetchUserDataFromDatabase(currentUser.username);
+        if (userData) {
+            currentUser = userData;
+            document.getElementById('userbal').innerText = currentUser.balance || '0.00';
+            document.getElementById('userwal').innerText = currentUser.withdrawal || '0.00';
         }
     };
-       </script>
 
+    // Example event listener for a withdraw button
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+        const amount = parseFloat(prompt("Enter amount to withdraw:"));
+        if (!isNaN(amount)) {
+            withdraw(amount);
+        } else {
+            alert("Invalid amount entered.");
+        }
+    });
+</script>
+</body>
    </html>
