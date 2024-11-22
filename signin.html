@@ -265,7 +265,7 @@
                 let dbpass = decPass(snapshot.val().password);
                 if (dbpass === password.value) {
                     login(snapshot.val());
-                    updateLastAccess(username.value);  // Call function to update the last access date
+                    //updateLastAccess(username.value);  // Call function to update the last access date
                 } else {
                     alert("Username or password is invalid!");
                 }
