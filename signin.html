@@ -300,16 +300,16 @@
     }
 
     // FUNCTION TO UPDATE LAST ACCESS DATE
-    function updateLastAccess(userId) {
-        const lastAccessTime = new Date().toISOString(); // Use ISO string for compatibility
-        const userRef = ref(db, "UsersList/" + userId);
+//    function updateLastAccess(userId) {
+  //      const lastAccessTime = new Date().toISOString(); // Use ISO string for compatibility
+    //    const userRef = ref(db, "UsersList/" + userId);
 
-        update(userRef, {
-            lastDate: lastAccessTime
-        })
-        .then(() => {
-            console.log("Last access date updated successfully!");
-        })
+      //  update(userRef, {
+        //    lastDate: lastAccessTime
+        //})
+        //.then(() => {
+          //  console.log("Last access date updated successfully!");
+        //})
         .catch((error) => {
             console.error("Error updating last access date:", error);
         });
