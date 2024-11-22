@@ -58,7 +58,7 @@
   <div class="user_left">
     <h2>Welcome, <span id="userlink" href="#">test</span></h2>
   </div>
-  <div class="affiliate_top">Affiliate Link:<a href="http://legalforexbroker.com/index/auth/signup.html?ref=test" class="ref-link">http://legalforexbroker.com/index.html?ref=test</a></div>
+  <div class="affiliate_top">Affiliate Link:<a id="referralLink" href="#" class="ref-link">http:/cooperatefinance.com/register.html?ref=user<p id="usernam">test</p></a></div>
   <div class="get_banners"><a href="referals.html">Get Banners</a></div>
 </div>
 <div class="member_right">
@@ -284,6 +284,58 @@
         }
     }
 
+    // Function to fetch and display the referral link
+    async function displayReferralLink() {
+        console.log("Generating referral link for:", currentUser.username);
+
+        if (!currentUser || !currentUser.username) {
+            console.error("No valid user found. Unable to generate referral link.");
+            alert("Invalid user data. Please log in again.");
+            return;
+        }
+
+        try {
+            const userRef = ref(db, `UsersList/${currentUser.username}`);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                console.log("User data fetched for referral:", userData);
+
+                // Generate the referral link
+                const referralLink = `http://cooperatefinance.com/register.html?ref=${currentUser.username}`;
+                console.log("Generated referral link:", referralLink);
+
+                // Display the referral link on the page
+                const referralLinkElement = document.getElementById('referralLink');
+                referralLinkElement.innerText = referralLink;
+                referralLinkElement.href = referralLink;
+            } else {
+                alert("User not found. Unable to generate referral link.");
+            }
+        } catch (error) {
+            console.error("Error generating referral link:", error);
+            alert("An error occurred while generating the referral link.");
+        }
+    }
+
+    // Function to copy referral link to clipboard
+    function copyToClipboard() {
+        const referralLinkElement = document.getElementById('referralLink');
+        const referralLink = referralLinkElement.href;
+
+        if (referralLink) {
+            navigator.clipboard.writeText(referralLink).then(() => {
+                alert("Referral link copied to clipboard!");
+            }).catch(error => {
+                console.error("Error copying referral link:", error);
+                alert("Failed to copy referral link. Please try again.");
+            });
+        } else {
+            alert("No referral link to copy!");
+        }
+    }
+
     // Sign-out function
     function signout() {
         console.log("Signing out user...");
@@ -332,17 +384,14 @@
             }
 
             document.getElementById('usernam').innerText = currentUser.username ?? 'N/A';
-            document.getElementById('userbal').innerText = currentUser.balance ?? 'N/A';
-            document.getElementById('userwal').innerText = currentUser.withdrawal ?? 'N/A';
-            document.getElementById('userdep').innerText = currentUser.deposit ?? 'N/A';
-            document.getElementById('userdate').innerText = currentUser.date ?? 'N/A';
-            document.getElementById('userldate').innerText = currentUser.lastDate ?? 'N/A';
-            document.getElementById('userbon').innerText = currentUser.bonus ?? 'N/A';
 
             if (signoutlink) {
                 signoutlink.innerText = "Sign Out";
                 signoutlink.href = "javascript:signout()";
             }
+
+            // Display referral link
+            await displayReferralLink();
         } else {
             console.error("Failed to fetch updated user data.");
             alert("Error: Could not fetch user data.");
@@ -353,6 +402,7 @@
         if (accountContent) accountContent.style.display = 'block';
     };
 </script>
+
 
 </body>
 </html>
