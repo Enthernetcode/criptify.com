@@ -197,48 +197,8 @@
   </div>
 </div> <!-- end bot footer -->
   
-  <script type="text/javascript">
-$(document).ready(function() {
-
-    $('.accordion>dl>dt>a').click(function() 
-    {
-      $(this).toggleClass("rotate0");
-    });
-      /*------- parse price --------*/
-      function parsePriceCrypto()
-      {
-        returnString = "";
-        
-        $.post( "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,ETH,BCH,XRP&tsyms=USD", function( data )
-        {
-          $('#price_btc').text('$'+data['BTC']['USD']);
-          $('#price_ltc').text('$'+data['LTC']['USD']);
-          $('#price_eth').text('$'+data['ETH']['USD']);
-          $('#price_bch').text('$'+data['BCH']['USD']);
-          $('#price_xrp').text('$'+data['XRP']['USD']);
-        });
-      }
-      parsePriceCrypto();
-      
-      setInterval(function()
-      {
-        parsePriceCrypto();
-      }
-      , 5000);
-    });
-    
-    $('.language').click(function() {
-      $(this).toggleClass('active');
-    });
-    
-    $('.mobileMenu').click(function() {
-      $('.menu').toggleClass('mobile');
-      $(this).toggleClass('rotate');
-    });
-
-
-  </script> 
-<script type="text/javascript">
+   
+<script type="module">
  // REFERENCES
     let userlink = document.getElementById('userlink');
     let signoutlink = document.getElementById('signoutlink');
