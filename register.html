@@ -488,27 +488,45 @@
     const refer = document.getElementById('referrer');
     const otpcode = document.getElementById('otp_code');
     const code = document.getElementById('code');
-    const x = "901b567";
     let otp;
+    const BONUS_AMOUNT = 50;
 
-    const BONUS_AMOUNT = 50; // Bonus amount for referrals
-
-  // This function will get the query parameter from the URL
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
-
-  // Once the document is loaded, check for 'referrer' in the URL and fill the input field
-  window.onload = function() {
-    const referrer = getQueryParam('referrer'); // Get 'referrer' parameter from the URL
-    if (referrer) {
-      // If the 'referrer' parameter exists, set it as the value of the input field
-      document.getElementById('referrer').value = referrer;
+    // Get query parameter for referrer
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
     }
-  };
 
-    // VALIDATION
+    // Set referrer field from URL on page load
+    window.onload = async function() {
+        const referrer = getQueryParam('referrer');
+        if (referrer) {
+            refer.value = referrer;
+        }
+
+        // Fetch signup code dynamically from the database
+        await fetchSignupCode();
+    };
+
+    // Fetch signup code from database
+    async function fetchSignupCode() {
+        const dbRef = ref(db);
+        try {
+            const snapshot = await get(child(dbRef, "SignupCode"));
+            if (snapshot.exists()) {
+                const signupCode = snapshot.val().code;
+                code.dataset.expectedCode = signupCode; // Store expected code for validation
+                console.log("Signup code fetched successfully:", signupCode);
+            } else {
+                console.error("Signup code not found in database.");
+                alert("System error: Signup code unavailable.");
+            }
+        } catch (error) {
+            console.error("Error fetching signup code:", error);
+        }
+    }
+
+    // Validation
     function isEmptyOrSpaces(str) {
         return str === null || str.match(/^ *$/) !== null;
     }
@@ -535,7 +553,9 @@
             alert('Username must contain at least 5 alphanumeric characters without spaces');
             return false;
         }
-        if (code.value !== x) {
+
+        const expectedCode = code.dataset.expectedCode;
+        if (code.value !== expectedCode) {
             alert('Wrong sign up code, please contact the admin');
             return false;
         }
@@ -546,6 +566,7 @@
         return true;
     }
 
+    // Generate OTP
     function generateOTP(length = 6) {
         otp = '';
         const characters = '0123456789';
@@ -554,14 +575,13 @@
         for (let i = 0; i < length; i++) {
             otp += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-
         return otp;
     }
 
     window.sendOTP = function() {
-        const emailInput = document.getElementById('emailInp').value;
+        const emailInput = email.value;
         const otpCode = generateOTP();
-        const fname = document.getElementById('userInp').value;
+        const fname = fullname.value;
 
         if (!emailInput) {
             alert('Please enter an email address.');
@@ -572,7 +592,7 @@
             return;
         }
 
-        // Sending the OTP via Email.js
+        // Send OTP using Email.js
         const serviceID = 'service_1vvxdzj';
         const templateID = 'template_rjdwxve';
         const templateParams = {
@@ -587,11 +607,11 @@
                 console.log('Success:', response.status, response.text);
             }, error => {
                 alert('Failed to send OTP. Please try again.');
-                console.log('Error:', error);
+                console.error('Error:', error);
             });
     }
 
-    // CREDIT REFERRAL BONUS
+    // Credit referral bonus
     async function creditReferralBonus(referrerUsername) {
         const dbRef = ref(db);
         try {
@@ -618,7 +638,7 @@
         }
     }
 
-    // REGISTER USER TO FIREBASE
+    // Register user
     async function RegisterUser(event) {
         if (!Validation()) {
             return;
@@ -634,7 +654,7 @@
                 return;
             }
 
-            // Register the new user
+            // Register new user
             await set(ref(db, "UsersList/" + username.value), {
                 fullname: fullname.value,
                 username: username.value,
@@ -659,7 +679,7 @@
 
             alert("User registered successfully");
 
-            // Credit referral bonus if valid referral is provided
+            // Credit referral bonus
             if (referralCode) {
                 const success = await creditReferralBonus(referralCode);
                 if (success) {
@@ -676,13 +696,12 @@
         }
     }
 
-    // ENCRYPT PASSWORD
+    // Encrypt password
     function encPass() {
-        const pass123 = CryptoJS.AES.encrypt(password.value, password.value);
-        return pass123.toString();
+        return CryptoJS.AES.encrypt(password.value, password.value).toString();
     }
 
-    // ASSIGN EVENTS
+    // Assign submit button event
     submitBtn.addEventListener("click", function(event) {
         event.preventDefault();
         RegisterUser(event);
