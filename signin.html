@@ -279,7 +279,7 @@
 
     // FUNCTION TO UPDATE LAST ACCESS DATE
     function updateLastAccess(username) {
-        const currentDateTime = new Date().toISOString();
+        const currentDateTime = new Date().toISOString().slice(0, 10);
         const userRef = ref(db, "UsersList/" + username);
 
         update(userRef, {
