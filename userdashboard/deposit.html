@@ -237,7 +237,7 @@ const db = getDatabase(app);
       };
 
       // Open deposit form and populate selected plan
-      window.openDepositForm = function(plan, minAmount, maxAmount) {
+      function openDepositForm(plan, minAmount, maxAmount) {
         document.getElementById('plan').value = plan;
         document.getElementById('depositForm').style.display = "block";
         document.getElementById('amount').setAttribute('min', minAmount);
@@ -245,7 +245,7 @@ const db = getDatabase(app);
       }
 
       // Close the deposit form
-      window.closeDepositForm = function() {
+      function closeDepositForm() {
         document.getElementById('depositForm').style.display = "none";
       }
 
