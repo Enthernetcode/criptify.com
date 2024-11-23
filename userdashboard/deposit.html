@@ -238,6 +238,114 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+   // Database Reference
+        const usersRef = ref(db, 'UsersList');
+        console.log("Database reference created:", usersRef);
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
+
+    // References to DOM elements
+    console.log("Setting up DOM references...");
+    const userlink = document.getElementById('userlink');
+    const signoutlink = document.getElementById('signoutlink');
+    const spinner = document.querySelector('.loading-spinner');
+    const accountContent = document.querySelector('.inside_inner_account');
+
+    if (!userlink) console.warn("User link element not found.");
+    if (!signoutlink) console.warn("Signout link element not found.");
+    if (!spinner) console.warn("Spinner element not found.");
+    if (!accountContent) console.warn("Account content element not found.");
+
+    let currentUser = null;
+
+    // Function to get username from storage
+    function getUsername() {
+        console.log("Getting username...");
+        try {
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            console.log("Keep logged in:", keepLoggedIn);
+
+            const userData = keepLoggedIn === 'yes' 
+                ? localStorage.getItem('user') 
+                : sessionStorage.getItem('user');
+
+            console.log("User data from storage:", userData);
+
+            currentUser = JSON.parse(userData);
+            console.log("Current user data parsed:", currentUser);
+        } catch (error) {
+            console.error("Failed to parse user data:", error);
+            currentUser = null;
+        }
+    }
+
+    // Function to fetch user data from the database
+    async function fetchUserDataFromDatabase(userId) {
+        console.log("Fetching user data from database for ID:", userId);
+        try {
+            const dbRef = ref(getDatabase()); // Create database reference
+            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
+            if (snapshot.exists()) {
+                console.log("User data fetched successfully:", snapshot.val());
+                return snapshot.val();
+            } else {
+                console.warn("No user data found for ID:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from database:", error);
+            return null;
+        }
+    }
+
+    // Sign-out function
+    function signout() {
+        console.log("Signing out user...");
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
+        localStorage.removeItem('keepLoggedIn');
+        console.log("User signed out. Redirecting to login page...");
+        window.location = "login.html";
+    }
+
+    // Page load event handler
+    window.onload = async function () {
+        console.log("Page loaded. Initializing...");
+
+        // Show spinner
+        if (spinner) spinner.style.display = 'block';
+        if (accountContent) accountContent.style.display = 'none';
+
+        // Get the current user
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            console.error("No valid user found. Redirecting to login...");
+            alert("Invalid user data. Please log in again.");
+            window.location = "/signin.html";
+            return;
+        }
+
+        // Fetch updated user data from database
+        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+        if (updatedUserData) {
+            console.log("Updated user data:", updatedUserData);
+            currentUser = updatedUserData;
+
+            // Update localStorage or sessionStorage
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            // Update UI
+            if (userlink) {
+                userlink.innerText = currentUser.username;
+                userlink.href = "#";
+            }
+
   // Plan validation logic for deposit amount
   const planLimits = {
     'Starter Pack': { min: 500, max: 6000 },
