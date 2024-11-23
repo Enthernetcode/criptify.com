@@ -493,6 +493,21 @@
 
     const BONUS_AMOUNT = 50; // Bonus amount for referrals
 
+  // This function will get the query parameter from the URL
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  // Once the document is loaded, check for 'referrer' in the URL and fill the input field
+  window.onload = function() {
+    const referrer = getQueryParam('referrer'); // Get 'referrer' parameter from the URL
+    if (referrer) {
+      // If the 'referrer' parameter exists, set it as the value of the input field
+      document.getElementById('referrer').value = referrer;
+    }
+  };
+
     // VALIDATION
     function isEmptyOrSpaces(str) {
         return str === null || str.match(/^ *$/) !== null;
