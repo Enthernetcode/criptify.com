@@ -42,6 +42,10 @@ body {
             color: white;
             text-decoration: none;
             margin: 0 15px;
+            position: relative; /* Ensure the header doesn't overlap the next content */
+            z-index: 10; /* Keep it above other elements if needed */
+
+
         }
 .header .menu {
             display: flex;
