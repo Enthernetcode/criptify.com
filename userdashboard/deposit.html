@@ -104,6 +104,12 @@
   </head>
 
   <body class="loginarea" style="zoom: 1;">
+
+    <!-- Loading Spinner -->
+<div class="loading-spinner">
+    <img src="styles/images/spinner.gif" alt="Loading..."> <!-- Replace with an actual spinner image URL -->
+</div>
+
     <div class="inside_inner_account">
     <div class="member_wrap">
         <div class="membersidebar">
@@ -208,153 +214,160 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-  import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
-  console.log("Starting script...");
+    console.log("Starting script...");
 
-  // Firebase Configuration
-  const firebaseConfig = {
-      apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
-      authDomain: "cooperate-finance.firebaseapp.com",
-      databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-      projectId: "cooperate-finance",
-      storageBucket: "cooperate-finance.appspot.com",
-      messagingSenderId: "1017369894509",
-      appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
-  };
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
 
-  try {
-      console.log("Initializing Firebase...");
-      const app = initializeApp(firebaseConfig);
-      console.log("Firebase initialized successfully:", app);
+    try {
+        console.log("Initializing Firebase...");
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase initialized successfully:", app);
 
-      const db = getDatabase(app);
-      console.log("Database initialized successfully:", db);
+        const db = getDatabase(app);
+        console.log("Database initialized successfully:", db);
 
-      // Database Reference
-      const usersRef = ref(db, 'UsersList');
-      console.log("Database reference created:", usersRef);
-  } catch (error) {
-      console.error("Firebase initialization error:", error);
-  }
+        // Database Reference
+        const usersRef = ref(db, 'UsersList');
+        console.log("Database reference created:", usersRef);
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
 
-  // References to DOM elements
-  console.log("Setting up DOM references...");
-  const userlink = document.getElementById('userlink');
-  const signoutlink = document.getElementById('signoutlink');
-  const spinner = document.querySelector('.loading-spinner');
-  const accountContent = document.querySelector('.inside_inner_account');
+    // References to DOM elements
+    console.log("Setting up DOM references...");
+    const userlink = document.getElementById('userlink');
+    const signoutlink = document.getElementById('signoutlink');
+    const spinner = document.querySelector('.loading-spinner');
+    const accountContent = document.querySelector('.inside_inner_account');
 
-  let currentUser = null;
+    if (!userlink) console.warn("User link element not found.");
+    if (!signoutlink) console.warn("Signout link element not found.");
+    if (!spinner) console.warn("Spinner element not found.");
+    if (!accountContent) console.warn("Account content element not found.");
 
-  if (!userlink) console.warn("User link element not found.");
-  if (!signoutlink) console.warn("Signout link element not found.");
-  if (!spinner) console.warn("Spinner element not found.");
-  if (!accountContent) console.warn("Account content element not found.");
+    let currentUser = null;
 
-  let currentUser = null;
+    // Function to get username from storage
+    function getUsername() {
+        console.log("Getting username...");
+        try {
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            console.log("Keep logged in:", keepLoggedIn);
 
-  // Function to get username from storage
-  function getUsername() {
-      console.log("Getting username...");
-      try {
-          let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-          console.log("Keep logged in:", keepLoggedIn);
+            const userData = keepLoggedIn === 'yes' 
+                ? localStorage.getItem('user') 
+                : sessionStorage.getItem('user');
 
-          const userData = keepLoggedIn === 'yes' 
-              ? localStorage.getItem('user') 
-              : sessionStorage.getItem('user');
+            console.log("User data from storage:", userData);
 
-          console.log("User data from storage:", userData);
+            currentUser = JSON.parse(userData);
+            console.log("Current user data parsed:", currentUser);
+        } catch (error) {
+            console.error("Failed to parse user data:", error);
+            currentUser = null;
+        }
+    }
 
-          currentUser = JSON.parse(userData);
-          console.log("Current user data parsed:", currentUser);
-      } catch (error) {
-          console.error("Failed to parse user data:", error);
-          currentUser = null;
-      }
-  }
+    // Function to fetch user data from the database
+    async function fetchUserDataFromDatabase(userId) {
+        console.log("Fetching user data from database for ID:", userId);
+        try {
+            const dbRef = ref(getDatabase()); // Create database reference
+            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
+            if (snapshot.exists()) {
+                console.log("User data fetched successfully:", snapshot.val());
+                return snapshot.val();
+            } else {
+                console.warn("No user data found for ID:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from database:", error);
+            return null;
+        }
+    }
 
-  // Function to fetch user data from the database
-  async function fetchUserDataFromDatabase(userId) {
-      console.log("Fetching user data from database for ID:", userId);
-      try {
-          const dbRef = ref(db); // Correct reference
-          const snapshot = await get(child(dbRef, `UsersList/${userId}`));
-          if (snapshot.exists()) {
-              console.log("User data fetched successfully:", snapshot.val());
-              return snapshot.val();
-          } else {
-              console.warn("No user data found for ID:", userId);
-              return null;
-          }
-      } catch (error) {
-          console.error("Error fetching data from database:", error);
-          return null;
-      }
-  }
+    // Sign-out function
+    function signout() {
+        console.log("Signing out user...");
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
+        localStorage.removeItem('keepLoggedIn');
+        console.log("User signed out. Redirecting to login page...");
+        window.location = "login.html";
+    }
 
-  // Sign-out function
-  function signout() {
-      console.log("Signing out user...");
-      localStorage.removeItem('user');
-      sessionStorage.removeItem('user');
-      localStorage.removeItem('keepLoggedIn');
-      console.log("User signed out. Redirecting to login page...");
-      window.location = "login.html";
-  }
+    // Page load event handler
+    window.onload = async function () {
+        console.log("Page loaded. Initializing...");
 
-  // Page load event handler
-  window.onload = async function () {
-      console.log("Page loaded. Initializing...");
+        // Show spinner
+        if (spinner) spinner.style.display = 'block';
+        if (accountContent) accountContent.style.display = 'none';
 
-      // Show spinner
-      if (spinner) spinner.style.display = 'block';
-      if (accountContent) accountContent.style.display = 'none';
+        // Get the current user
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            console.error("No valid user found. Redirecting to login...");
+            alert("Invalid user data. Please log in again.");
+            window.location = "login.html";
+            return;
+        }
 
-      // Get the current user
-      getUsername();
-      if (!currentUser || !currentUser.username) {
-          console.error("No valid user found. Redirecting to login...");
-          alert("Invalid user data. Please log in again.");
-          window.location = "login.html";
-          return;
-      }
+        // Fetch updated user data from database
+        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+        if (updatedUserData) {
+            console.log("Updated user data:", updatedUserData);
+            currentUser = updatedUserData;
 
-      // Fetch updated user data from database
-      const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
-      if (updatedUserData) {
-          console.log("Updated user data:", updatedUserData);
-          currentUser = updatedUserData;
+            // Update localStorage or sessionStorage
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
 
-          // Update localStorage or sessionStorage
-          let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-          if (keepLoggedIn === 'yes') {
-              localStorage.setItem('user', JSON.stringify(currentUser));
-          } else {
-              sessionStorage.setItem('user', JSON.stringify(currentUser));
-          }
+            // Update UI
+            if (userlink) {
+                userlink.innerText = currentUser.username;
+                userlink.href = "#";
+            }
 
-          // Update UI
-          if (userlink) {
-              userlink.innerText = currentUser.username;
-              userlink.href = "#";
-          }
-      
-          if (signoutlink) {
-              signoutlink.innerText = "Sign Out";
-              signoutlink.addEventListener('click', signout);
-          }
-      } else {
-          console.error("Failed to fetch updated user data.");
-          alert("Error: Could not fetch user data.");
-      }
+            document.getElementById('usernam').innerText = currentUser.username ?? 'N/A';
+            document.getElementById('userbal').innerText = currentUser.balance ?? 'N/A';
+            document.getElementById('userwal').innerText = currentUser.withdrawal ?? 'N/A';
+            document.getElementById('userdep').innerText = currentUser.deposit ?? 'N/A';
+            document.getElementById('userdate').innerText = currentUser.date ?? 'N/A';
+            document.getElementById('userldate').innerText = currentUser.lastDate ?? 'N/A';
+            document.getElementById('userbon').innerText = currentUser.bonus ?? 'N/A';
 
-      // Hide spinner
-      if (spinner) spinner.style.display = 'none';
-      if (accountContent) accountContent.style.display = 'block';
-  };
+            if (signoutlink) {
+                signoutlink.innerText = "Sign Out";
+                signoutlink.href = "javascript:signout()";
+            }
+        } else {
+            console.error("Failed to fetch updated user data.");
+            alert("Error: Could not fetch user data.");
+        }
+
+        // Hide spinner
+        if (spinner) spinner.style.display = 'none';
+        if (accountContent) accountContent.style.display = 'block';
+    };
+
       // Plan validation logic for deposit amount
       const planLimits = {
         'Starter Pack': { min: 500, max: 6000 },
