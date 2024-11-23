@@ -43,7 +43,6 @@ body {
             text-decoration: none;
             margin: 0 15px;
             position: relative; /* Ensure the header doesn't overlap the next content */
-            z-index: 10; /* Keep it above other elements if needed */
 
 
         }
@@ -63,6 +62,8 @@ body {
     margin-top: 20px;
     padding: 50px 20px;
     position: relative;
+    max-width: 90%; /* Restrict width to 90% of the screen */
+    min-height: calc(100vh - 200px);
 }
 
 .create-account-container::before {
