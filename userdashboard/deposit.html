@@ -246,6 +246,8 @@
   const spinner = document.querySelector('.loading-spinner');
   const accountContent = document.querySelector('.inside_inner_account');
 
+  let currentUser = null;
+
   if (!userlink) console.warn("User link element not found.");
   if (!signoutlink) console.warn("Signout link element not found.");
   if (!spinner) console.warn("Spinner element not found.");
