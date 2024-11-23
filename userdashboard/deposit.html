@@ -218,106 +218,136 @@
     <script src="style/setting2.js" type="text/javascript"></script>
     <script src="style/tab.js" type="text/javascript"></script>
     <script src="style/bootstrap.min.js" type="text/javascript"></script>
-    <script>
-      // Firebase Imports
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-      import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-      
-      const firebaseConfig = { /* your Firebase configuration */ };
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      
-      // Your function definitions go here
-      // Plan validation logic for deposit amount
-      const planLimits = {
-        'Starter Pack': { min: 500, max: 6000 },
-        'Silver Pack': { min: 6000, max: 19000 },
-        'Gold Pack': { min: 19000, max: 50000 },
-        'Diamond Pack': { min: 50000, max: Infinity }
-      };
-      
-      // Open deposit form and populate selected plan
-      function openDepositForm(plan, minAmount, maxAmount) {
-        document.getElementById('plan').value = plan;
-        document.getElementById('depositForm').style.display = "block";
-        document.getElementById('amount').setAttribute('min', minAmount);
-        document.getElementById('amount').setAttribute('max', maxAmount);
-      }
+  <script>
+  // Firebase Imports
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+  import { send } from "https://cdn.emailjs.com/dist/email.min.js"; // Import EmailJS to send admin emails
 
-      // Close the deposit form
-      function closeDepositForm() {
-        document.getElementById('depositForm').style.display = "none";
-      }
-      
-      // Handle Deposit Submission
-      async function handleDeposit(event) {
-        event.preventDefault();
-        const plan = document.getElementById('plan').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-    
-        if (!currentUser) {
-          alert("User not logged in. Please log in to proceed.");
-          return;
-        }
-    
-        const userId = currentUser.username;
-        const depositData = {
-          plan,
-          amount,
-          paymentMethod,
-          date: new Date().toISOString(),
-          status: "Pending"
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+    authDomain: "cooperate-finance.firebaseapp.com",
+    databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+    projectId: "cooperate-finance",
+    storageBucket: "cooperate-finance.appspot.com",
+    messagingSenderId: "1017369894509",
+    appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Plan validation logic for deposit amount
+  const planLimits = {
+    'Starter Pack': { min: 500, max: 6000 },
+    'Silver Pack': { min: 6000, max: 19000 },
+    'Gold Pack': { min: 19000, max: 50000 },
+    'Diamond Pack': { min: 50000, max: Infinity }
+  };
+
+  // Open deposit form and populate selected plan
+  function openDepositForm(plan, minAmount, maxAmount) {
+    document.getElementById('plan').value = plan;
+    document.getElementById('depositForm').style.display = "block";
+    document.getElementById('amount').setAttribute('min', minAmount);
+    document.getElementById('amount').setAttribute('max', maxAmount);
+  }
+
+  // Close the deposit form
+  function closeDepositForm() {
+    document.getElementById('depositForm').style.display = "none";
+  }
+
+  // Handle Deposit Submission
+  async function handleDeposit(event) {
+    event.preventDefault();
+    const plan = document.getElementById('plan').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+
+    if (!currentUser) {
+      alert("User not logged in. Please log in to proceed.");
+      return;
+    }
+
+    const userId = currentUser.username;
+    const depositData = {
+      plan,
+      amount,
+      paymentMethod,
+      date: new Date().toISOString(),
+      status: "Pending"
+    };
+
+    try {
+      const userRef = ref(db, `UsersList/${userId}`);
+      const snapshot = await get(userRef);
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        const updatedBalance = (userData.balance || 0) + amount;
+        const updatedHistory = userData.depositHistory || [];
+        updatedHistory.push(depositData);
+
+        await update(userRef, {
+          balance: updatedBalance,
+          depositHistory: updatedHistory
+        });
+
+        const adminPendingRef = ref(db, "AdminPendingDeposits");
+        await push(adminPendingRef, { userId, ...depositData });
+
+        // Send Email Notification to the User
+        const emailTemplateParams = {
+          user_email: userData.email,
+          username: userData.username,
+          amount: `$${amount.toFixed(2)}`,
+          plan: plan,
+          paymentMethod: paymentMethod,
+          date: new Date().toLocaleString()
         };
-    
-        try {
-          const userRef = ref(db, `UsersList/${userId}`);
-          const snapshot = await get(userRef);
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            const updatedBalance = (userData.balance || 0) + amount;
-            const updatedHistory = userData.depositHistory || [];
-            updatedHistory.push(depositData);
-    
-            await update(userRef, {
-              balance: updatedBalance,
-              depositHistory: updatedHistory
-            });
-    
-            const adminPendingRef = ref(db, "AdminPendingDeposits");
-            await push(adminPendingRef, { userId, ...depositData });
-    
-            // Send Email Notification
-            const emailTemplateParams = {
-              user_email: userData.email,
-              username: userData.username,
-              amount: `$${amount.toFixed(2)}`,
-              plan: plan,
-              paymentMethod: paymentMethod,
-              date: new Date().toLocaleString()
-            };
-    
-            emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
-              .then(() => {
-                console.log("Email sent successfully to user.");
-              })
-              .catch((error) => {
-                console.error("Failed to send email:", error);
-              });
-    
-            alert(`Deposit submitted successfully! Awaiting admin approval.`);
-          } else {
-            alert("User data not found.");
-          }
-        } catch (error) {
-          console.error("Error processing deposit:", error);
-          alert("An error occurred while processing your deposit. Please try again.");
-        }
-      }
 
-      document.getElementById('depositFormContent').addEventListener('submit', handleDeposit());
-    </script>
+        emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
+          .then(() => {
+            console.log("Email sent successfully to user.");
+          })
+          .catch((error) => {
+            console.error("Failed to send email:", error);
+          });
+
+        // Send Email Notification to the Admin
+        const adminEmailTemplateParams = {
+          admin_email: "admin@cooperatefinance.com", // Replace with actual admin email
+          userId: userData.username,
+          amount: `$${amount.toFixed(2)}`,
+          plan: plan,
+          paymentMethod: paymentMethod,
+          date: new Date().toLocaleString()
+        };
+
+        emailjs.send("service_1vvxdzj", "template_admin_notification", adminEmailTemplateParams)
+          .then(() => {
+            console.log("Admin notified of the deposit.");
+          })
+          .catch((error) => {
+            console.error("Failed to notify admin:", error);
+          });
+
+        alert(`Deposit submitted successfully! Awaiting admin approval.`);
+      } else {
+        alert("User data not found.");
+      }
+    } catch (error) {
+      console.error("Error processing deposit:", error);
+      alert("An error occurred while processing your deposit. Please try again.");
+    }
+  }
+
+  document.getElementById('depositFormContent').addEventListener('submit', handleDeposit);
+
+</script>
+
 
   </body>
 </html>
