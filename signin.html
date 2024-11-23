@@ -231,9 +231,8 @@
     </div>
 <script type="module">
     // SETTING UP FIREBASE DB
-    //import "https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/aes.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
-    import { getDatabase, ref, set, child, get, update } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+    import { getDatabase, ref, child, get, update } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
@@ -256,25 +255,42 @@
 
     // AUTHENTICATION FUNCTION
     function AuthenticateUser(event) {
-        event.preventDefault();  // Prevents form from submitting and reloading the page
+        event.preventDefault(); // Prevents form from submitting and reloading the page
         const dbRef = ref(db);
 
-        get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
-            if (snapshot.exists()) {
-                alert("Logged in successfully");
-                let dbpass = decPass(snapshot.val().password);
-                if (dbpass === password.value) {
-                    login(snapshot.val());
-                    //updateLastAccess(username.value);  // Call function to update the last access date
+        get(child(dbRef, "UsersList/" + username.value))
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    let dbpass = decPass(snapshot.val().password);
+                    if (dbpass === password.value) {
+                        updateLastAccess(username.value); // Update last access time
+                        login(snapshot.val());
+                    } else {
+                        alert("Username or password is invalid!");
+                    }
                 } else {
                     alert("Username or password is invalid!");
                 }
-            } else {
-                alert("Username or password is invalid!");
-            }
-        }).catch(error => {
-            console.error("Error reading data: ", error);
-        });
+            })
+            .catch((error) => {
+                console.error("Error reading data: ", error);
+            });
+    }
+
+    // FUNCTION TO UPDATE LAST ACCESS DATE
+    function updateLastAccess(username) {
+        const currentDateTime = new Date().toISOString();
+        const userRef = ref(db, "UsersList/" + username);
+
+        update(userRef, {
+            lastDate: currentDateTime // Updates the lastSeen field
+        })
+            .then(() => {
+                console.log("User's last access time updated successfully.");
+            })
+            .catch((error) => {
+                console.error("Error updating last access time: ", error);
+            });
     }
 
     // DECRYPT PASSWORD FUNCTION
@@ -289,32 +305,18 @@
 
         if (!keepLoggedIn) {
             sessionStorage.setItem('user', JSON.stringify(user));
-            window.location = "userdashboard/index.html";
         } else {
             localStorage.setItem('keepLoggedIn', 'yes');
             localStorage.setItem('user', JSON.stringify(user));
-            window.location = "userdashboard/index.html";
         }
+
+        // Redirect to user dashboard
+        window.location = "userdashboard/index.html";
     }
-
-    // FUNCTION TO UPDATE LAST ACCESS DATE
-//    function updateLastAccess(userId) {
-  //      const lastAccessTime = new Date().toISOString(); // Use ISO string for compatibility
-    //    const userRef = ref(db, "UsersList/" + userId);
-
-      //  update(userRef, {
-        //    lastDate: lastAccessTime
-        //})
-        //.then(() => {
-          //  console.log("Last access date updated successfully!");
-        //})
-    //    .catch((error) => {
-      //      console.error("Error updating last access date:", error);
-        //});
-    //}
 
     // ASSIGN EVENT
     submitBtn.addEventListener("click", AuthenticateUser);
 </script>
+
 </body>
 </html>
