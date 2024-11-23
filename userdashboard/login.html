@@ -195,7 +195,7 @@
                     <input type="password" name="password" id="passInp" placeholder="Password" required>
                     <label><input type="checkbox" name="remember" id="customSwitch1"> Remember me</label>
                     <button type="button" id="sub-btn" >Login</button>
-                    <!--a href="#">Forgot password?</a--> | <a href="/register.html">Create account</a>
+                    <!--a href="#">Forgot password?</a--> | <a href="register.html">Create account</a>
                 </form>
             </div>
         </div>
@@ -229,95 +229,94 @@
             <p>&copy; Copyright Cooperate Finance. All Rights Reserved.</p>
         </div>
     </div>
-     <script type="module">
-        // SETTING UP FIREBASE DB
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+<script type="module">
+    // SETTING UP FIREBASE DB
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+    import { getDatabase, ref, child, get, update } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
-          authDomain: "cooperate-finance.firebaseapp.com",
-          databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-          projectId: "cooperate-finance",
-          storageBucket: "cooperate-finance.appspot.com",
-          messagingSenderId: "785120987896",
-          appId: "1:785120987896:web:9c97861dfd6f908112c90d"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "785120987896",
+        appId: "1:785120987896:web:9c97861dfd6f908112c90d"
+    };
 
-        const app = initializeApp(firebaseConfig);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
 
-        import {getDatabase, ref, set, child, get} from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+    // REFERENCES
+    const username = document.getElementById('userInp');
+    const password = document.getElementById('passInp');
+    const submitBtn = document.getElementById('sub-btn');
 
-        const db = getDatabase()
+    // AUTHENTICATION FUNCTION
+    function AuthenticateUser(event) {
+        event.preventDefault(); // Prevents form from submitting and reloading the page
+        const dbRef = ref(db);
 
-        //REFERENCES
-        const username = document.getElementById('userInp');
-        const password = document.getElementById('passInp');
-        const submitBtn = document.getElementById('sub-btn')
-
-//AUTHENTIFICATION
-
-function AuthenticateUser(event) {
-    event.preventDefault();  // Prevents form from submitting and reloading the page
-    const dbRef = ref(db);
-
-    get(child(dbRef, "UsersList/" + username.value)).then((snapshot) => {
-        if (snapshot.exists()) {
-            alert("Logged in successful");
-            let dbpass = decPass(snapshot.val().password);
-            if (dbpass == password.value) {
-                login(snapshot.val());
-            } else {
-                alert("Username or password is invalid!");
-            }
-        } else {
-            alert("Username or password is invalid!");
-        }
-    }).catch(error => {
-        console.error("Error reading data: ", error);
-    });
-}
-
-
-//DECRYPT PASSWORD
-function decPass(dbpass){
-    var pass123 = CryptoJS.AES.decrypt(dbpass, password.value);
-    return pass123.toString(CryptoJS.enc.Utf8);
-}
-
-//LOGIN
-function login(user){
-let keepLoggedIn = document.getElementById('customSwitch1').checked;
-
-if(!keepLoggedIn){
-    sessionStorage.setItem('user', JSON.stringify(user));
-    window.location="index.html";
-}else{
-    localStorage.setItem('keepLoggedIn', 'yes');
-    localStorage.setItem('user', JSON.stringify(user));
-    window.location="index.html";
-}
-}
-
-// Function to update last access time in Firebase
-    function updateLastAccess(userId) {
-        const lastAccessTime = new Date();
-
-        db.collection("users").doc(userId).update({
-            lastAccess: firebase.firestore.Timestamp.fromDate(lastAccessTime)
-        })
-        .then(() => {
-            document.getElementById("lastAccessDate").innerText = lastAccessTime.toLocaleString();
-            console.log("Last access updated successfully!");
-        })
-        .catch((error) => {
-            console.error("Error updating last access:", error);
-        });
+        get(child(dbRef, "UsersList/" + username.value))
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    let dbpass = decPass(snapshot.val().password);
+                    if (dbpass === password.value) {
+                        updateLastAccess(username.value); // Update last access time
+                        login(snapshot.val());
+                    } else {
+                        alert("Username or password is invalid!");
+                    }
+                } else {
+                    alert("Username or password is invalid!");
+                }
+            })
+            .catch((error) => {
+                console.error("Error reading data: ", error);
+            });
     }
 
-//ASSIGN EVENTS
-submitBtn.addEventListener("click", AuthenticateUser);
+    // FUNCTION TO UPDATE LAST ACCESS DATE
+    function updateLastAccess(username) {
+        const currentDateTime = new Date().toISOString().slice(0, 10);
+        const userRef = ref(db, "UsersList/" + username);
 
-      </script>
+        update(userRef, {
+            lastDate: currentDateTime // Updates the lastSeen field
+        })
+            .then(() => {
+                console.log("User's last access time updated successfully.");
+            })
+            .catch((error) => {
+                console.error("Error updating last access time: ", error);
+            });
+    }
+
+    // DECRYPT PASSWORD FUNCTION
+    function decPass(dbpass) {
+        var pass123 = CryptoJS.AES.decrypt(dbpass, password.value);
+        return pass123.toString(CryptoJS.enc.Utf8);
+    }
+
+    // LOGIN FUNCTION
+    function login(user) {
+        let keepLoggedIn = document.getElementById('customSwitch1').checked;
+
+        if (!keepLoggedIn) {
+            sessionStorage.setItem('user', JSON.stringify(user));
+        } else {
+            localStorage.setItem('keepLoggedIn', 'yes');
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+
+        // Redirect to user dashboard
+        window.location = "userdashboard/index.html";
+    }
+
+    // ASSIGN EVENT
+    submitBtn.addEventListener("click", AuthenticateUser);
+</script>
 
 </body>
 </html>

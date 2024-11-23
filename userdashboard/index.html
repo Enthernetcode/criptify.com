@@ -202,7 +202,7 @@
 </div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
     console.log("Starting script...");
 
@@ -217,13 +217,17 @@
         appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
     };
 
-    // Initialize Firebase
     try {
         console.log("Initializing Firebase...");
         const app = initializeApp(firebaseConfig);
         console.log("Firebase initialized successfully:", app);
+
         const db = getDatabase(app);
         console.log("Database initialized successfully:", db);
+
+        // Database Reference
+        const usersRef = ref(db, 'UsersList');
+        console.log("Database reference created:", usersRef);
     } catch (error) {
         console.error("Firebase initialization error:", error);
     }
@@ -234,16 +238,26 @@
     const signoutlink = document.getElementById('signoutlink');
     const spinner = document.querySelector('.loading-spinner');
     const accountContent = document.querySelector('.inside_inner_account');
+
+    if (!userlink) console.warn("User link element not found.");
+    if (!signoutlink) console.warn("Signout link element not found.");
+    if (!spinner) console.warn("Spinner element not found.");
+    if (!accountContent) console.warn("Account content element not found.");
+
     let currentUser = null;
 
-    // Function to get username from localStorage or sessionStorage
+    // Function to get username from storage
     function getUsername() {
         console.log("Getting username...");
         try {
             let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            console.log("Keep logged in:", keepLoggedIn);
+
             const userData = keepLoggedIn === 'yes' 
                 ? localStorage.getItem('user') 
                 : sessionStorage.getItem('user');
+
+            console.log("User data from storage:", userData);
 
             currentUser = JSON.parse(userData);
             console.log("Current user data parsed:", currentUser);
@@ -253,11 +267,11 @@
         }
     }
 
-    // Function to fetch user data from the Firebase database
+    // Function to fetch user data from the database
     async function fetchUserDataFromDatabase(userId) {
         console.log("Fetching user data from database for ID:", userId);
         try {
-            const dbRef = ref(getDatabase());
+            const dbRef = ref(getDatabase()); // Create database reference
             const snapshot = await get(child(dbRef, `UsersList/${userId}`));
             if (snapshot.exists()) {
                 console.log("User data fetched successfully:", snapshot.val());
@@ -282,67 +296,6 @@
         window.location = "login.html";
     }
 
-    // Handle Withdrawal Logic
-    async function handleWithdrawal(amount) {
-        console.log("Processing withdrawal for amount:", amount);
-
-        if (!currentUser || !currentUser.username) {
-            alert("User not logged in. Please log in to proceed.");
-            return;
-        }
-
-        const userData = await fetchUserDataFromDatabase(currentUser.username);
-        if (!userData) {
-            alert("Failed to fetch user data.");
-            return;
-        }
-
-        if (amount <= 0) {
-            alert("Please enter a valid amount to withdraw.");
-            return;
-        }
-
-        const currentBalance = parseFloat(userData.balance);
-        if (amount > currentBalance) {
-            alert("Insufficient funds.");
-            return;
-        }
-
-        const updatedBalance = currentBalance - amount;
-        const withdrawalHistoryRef = ref(db, `UsersList/${currentUser.username}/withdrawalHistory`);
-
-        try {
-            // Update the user's balance in the database
-            await update(ref(db, `UsersList/${currentUser.username}`), { balance: updatedBalance });
-
-            // Push the withdrawal to the withdrawal history
-            const newWithdrawal = {
-                amount: amount,
-                date: new Date().toISOString(),
-                balanceAfter: updatedBalance
-            };
-            await push(withdrawalHistoryRef, newWithdrawal);
-
-            // Update currentUser locally
-            currentUser.balance = updatedBalance;
-            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            if (keepLoggedIn === 'yes') {
-                localStorage.setItem('user', JSON.stringify(currentUser));
-            } else {
-                sessionStorage.setItem('user', JSON.stringify(currentUser));
-            }
-
-            // Update UI with new balance and withdrawal amount
-            document.getElementById('userbal').innerText = updatedBalance.toFixed(2);
-            document.getElementById('userwal').innerText = (parseFloat(userData.withdrawal || 0) + amount).toFixed(2);
-
-            alert("Withdrawal successful!");
-        } catch (error) {
-            console.error("Error processing withdrawal:", error);
-            alert("An error occurred while processing your withdrawal.");
-        }
-    }
-
     // Page load event handler
     window.onload = async function () {
         console.log("Page loaded. Initializing...");
@@ -356,11 +309,11 @@
         if (!currentUser || !currentUser.username) {
             console.error("No valid user found. Redirecting to login...");
             alert("Invalid user data. Please log in again.");
-            window.location = "login.html";
+            window.location = "/signin.html";
             return;
         }
 
-        // Fetch updated user data from the database
+        // Fetch updated user data from database
         const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
         if (updatedUserData) {
             console.log("Updated user data:", updatedUserData);
@@ -401,18 +354,6 @@
         if (spinner) spinner.style.display = 'none';
         if (accountContent) accountContent.style.display = 'block';
     };
-
-    // Event listener for the withdraw button
-    document.getElementById('withdrawBtn').addEventListener('click', () => {
-        const amount = parseFloat(prompt("Enter amount to withdraw:"));
-        if (!isNaN(amount) && amount > 0) {
-            handleWithdrawal(amount);
-        } else {
-            alert("Invalid amount entered.");
-        }
-    });
-</script>
-
 </script>
 </body>
 </html>
