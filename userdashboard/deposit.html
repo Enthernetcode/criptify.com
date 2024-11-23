@@ -236,231 +236,246 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  const db = getDatabase(app); // Firebase Database initialized
 
-   // Database Reference
-        const usersRef = ref(db, 'UsersList');
-        console.log("Database reference created:", usersRef);
+  // References to DOM elements
+  console.log("Setting up DOM references...");
+  const userlink = document.getElementById('userlink');
+  const signoutlink = document.getElementById('signoutlink');
+  const spinner = document.querySelector('.loading-spinner');
+  const accountContent = document.querySelector('.inside_inner_account');
+  const depositForm = document.getElementById('depositForm');
+  const amountField = document.getElementById('amount');
+  const paymentMethodField = document.getElementById('paymentMethod');
 
-    // References to DOM elements
-    console.log("Setting up DOM references...");
-    const userlink = document.getElementById('userlink');
-    const signoutlink = document.getElementById('signoutlink');
-    const spinner = document.querySelector('.loading-spinner');
-    const accountContent = document.querySelector('.inside_inner_account');
+  if (!userlink) console.warn("User link element not found.");
+  if (!signoutlink) console.warn("Signout link element not found.");
+  if (!spinner) console.warn("Spinner element not found.");
+  if (!accountContent) console.warn("Account content element not found.");
+  if (!depositForm) console.warn("Deposit form element not found.");
+  if (!amountField) console.warn("Amount field element not found.");
+  if (!paymentMethodField) console.warn("Payment method field not found.");
 
-    if (!userlink) console.warn("User link element not found.");
-    if (!signoutlink) console.warn("Signout link element not found.");
-    if (!spinner) console.warn("Spinner element not found.");
-    if (!accountContent) console.warn("Account content element not found.");
+  let currentUser = null;
 
-    let currentUser = null;
+  // Function to get username from storage
+  function getUsername() {
+      console.log("Getting username...");
+      try {
+          let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+          console.log("Keep logged in:", keepLoggedIn);
 
-    // Function to get username from storage
-    function getUsername() {
-        console.log("Getting username...");
-        try {
-            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            console.log("Keep logged in:", keepLoggedIn);
+          const userData = keepLoggedIn === 'yes' 
+              ? localStorage.getItem('user') 
+              : sessionStorage.getItem('user');
 
-            const userData = keepLoggedIn === 'yes' 
-                ? localStorage.getItem('user') 
-                : sessionStorage.getItem('user');
+          console.log("User data from storage:", userData);
 
-            console.log("User data from storage:", userData);
-
-            currentUser = JSON.parse(userData);
-            console.log("Current user data parsed:", currentUser);
-        } catch (error) {
-            console.error("Failed to parse user data:", error);
-            currentUser = null;
-        }
-    }
-
-    // Function to fetch user data from the database
-    async function fetchUserDataFromDatabase(userId) {
-        console.log("Fetching user data from database for ID:", userId);
-        try {
-            const dbRef = ref(getDatabase()); // Create database reference
-            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
-            if (snapshot.exists()) {
-                console.log("User data fetched successfully:", snapshot.val());
-                return snapshot.val();
-            } else {
-                console.warn("No user data found for ID:", userId);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching data from database:", error);
-            return null;
-        }
-    }
-
-    // Sign-out function
-    function signout() {
-        console.log("Signing out user...");
-        localStorage.removeItem('user');
-        sessionStorage.removeItem('user');
-        localStorage.removeItem('keepLoggedIn');
-        console.log("User signed out. Redirecting to login page...");
-        window.location = "login.html";
-    }
-
-    // Page load event handler
-    window.onload = async function () {
-        console.log("Page loaded. Initializing...");
-
-        // Show spinner
-        if (spinner) spinner.style.display = 'block';
-        if (accountContent) accountContent.style.display = 'none';
-
-        // Get the current user
-        getUsername();
-        if (!currentUser || !currentUser.username) {
-            console.error("No valid user found. Redirecting to login...");
-            alert("Invalid user data. Please log in again.");
-            window.location = "/signin.html";
-            return;
-        }
-
-        // Fetch updated user data from database
-        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
-        if (updatedUserData) {
-            console.log("Updated user data:", updatedUserData);
-            currentUser = updatedUserData;
-
-            // Update localStorage or sessionStorage
-            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            if (keepLoggedIn === 'yes') {
-                localStorage.setItem('user', JSON.stringify(currentUser));
-            } else {
-                sessionStorage.setItem('user', JSON.stringify(currentUser));
-            }
-
-            // Update UI
-            if (userlink) {
-                userlink.innerText = currentUser.username;
-                userlink.href = "#";
-            }
-
-       // Plan validation logic for deposit amount
-      const planLimits = {
-        'Starter Pack': { min: 500, max: 6000 },
-        'Silver Pack': { min: 6000, max: 19000 },
-        'Gold Pack': { min: 19000, max: 50000 },
-        'Diamond Pack': { min: 50000, max: Infinity }
-      };
-
-      // Open deposit form and populate selected plan
-      window.openDepositForm = function(plan, minAmount, maxAmount) {
-        document.getElementById('plan').value = plan;
-        document.getElementById('depositForm').style.display = "block";
-        document.getElementById('amount').setAttribute('min', minAmount);
-        document.getElementById('amount').setAttribute('max', maxAmount);
+          currentUser = JSON.parse(userData);
+          console.log("Current user data parsed:", currentUser);
+      } catch (error) {
+          console.error("Failed to parse user data:", error);
+          currentUser = null;
       }
-
-      // Close the deposit form
-      window.closeDepositForm = function() {
-        document.getElementById('depositForm').style.display = "none";
-      }
-
-      // Toggle crypto options visibility
-      window.toggleCryptoOptions = function() {
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const cryptoOptions = document.getElementById('cryptoOptions');
-        if (paymentMethod === 'crypto') {
-          cryptoOptions.style.display = "block";
-        } else {
-          cryptoOptions.style.display = "none";
-        }
-      }
-  // Handle Deposit Submission
-  async function handleDeposit(event) {
-    event.preventDefault();
-    const plan = document.getElementById('plan').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    const paymentMethod = document.getElementById('paymentMethod').value;
-    const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
-
-    if (!currentUser) {
-      alert("User not logged in. Please log in to proceed.");
-      return;
-    }
-
-    const userId = currentUser.username;
-    const depositData = {
-      plan,
-      amount,
-      paymentMethod,
-      date: new Date().toISOString(),
-      status: "Pending"
-    };
-
-    try {
-      const userRef = ref(db, `UsersList/${userId}`);
-      const snapshot = await get(userRef);
-      if (snapshot.exists()) {
-        const userData = snapshot.val();
-        const updatedBalance = (userData.balance || 0) + amount;
-        const updatedHistory = userData.depositHistory || [];
-        updatedHistory.push(depositData);
-
-        await update(userRef, {
-          balance: updatedBalance,
-          depositHistory: updatedHistory
-        });
-
-        const adminPendingRef = ref(db, "AdminPendingDeposits");
-        await push(adminPendingRef, { userId, ...depositData });
-
-        // Send Email Notification to the User
-        const emailTemplateParams = {
-          user_email: userData.email,
-          username: userData.username,
-          amount: `$${amount.toFixed(2)}`,
-          plan: plan,
-          paymentMethod: paymentMethod,
-          date: new Date().toLocaleString()
-        };
-
-        emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
-          .then(() => {
-            console.log("Email sent successfully to user.");
-          })
-          .catch((error) => {
-            console.error("Failed to send email:", error);
-          });
-
-        // Send Email Notification to the Admin
-        const adminEmailTemplateParams = {
-          admin_email: "cooperatefinances@gmail.com", // Replace with actual admin email
-          userId: userData.username,
-          amount: `$${amount.toFixed(2)}`,
-          plan: plan,
-          paymentMethod: paymentMethod,
-          date: new Date().toLocaleString()
-        };
-
-        emailjs.send("service_1vvxdzj", "template_admin_notification", adminEmailTemplateParams)
-          .then(() => {
-            console.log("Admin notified of the deposit.");
-          })
-          .catch((error) => {
-            console.error("Failed to notify admin:", error);
-          });
-
-        alert(`Deposit submitted successfully! Awaiting admin approval.`);
-      } else {
-        alert("User data not found.");
-      }
-    } catch (error) {
-      console.error("Error processing deposit:", error);
-      alert("An error occurred while processing your deposit. Please try again.");
-    }
   }
 
-  document.getElementById('depositFormContent').addEventListener('submit', handleDeposit);
+  // Function to fetch user data from the database
+  async function fetchUserDataFromDatabase(userId) {
+      console.log("Fetching user data from database for ID:", userId);
+      try {
+          const userRef = ref(db, `UsersList/${userId}`);
+          const snapshot = await get(userRef);
+          if (snapshot.exists()) {
+              console.log("User data fetched successfully:", snapshot.val());
+              return snapshot.val();
+          } else {
+              console.warn("No user data found for ID:", userId);
+              return null;
+          }
+      } catch (error) {
+          console.error("Error fetching data from database:", error);
+          return null;
+      }
+  }
 
+  // Sign-out function
+  function signout() {
+      console.log("Signing out user...");
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
+      localStorage.removeItem('keepLoggedIn');
+      console.log("User signed out. Redirecting to login page...");
+      window.location = "login.html";
+  }
+
+  // Page load event handler
+  window.onload = async function () {
+      console.log("Page loaded. Initializing...");
+
+      // Show spinner
+      if (spinner) spinner.style.display = 'block';
+      if (accountContent) accountContent.style.display = 'none';
+
+      // Get the current user
+      getUsername();
+      if (!currentUser || !currentUser.username) {
+          console.error("No valid user found. Redirecting to login...");
+          alert("Invalid user data. Please log in again.");
+          window.location = "/signin.html";
+          return;
+      }
+
+      // Fetch updated user data from database
+      const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+      if (updatedUserData) {
+          console.log("Updated user data:", updatedUserData);
+          currentUser = updatedUserData;
+
+          // Update localStorage or sessionStorage
+          let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+          if (keepLoggedIn === 'yes') {
+              localStorage.setItem('user', JSON.stringify(currentUser));
+          } else {
+              sessionStorage.setItem('user', JSON.stringify(currentUser));
+          }
+
+          // Update UI
+          if (userlink) {
+              userlink.innerText = currentUser.username;
+              userlink.href = "#";
+          }
+      }
+
+      // Sign-out event listener
+      if (signoutlink) {
+          signoutlink.addEventListener('click', signout);
+      }
+
+      // Plan validation logic for deposit amount
+      const planLimits = {
+          'Starter Pack': { min: 500, max: 6000 },
+          'Silver Pack': { min: 6000, max: 19000 },
+          'Gold Pack': { min: 19000, max: 50000 },
+          'Diamond Pack': { min: 50000, max: Infinity }
+      };
+
+      window.openDepositForm = function(plan, minAmount, maxAmount) {
+          document.getElementById('plan').value = plan;
+          document.getElementById('depositForm').style.display = "block";
+          document.getElementById('amount').setAttribute('min', minAmount);
+          document.getElementById('amount').setAttribute('max', maxAmount);
+      }
+
+      window.closeDepositForm = function() {
+          document.getElementById('depositForm').style.display = "none";
+      }
+
+      window.toggleCryptoOptions = function() {
+          const paymentMethod = document.getElementById('paymentMethod').value;
+          const cryptoOptions = document.getElementById('cryptoOptions');
+          if (paymentMethod === 'crypto') {
+              cryptoOptions.style.display = "block";
+          } else {
+              cryptoOptions.style.display = "none";
+          }
+      }
+
+      // Handle Deposit Submission
+      async function handleDeposit(event) {
+          event.preventDefault();
+          const plan = document.getElementById('plan').value;
+          const amount = parseFloat(document.getElementById('amount').value);
+          const paymentMethod = document.getElementById('paymentMethod').value;
+
+          // Plan validation
+          if (!planLimits[plan]) {
+              alert("Invalid plan selected.");
+              return;
+          }
+          if (amount < planLimits[plan].min || amount > planLimits[plan].max) {
+              alert(`Amount must be between $${planLimits[plan].min} and $${planLimits[plan].max} for this plan.`);
+              return;
+          }
+
+          if (!currentUser) {
+              alert("User not logged in. Please log in to proceed.");
+              return;
+          }
+
+          const userId = currentUser.username;
+          const depositData = {
+              plan,
+              amount,
+              paymentMethod,
+              date: new Date().toISOString(),
+              status: "Pending"
+          };
+
+          try {
+              const userRef = ref(db, `UsersList/${userId}`);
+              const snapshot = await get(userRef);
+              if (snapshot.exists()) {
+                  const userData = snapshot.val();
+                  const updatedBalance = (userData.balance || 0) + amount;
+                  const updatedHistory = userData.depositHistory || [];
+                  updatedHistory.push(depositData);
+
+                  await update(userRef, {
+                      balance: updatedBalance,
+                      depositHistory: updatedHistory
+                  });
+
+                  const adminPendingRef = ref(db, "AdminPendingDeposits");
+                  await push(adminPendingRef, { userId, ...depositData });
+
+                  // Send Email Notification to the User
+                  const emailTemplateParams = {
+                      user_email: userData.email,
+                      username: userData.username,
+                      amount: `$${amount.toFixed(2)}`,
+                      plan: plan,
+                      paymentMethod: paymentMethod,
+                      date: new Date().toLocaleString()
+                  };
+
+                  emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
+                      .then(() => {
+                          console.log("Email sent successfully to user.");
+                      })
+                      .catch((error) => {
+                          console.error("Failed to send email:", error);
+                      });
+
+                  // Send Email Notification to the Admin
+                  const adminEmailTemplateParams = {
+                      admin_email: "cooperatefinances@gmail.com", // Replace with actual admin email
+                      userId: userData.username,
+                      amount: `$${amount.toFixed(2)}`,
+                      plan: plan,
+                      paymentMethod: paymentMethod,
+                      date: new Date().toLocaleString()
+                  };
+
+                  emailjs.send("service_1vvxdzj", "template_admin_notification", adminEmailTemplateParams)
+                      .then(() => {
+                          console.log("Admin notified of the deposit.");
+                      })
+                      .catch((error) => {
+                          console.error("Failed to notify admin:", error);
+                      });
+
+                  alert(`Deposit submitted successfully! Awaiting admin approval.`);
+              } else {
+                  alert("User data not found.");
+              }
+          } catch (error) {
+              console.error("Error processing deposit:", error);
+              alert("An error occurred while processing your deposit. Please try again.");
+          }
+      }
+
+      depositForm.addEventListener('submit', handleDeposit);
+  };
 </script>
 
 
