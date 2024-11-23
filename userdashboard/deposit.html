@@ -228,6 +228,27 @@ const db = getDatabase(app);
     emailjs.init("BVUOlzj2CdQNf6Gsp");
 })();
 
+  // Plan validation logic for deposit amount
+      const planLimits = {
+        'Starter Pack': { min: 500, max: 6000 },
+        'Silver Pack': { min: 6000, max: 19000 },
+        'Gold Pack': { min: 19000, max: 50000 },
+        'Diamond Pack': { min: 50000, max: Infinity }
+      };
+
+      // Open deposit form and populate selected plan
+      window.openDepositForm = function(plan, minAmount, maxAmount) {
+        document.getElementById('plan').value = plan;
+        document.getElementById('depositForm').style.display = "block";
+        document.getElementById('amount').setAttribute('min', minAmount);
+        document.getElementById('amount').setAttribute('max', maxAmount);
+      }
+
+      // Close the deposit form
+      window.closeDepositForm = function() {
+        document.getElementById('depositForm').style.display = "none";
+      }
+
 // Handle Deposit Submission
 async function handleDeposit(event) {
     event.preventDefault();
