@@ -377,7 +377,7 @@
       };
 
       // Open deposit form and populate selected plan
-      function openDepositForm(plan, minAmount, maxAmount) {
+      window.openDepositForm = function(plan, minAmount, maxAmount) {
         document.getElementById('plan').value = plan;
         document.getElementById('depositForm').style.display = "block";
         document.getElementById('amount').setAttribute('min', minAmount);
@@ -385,12 +385,12 @@
       }
 
       // Close the deposit form
-      function closeDepositForm() {
+      window.closeDepositForm = function() {
         document.getElementById('depositForm').style.display = "none";
       }
 
       // Toggle crypto options visibility
-      function toggleCryptoOptions() {
+      window.toggleCryptoOptions = function() {
         const paymentMethod = document.getElementById('paymentMethod').value;
         const cryptoOptions = document.getElementById('cryptoOptions');
         if (paymentMethod === 'crypto') {
@@ -401,7 +401,7 @@
       }
 
       // Handle deposit form submission
-      function handleDeposit(event) {
+      window.handleDeposit = function(event) {
         event.preventDefault();
         const plan = document.getElementById('plan').value;
         const amount = parseFloat(document.getElementById('amount').value);
