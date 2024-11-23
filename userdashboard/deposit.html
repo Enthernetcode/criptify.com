@@ -218,7 +218,7 @@
     <script src="style/setting2.js" type="text/javascript"></script>
     <script src="style/tab.js" type="text/javascript"></script>
     <script src="style/bootstrap.min.js" type="text/javascript"></script>
-  <script>
+  <script type="module">
   // Firebase Imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
   import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
@@ -346,27 +346,37 @@
                 userlink.href = "#";
             }
 
-  // Plan validation logic for deposit amount
-  const planLimits = {
-    'Starter Pack': { min: 500, max: 6000 },
-    'Silver Pack': { min: 6000, max: 19000 },
-    'Gold Pack': { min: 19000, max: 50000 },
-    'Diamond Pack': { min: 50000, max: Infinity }
-  };
+       // Plan validation logic for deposit amount
+      const planLimits = {
+        'Starter Pack': { min: 500, max: 6000 },
+        'Silver Pack': { min: 6000, max: 19000 },
+        'Gold Pack': { min: 19000, max: 50000 },
+        'Diamond Pack': { min: 50000, max: Infinity }
+      };
 
-  // Open deposit form and populate selected plan
-  function openDepositForm(plan, minAmount, maxAmount) {
-    document.getElementById('plan').value = plan;
-    document.getElementById('depositForm').style.display = "block";
-    document.getElementById('amount').setAttribute('min', minAmount);
-    document.getElementById('amount').setAttribute('max', maxAmount);
-  }
+      // Open deposit form and populate selected plan
+      window.openDepositForm = function(plan, minAmount, maxAmount) {
+        document.getElementById('plan').value = plan;
+        document.getElementById('depositForm').style.display = "block";
+        document.getElementById('amount').setAttribute('min', minAmount);
+        document.getElementById('amount').setAttribute('max', maxAmount);
+      }
 
-  // Close the deposit form
-  function closeDepositForm() {
-    document.getElementById('depositForm').style.display = "none";
-  }
+      // Close the deposit form
+      window.closeDepositForm = function() {
+        document.getElementById('depositForm').style.display = "none";
+      }
 
+      // Toggle crypto options visibility
+      window.toggleCryptoOptions = function() {
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const cryptoOptions = document.getElementById('cryptoOptions');
+        if (paymentMethod === 'crypto') {
+          cryptoOptions.style.display = "block";
+        } else {
+          cryptoOptions.style.display = "none";
+        }
+      }
   // Handle Deposit Submission
   async function handleDeposit(event) {
     event.preventDefault();
