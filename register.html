@@ -7,7 +7,7 @@
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <title>Create Account - Cooperate Finance</title>
     <style>
-      /* Reset */
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
@@ -34,7 +34,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
         }
         .header a {
             color: white;
@@ -44,7 +43,6 @@
         .header .menu {
             display: flex;
             gap: 20px;
-            flex-wrap: wrap;
         }
         .header .button {
             background-color: #ff5050;
@@ -68,6 +66,37 @@
             position: relative;
         }
 
+        .button-like {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-left: none; /* Remove the left border to merge with input */
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            user-select: none; /* Prevent text selection */
+        }
+
+        .button-like:hover {
+            background-color: #0056b3;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            max-width: 300px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+
         /* Overlay effect */
         .create-account-container::before {
             content: "";
@@ -84,8 +113,7 @@
         .create-account-box {
             position: relative;
             z-index: 2;
-            width: 90%;
-            max-width: 400px;
+            width: 400px;
             margin: auto;
             background-color: #2a2b38;
             padding: 30px;
@@ -107,6 +135,9 @@
             border-radius: 4px;
             background: #1e1f26;
             color: #fff;
+        }
+        .create-account-box input[type="checkbox"] {
+            margin-top: 15px;
         }
         .create-account-box button {
             width: 100%;
@@ -131,9 +162,9 @@
             color: #bbb;
             padding: 30px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            justify-content: space-around;
+            text-align: left;
+            flex-wrap: wrap;
         }
         .footer div {
             margin: 10px;
@@ -156,8 +187,7 @@
             text-align: center;
             padding: 10px;
         }
-
-        /* Responsive Styles */
+           /* Responsive Styles */
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -171,7 +201,6 @@
                 text-align: center;
             }
         }
-
     </style>
 </head>
 <body>
