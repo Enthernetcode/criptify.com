@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cooperate Finance</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .admin-panel {
+            width: 100%;
+            max-width: 900px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e1f26;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1e1f26;
+            color: #fff;
+        }
+
+        .update-button, .delete-button, .edit-button, .logout-button {
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .update-button {
+            background-color: #ff5050;
+        }
+
+        .edit-button {
+            background-color: #ff9900;
+        }
+
+        .delete-button {
+            background-color: #c0392b;
+        }
+
+        .logout-button {
+            background-color: #333;
+            float: right;
+            margin-bottom: 10px;
+        }
+
+        .update-button:hover {
+            background-color: #e64545;
+        }
+
+        .edit-button:hover {
+            background-color: #e68a00;
+        }
+
+        .delete-button:hover {
+            background-color: #e74c3c;
+        }
+
+        .logout-button:hover {
+            background-color: #555;
+        }
+
+        @media (max-width: 768px) {
+            table, th, td {
+                display: block;
+                width: 100%;
+            }
+
+            th, td {
+                text-align: right;
+                padding: 10px;
+                position: relative;
+            }
+
+            th::before, td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+    </style>
+    <script>
+        function checkAdminAuth() {
+            const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
+            if (isAdminLoggedIn !== "true") {
+                window.location.href = "admin_login.html";
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem("adminLoggedIn");
+            window.location.href = "admin_login.html";
+        }
+
+        window.onload = checkAdminAuth;
+    </script>
+</head>
+<body>
+    <div class="admin-panel">
+        <button class="logout-button" onclick="logoutAdmin()">Logout</button>
+        <h1>Welcome to the Admin Dashboard</h1>
+        <h2>Wallet Information</h2>
+        <table id="wallet-table">
+            <thead>
+                <tr>
+                    <th>Wallet</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="wallet-list">
+                <!-- Wallet data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+            authDomain: "cooperate-finance.firebaseapp.com",
+            databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+            projectId: "cooperate-finance",
+            storageBucket: "cooperate-finance.appspot.com",
+            messagingSenderId: "1017369894509",
+            appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        const walletsRef = ref(db, 'Wallets');
+
+        const fetchWallets = async () => {
+            try {
+                const snapshot = await get(walletsRef);
+                const walletsData = snapshot.val();
+                const walletListContainer = document.getElementById('wallet-list');
+                walletListContainer.innerHTML = '';
+
+                for (const walletKey in walletsData) {
+                    const walletValue = walletsData[walletKey];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Wallet Type">${walletKey}</td>
+                        <td data-label="Wallet Value">${walletValue}</td>
+                        <td data-label="Actions">
+                            <button class="edit-button">Edit</button>
+                            <button class="delete-button">Delete</button>
+                        </td>
+                    `;
+                    walletListContainer.appendChild(row);
+
+                    row.querySelector('.edit-button').addEventListener('click', async () => {
+                        const newWalletValue = prompt(`Enter new value for "${walletKey}":`, walletValue);
+                        if (newWalletValue && newWalletValue.trim() !== "") {
+                            try {
+                                await set(ref(db, `Wallets/${walletKey}`), newWalletValue.trim());
+                                alert(`Wallet "${walletKey}" updated successfully.`);
+                                fetchWallets();
+                            } catch (error) {
+                                console.error('Error updating wallet:', error);
+                                alert('Failed to update wallet.');
+                            }
+                        }
+                    });
+
+                    row.querySelector('.delete-button').addEventListener('click', async () => {
+                        if (confirm(`Are you sure you want to delete "${walletKey}"?`)) {
+                            try {
+                                await remove(ref(db, `Wallets/${walletKey}`));
+                                alert(`Wallet "${walletKey}" deleted successfully.`);
+                                fetchWallets();
+                            } catch (error) {
+                                console.error('Error deleting wallet:', error);
+                                alert('Failed to delete wallet.');
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching wallet data:', error);
+            }
+        };
+
+        fetchWallets();
+    </script>
+</body>
+</html>
+

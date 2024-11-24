@@ -62,7 +62,7 @@
         }
 
         /* Button Styling */
-        .update-button, .delete-button, .logout-button {
+        .update-button, .delete-button, .edit-button, .logout-button {
             color: #fff;
             border: none;
             padding: 8px 12px;
@@ -73,6 +73,10 @@
 
         .update-button {
             background-color: #ff5050;
+        }
+
+        .edit-button {
+            background-color: #ff9900;
         }
 
         .delete-button {
@@ -87,6 +91,10 @@
 
         .update-button:hover {
             background-color: #e64545;
+        }
+
+        .edit-button:hover {
+            background-color: #e68a00;
         }
 
         .delete-button:hover {
@@ -149,6 +157,7 @@
         <button class="logout-button" onclick="logoutAdmin()">Logout</button>
         <h1>Welcome to the Admin Dashboard</h1>
         
+        <h2>User Information</h2>
         <table id="user-table">
             <thead>
                 <tr>
@@ -164,28 +173,54 @@
                 <!-- User data will be inserted here by JavaScript -->
             </tbody>
         </table>
+
+        <h2>Signup Codes</h2>
+        <table id="signup-code-table">
+            <thead>
+                <tr>
+                    <th>Signup Code</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="signup-code-list">
+                <!-- Signup code data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+
+        <h2>Wallet Information</h2>
+        <table id="wallet-table">
+            <thead>
+                <tr>
+                    <th>Wallet</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="wallet-list">
+                <!-- Wallet data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
     </div>
 
-    <script type="module">
-        // Setting up Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-        import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
-            authDomain: "cooperate-finance.firebaseapp.com",
-            databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-            projectId: "cooperate-finance",
-            storageBucket: "cooperate-finance.appspot.com",
-            messagingSenderId: "1017369894509",
-            appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase();
+   <script type="module">
+    // Firebase setup
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
 
-        // Get user data and populate table
-        const usersRef = ref(db, 'UsersList');
+     const usersRef = ref(db, 'UsersList');
         
         const fetchUsersData = async () => {
             try {
@@ -194,7 +229,7 @@
                 const userListContainer = document.getElementById('user-list');
                 userListContainer.innerHTML = ''; // Clear previous entries
                 
-                // Iterate through users and create table rows
+                // Iterate through users and create user table rows
                 for (const username in usersData) {
                     if (usersData.hasOwnProperty(username)) {
                         const userData = usersData[username];
@@ -242,8 +277,90 @@
             }
         };
 
-        // Initial fetch of users data
-        fetchUsersData();
-    </script>
+
+    // Function to handle fetching data and displaying errors
+    const fetchData = async (refPath, callback) => {
+        try {
+            const snapshot = await get(ref(db, refPath));
+            const data = snapshot.val();
+            if (data) {
+                callback(data);  // Call the callback function with fetched data
+            } else {
+                console.log(`No data available at ${refPath}`);
+            }
+        } catch (error) {
+            console.error(`Error fetching data from ${refPath}:`, error);
+        }
+    };
+
+    // Fetch and display Signup Codes
+    const fetchSignupCodes = () => {
+        fetchData('SignupCode', (signupCodeData) => {
+            const signupCodeListContainer = document.getElementById('signup-code-list');
+            signupCodeListContainer.innerHTML = ''; // Clear previous entries
+            for (const code in signupCodeData) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${signupCodeData[code]}</td>
+                    <td>
+                        <button class="edit-button">Edit Code</button>
+                    </td>
+                `;
+                signupCodeListContainer.appendChild(row);
+            }
+        });
+    };
+
+    const walletsRef = ref(db, 'Wallets');
+
+        const fetchWallets = async () => {
+            try {
+                const snapshot = await get(walletsRef);
+                const walletsData = snapshot.val();
+                const walletListContainer = document.getElementById('wallet-list');
+                walletListContainer.innerHTML = '';
+
+                for (const walletKey in walletsData) {
+                    const walletValue = walletsData[walletKey];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Wallet Type">${walletKey}</td>
+                        <td data-label="Wallet Value">${walletValue}</td>
+                        <td data-label="Actions">
+                            <button class="edit-button">Edit</button>
+                        </td>
+                    `;
+                    walletListContainer.appendChild(row);
+
+                    row.querySelector('.edit-button').addEventListener('click', async () => {
+                        const newWalletValue = prompt(`Enter new value for "${walletKey}":`, walletValue);
+                        if (newWalletValue && newWalletValue.trim() !== "") {
+                            try {
+                                await set(ref(db, `Wallets/${walletKey}`), newWalletValue.trim());
+                                alert(`Wallet "${walletKey}" updated successfully.`);
+                                fetchWallets();
+                            } catch (error) {
+                                console.error('Error updating wallet:', error);
+                                alert('Failed to update wallet.');
+                            }
+                        }
+                    });
+
+                   
+                }
+            } catch (error) {
+                console.error('Error fetching wallet data:', error);
+            }
+        };
+
+
+
+   
+    // Initialize data loading
+    fetchSignupCodes();
+    fetchWallets();
+    fetchUsersData();
+</script>
+
 </body>
 </html>

@@ -16,41 +16,37 @@
         }
 
         /* Body and Wrapper */
-body {
+        body {
             background-color: #f5f5f5;
             color: #333;
-            background-size: cover;
         }
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 100vh; /* Ensure the wrapper fills the viewport height */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-}
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
         /* Header */
-.header {
+        .header {
             background-color: #1e1f26;
             color: white;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
-.header a {
+        .header a {
             color: white;
             text-decoration: none;
             margin: 0 15px;
-            position: relative; /* Ensure the header doesn't overlap the next content */
-
-
         }
-.header .menu {
+        .header .menu {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
-.header .button {
+        .header .button {
             background-color: #ff5050;
             padding: 8px 16px;
             border-radius: 5px;
@@ -58,84 +54,123 @@ body {
             color: white;
         }
 
-.create-account-container {
-    margin: 20px auto; /* Center container horizontally */
-    padding: 50px 20px; /* Internal spacing */
-    position: relative;
-    max-width: 90%; /* Restrict width to 90% of the screen */
-    min-height: calc(100vh - 200px); /* Dynamically adjust height to fit the viewport */
-    background: rgba(30, 31, 38, 0.8); /* Background with transparency */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better aesthetics */
-}
+        /* Main content */
+        .create-account-container {
+            background-color: #1e1f26;
+            padding: 50px 0;
+            text-align: center;
+            color: white;
+            flex: 1;
+            background-image: url('your-background-image.jpg'); /* Replace with actual image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
 
+        /* Overlay effect */
+        .create-account-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 31, 38, 0.8); /* Dark overlay */
+            z-index: 1;
+        }
 
-.create-account-container::before {
-    z-index: 0;
-}
+        /* Account Creation Box */
+        .create-account-box {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            background-color: #2a2b38;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .create-account-box h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .create-account-box input[type="text"],
+        .create-account-box input[type="email"],
+        .create-account-box input[type="password"],
+        .create-account-box select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background: #1e1f26;
+            color: #fff;
+        }
+        .create-account-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5050;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .create-account-box a {
+            color: #bbb;
+            font-size: 12px;
+            text-decoration: none;
+        }
 
-.create-account-box {
-    max-width: 400px; /* Restrict box width for better readability */
-    margin: auto; /* Center the form box */
-    padding: 30px;
-    background-color: #2a2b38; /* Background color for form box */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-}
+        /* Footer */
+        .footer {
+            background-color: #1e1f26;
+            color: #bbb;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .footer div {
+            margin: 10px;
+            max-width: 250px;
+        }
+        .footer a {
+            color: #bbb;
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+        }
+        .footer .footer-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .footer-bottom {
+            background-color: #ff5050;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
 
-.footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    padding: 20px;
-}
-
-.footer div {
-    flex: 1 1 200px;
-}
-
-.input-container {
-    display: flex;
-    align-items: stretch;
-}
-
-.input-field {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-    outline: none;
-}
-
-.button-like {
-    padding: 10px 16px;
-    background-color: #007bff;
-    border: 1px solid #ccc;
-    border-left: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-}
-
-header, .footer {
-    flex-shrink: 0; /* Prevent collapsing of header and footer */
-    width: 100%; /* Ensure they span the full screen width */
-}
-
-.button-like:hover {
-    background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-    .create-account-box {
-        width: 90%;
-    }
-
-    .footer div {
-        flex: 1 1 100%;
-    }
-}
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            .footer {
+                text-align: center;
+            }
+        }
 
     </style>
 </head>
