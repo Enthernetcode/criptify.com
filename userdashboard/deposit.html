@@ -6,15 +6,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="style/custom.css" rel="stylesheet">
-    <link href='style/bootstrap.min.css' rel='stylesheet' type='text/css'>
-    <link href='style/default.css' rel='stylesheet' type='text/css'>
-    <link href='style/tab.css' rel='stylesheet' type='text/css'>
     <link rel="icon" href="../styles/images/favicon.png">
-    <script src='style/jquery.js' type='text/javascript'></script>
-    <script src='style/setting2.js' type='text/javascript'></script>
-    <script src='style/tab.js' type='text/javascript'></script>
-    <script src='style/bootstrap.min.js' type='text/javascript'></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
       /* Loading Spinner */
       .loading-spinner {
@@ -105,99 +97,93 @@
   </head>
 
   <body class="loginarea" style="zoom: 1;">
-
     <!-- Loading Spinner -->
-<div class="loading-spinner">
-    <img src="styles/images/spinner.gif" alt="Loading..."> <!-- Replace with an actual spinner image URL -->
-</div>
+    <div class="loading-spinner" id="spinner">
+      <img src="styles/images/spinner.gif" alt="Loading...">
+    </div>
 
     <div class="inside_inner_account">
-    <div class="member_wrap">
+      <div class="member_wrap">
         <div class="membersidebar">
-            <ul>
-                <li><a href="customer.html">My Account</a></li>
-                <li><a href="deposit.html">Deposit</a></li>
-                <li><a href="deposit_history.html">Deposits History</a></li>
-                <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="plans.html">Plans</a></li>
-                <li><a id="signoutlink" href="#">Logout</a></li>
-            </ul>
+          <ul>
+            <li><a href="customer.html">My Account</a></li>
+            <li><a href="deposit.html">Deposit</a></li>
+            <li><a href="deposit_history.html">Deposits History</a></li>
+            <li><a href="withdraw.html">Withdraw</a></li>
+            <li><a href="plans.html">Plans</a></li>
+            <li><a id="signoutlink" href="#">Logout</a></li>
+          </ul>
         </div>
-        <div class="member-container">
-            <div class="account_top">
-                <div class="user_left">
-                    <h2>Welcome, <span id="userlink" href="#">User</span></h2>
-                </div>
-            </div>
-        <!-- Deposit Section -->
-        <div class="col-md-9">
-          <div class="row">
-            <!-- Investment Plans -->
-            <div class="col-12 col-sm-6 col-md-3 pack starter">
-              <h3>Starter Pack</h3>
-              <p>$500 - $5,999</p>
-              <p>6% weekly ROI</p>
-              <p>8% compounding</p>
-              <p>6% referral bonus</p>
-              <button class="btn btn-primary" onclick="openDepositForm('Starter Pack', 500, 5999)">Invest</button>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3 pack silver">
-              <h3>Silver Pack</h3>
-              <p>$6,000 - $18,999</p>
-              <p>8% weekly ROI</p>
-              <p>10% compounding</p>
-              <p>6% referral bonus</p>
-              <button class="btn btn-primary" onclick="openDepositForm('Silver Pack', 6000, 18999)">Invest</button>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3 pack gold">
-              <h3>Gold Pack</h3>
-              <p>$19,000 - $49,999</p>
-              <p>10% weekly ROI</p>
-              <p>12% compounding</p>
-              <p>6% referral bonus</p>
-              <button class="btn btn-primary" onclick="openDepositForm('Gold Pack', 19000, 49999)">Invest</button>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3 pack diamond">
-              <h3>Diamond Pack</h3>
-              <p>$50,000 - Unlimited</p>
-              <p>12% weekly ROI</p>
-              <p>14% compounding</p>
-              <p>6% referral bonus</p>
-              <button class="btn btn-primary" onclick="openDepositForm('Diamond Pack', 50000, Infinity)">Invest</button>
+        <div class="member-container" id="accountContent">
+          <div class="account_top">
+            <div class="user_left">
+              <h2>Welcome, <span id="userlink" href="#">User</span></h2>
             </div>
           </div>
+          <!-- Deposit Section -->
+          <div class="col-md-9">
+            <div class="row">
+              <!-- Investment Plans -->
+              <div class="col-12 col-sm-6 col-md-3 pack starter">
+                <h3>Starter Pack</h3>
+                <p>$500 - $5,999</p>
+                <p>6% weekly ROI</p>
+                <p>8% compounding</p>
+                <p>6% referral bonus</p>
+                <button class="btn btn-primary" onclick="openDepositForm('Starter Pack', 500, 5999)">Invest</button>
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 pack silver">
+                <h3>Silver Pack</h3>
+                <p>$6,000 - $18,999</p>
+                <p>8% weekly ROI</p>
+                <p>10% compounding</p>
+                <p>6% referral bonus</p>
+                <button class="btn btn-primary" onclick="openDepositForm('Silver Pack', 6000, 18999)">Invest</button>
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 pack gold">
+                <h3>Gold Pack</h3>
+                <p>$19,000 - $49,999</p>
+                <p>10% weekly ROI</p>
+                <p>12% compounding</p>
+                <p>6% referral bonus</p>
+                <button class="btn btn-primary" onclick="openDepositForm('Gold Pack', 19000, 49999)">Invest</button>
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 pack diamond">
+                <h3>Diamond Pack</h3>
+                <p>$50,000 - Unlimited</p>
+                <p>12% weekly ROI</p>
+                <p>14% compounding</p>
+                <p>6% referral bonus</p>
+                <button class="btn btn-primary" onclick="openDepositForm('Diamond Pack', 50000, Infinity)">Invest</button>
+              </div>
+            </div>
 
-          <!-- Deposit Form Modal -->
-          <div id="depositForm" class="modal">
-            <div class="modal-content">
-              <span class="close" onclick="closeDepositForm()">&times;</span>
-              <h3>Deposit</h3>
-              <form id="depositFormContent" onsubmit="handleDeposit(event)">
-                <label for="plan">Selected Plan:</label>
-                <input type="text" id="plan" name="plan" class="form-control" readonly required>
+            <!-- Deposit Form Modal -->
+            <div id="depositForm" class="modal">
+              <div class="modal-content">
+                <span class="close" onclick="closeDepositForm()">&times;</span>
+                <h3>Deposit</h3>
+                <form id="depositFormContent" onsubmit="handleDeposit(event)">
+                  <label for="plan">Selected Plan:</label>
+                  <input type="text" id="plan" name="plan" class="form-control" readonly required>
 
-                <label for="amount" class="mt-3">Deposit Amount (USD):</label>
-                <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter Amount" required>
+                  <label for="amount" class="mt-3">Deposit Amount (USD):</label>
+                  <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter Amount" required>
 
-                <label for="paymentMethod" class="mt-3">Payment Method:</label>
-                <select id="paymentMethod" name="paymentMethod" class="form-control" onchange="toggleCryptoOptions()">
-                  <option value="bank">Bank Transfer</option>
-                  <option value="crypto">Cryptocurrency</option>
-                </select>
-
-                <!-- Cryptocurrency options appear only if Crypto is selected -->
-                <div id="cryptoOptions" class="mt-3" style="display: none;">
-                  <label for="cryptoCurrency">Select Cryptocurrency:</label>
-                  <select id="cryptoCurrency" name="cryptoCurrency" class="form-control">
-                    <option value="TRON">TRON</option>
-                    <option value="BTC">Bitcoin (BTC)</option>
-                    <option value="USDT">Tether (USDT)</option>
-                    <option value="BNB">Binance Coin (BNB)</option>
+                  <label for="paymentMethod" class="mt-3">Payment Method:</label>
+                  <select id="paymentMethod" name="paymentMethod" class="form-control" onchange="toggleCryptoOptions()">
+                    <option value="bank">Bank Transfer</option>
+                    <option value="crypto">Cryptocurrency</option>
                   </select>
-                </div>
 
-                <button type="submit" class="btn btn-success mt-3">Submit Deposit</button>
-              </form>
+                  <div id="cryptoOptions" class="mt-3" style="display: none;">
+                    <label for="cryptoCurrency">Select Cryptocurrency:</label>
+                    <select id="cryptoCurrency" name="cryptoCurrency" class="form-control"></select>
+                  </div>
+
+                  <button type="submit" class="btn btn-success mt-3">Submit Deposit</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -211,19 +197,15 @@
       </div>
     </div>
 
-    <!-- JavaScript to handle form logic -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="style/setting2.js" type="text/javascript"></script>
-    <script src="style/tab.js" type="text/javascript"></script>
-    <script src="style/bootstrap.min.js" type="text/javascript"></script>
-<script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+      import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+      import { emailjs } from "https://cdn.emailjs.com/dist/email.min.js";
+
 
     // Initialize emailjs
     (function () {
