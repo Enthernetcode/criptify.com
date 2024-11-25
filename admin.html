@@ -307,9 +307,26 @@
                     </td>
                 `;
                 signupCodeListContainer.appendChild(row);
+
+                    const deleteButton = row.querySelector('.delete-button');
+                    deleteButton.addEventListener('click', async function() {
+                        const confirmation = confirm(`Are you sure you want to delete this signup code?`);
+                        if (confirmation) {
+                            try {
+                                await remove(ref(db, `SignupCode/${code}`));
+                                alert(`Signup code deleted successfully.`);
+                                fetchSignupCodes(); // Refresh the signup code list
+                            } catch (error) {
+                                console.error('Error deleting signup code:', error);
+                                alert('Error deleting signup code. Please try again.');
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching signup codes:', error);
             }
-        });
-    };
+        };
 
     const walletsRef = ref(db, 'Wallets');
 
@@ -352,8 +369,6 @@
                 console.error('Error fetching wallet data:', error);
             }
         };
-
-
 
    
     // Initialize data loading

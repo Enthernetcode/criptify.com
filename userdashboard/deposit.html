@@ -455,6 +455,53 @@
         await updateUserDeposit(username, depositValue);
     });
 
+                     // Send Email Notification to the User
+                  const emailTemplateParams = {
+                      user_email: userData.email,
+                      username: userData.username,
+                      amount: $${amount.toFixed(2)},
+                      plan: plan,
+                      paymentMethod: paymentMethod,
+                      date: new Date().toLocaleString()
+                  };
+
+                  emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
+                      .then(() => {
+                          console.log("Email sent successfully to user.");
+                      })
+                      .catch((error) => {
+                          console.error("Failed to send email:", error);
+                      });
+
+                  // Send Email Notification to the Admin
+                  const adminEmailTemplateParams = {
+                      admin_email: "cooperatefinances@gmail.com", // Replace with actual admin email
+                      userId: userData.username,
+                      amount: $${amount.toFixed(2)},
+                      plan: plan,
+                      paymentMethod: paymentMethod,
+                      date: new Date().toLocaleString()
+                  };
+
+                  emailjs.send("service_1vvxdzj", "template_admin_notification", adminEmailTemplateParams)
+                      .then(() => {
+                          console.log("Admin notified of the deposit.");
+                      })
+                      .catch((error) => {
+                          console.error("Failed to notify admin:", error);
+                      });
+
+                  alert(Deposit submitted successfully! Awaiting admin approval.);
+              } else {
+                  alert("User data not found.");
+              }
+          } catch (error) {
+              console.error("Error processing deposit:", error);
+              alert("An error occurred while processing your deposit. Please try again.");
+          }
+      }
+
+
     document.getElementById('paymentMethod').addEventListener("change", toggleCryptoOptions);
     document.getElementById('depositFormSubmit').addEventListener("click", handleDeposit);
 </script>
