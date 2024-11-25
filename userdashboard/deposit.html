@@ -220,12 +220,15 @@
     <script src="style/tab.js" type="text/javascript"></script>
     <script src="style/bootstrap.min.js" type="text/javascript"></script>
 <script type="module">
+    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
     import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";(function() {
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
+    // Initialize emailjs
+    (function () {
         emailjs.init("BVUOlzj2CdQNf6Gsp");
     })();
-
 
     // Firebase Configuration
     const firebaseConfig = {
@@ -243,135 +246,55 @@
     const db = getDatabase();
     const auth = getAuth();
 
+    // DOM References
+    const userlink = document.getElementById('userlink');
+    const signoutlink = document.getElementById('signoutlink');
+    const spinner = document.getElementById('spinner');
+    const accountContent = document.getElementById('accountContent');
 
-    if (!userlink) console.warn("User link element not found.");
-    if (!signoutlink) console.warn("Signout link element not found.");
-    //if (!spinner) console.warn("Spinner element not found.");
-    //if (!accountContent) console.warn("Account content element not found.");
+    // Helper functions to show/hide elements
+    const showElement = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'block';
+    };
 
+    const hideElement = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    };
+
+    // Fetch user data from storage
     let currentUser = null;
-
-    // Function to get username from storage
     function getUsername() {
-        console.log("Getting username...");
         try {
             let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            console.log("Keep logged in:", keepLoggedIn);
-
-            const userData = keepLoggedIn === 'yes' 
-                ? localStorage.getItem('user') 
+            const userData = keepLoggedIn === 'yes'
+                ? localStorage.getItem('user')
                 : sessionStorage.getItem('user');
-
-            console.log("User data from storage:", userData);
-
-            currentUser = JSON.parse(userData);
-            console.log("Current user data parsed:", currentUser);
+            currentUser = JSON.parse(userData) || {};
         } catch (error) {
             console.error("Failed to parse user data:", error);
             currentUser = null;
         }
     }
 
-
-      // Page load event handler
-    window.onload = async function () {
-        console.log("Page loaded. Initializing...");
-
-        // Show spinner
-        if (spinner) spinner.style.display = 'block';
-        if (accountContent) accountContent.style.display = 'none';
-
-        // Get the current user
-        getUsername();
-        if (!currentUser || !currentUser.username) {
-            console.error("No valid user found. Redirecting to login...");
-            alert("Invalid user data. Please log in again.");
-            window.location = "/signin.html";
-            return;
-        }
-
-         // Fetch updated user data from database
-        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
-        if (updatedUserData) {
-            console.log("Updated user data:", updatedUserData);
-            currentUser = updatedUserData;
-
-            // Update localStorage or sessionStorage
-            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            if (keepLoggedIn === 'yes') {
-                localStorage.setItem('user', JSON.stringify(currentUser));
-            } else {
-                sessionStorage.setItem('user', JSON.stringify(currentUser));
-            }
-
-            // Update UI
-            if (userlink) {
-                userlink.innerText = currentUser.username;
-                userlink.href = "#";
-            }
-
-            /*document.getElementById('usernam').innerText = currentUser.username ?? 'N/A';
-            document.getElementById('userbal').innerText = currentUser.balance ?? 'N/A';
-            document.getElementById('userwal').innerText = currentUser.withdrawal ?? 'N/A';
-            document.getElementById('userdep').innerText = currentUser.deposit ?? 'N/A';
-            document.getElementById('userdate').innerText = currentUser.date ?? 'N/A';
-            document.getElementById('userldate').innerText = currentUser.lastDate ?? 'N/A';
-            document.getElementById('userbon').innerText = currentUser.bonus ?? 'N/A'; */
-
-            if (signoutlink) {
-                signoutlink.innerText = "Sign Out";
-                signoutlink.href = "javascript:signout()";
-            }
-        } else {
-            console.error("Failed to fetch updated user data.");
-            alert("Error: Could not fetch user data.");
-        }
-
-        // Hide spinner
-        if (spinner) spinner.style.display = 'none';
-        if (accountContent) accountContent.style.display = 'block';
-    };
-
-
-    // Toggle cryptocurrency options
-    const toggleCryptoOptions = async () => {
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const cryptoOptions = document.getElementById('cryptoOptions');
-        if (paymentMethod === 'crypto') {
-            cryptoOptions.style.display = 'block';
-            await fetchWallets(); // Fetch wallet addresses
-        } else {
-            cryptoOptions.style.display = 'none';
-        }
-    };
-
-    // Fetch wallet addresses
-    const fetchWallets = async () => {
-        const walletsRef = ref(db, 'Wallets');
+    // Fetch updated user data from database
+    async function fetchUserDataFromDatabase(username) {
         try {
-            const snapshot = await get(walletsRef);
-            const walletsData = snapshot.val();
-
-            const cryptoSelect = document.getElementById('cryptoCurrency');
-            cryptoSelect.innerHTML = ''; // Clear previous options
-            for (const walletKey in walletsData) {
-                const walletValue = walletsData[walletKey];
-                const option = document.createElement('option');
-                option.value = walletKey;
-                option.textContent = `${walletKey} (${walletValue})`;
-                cryptoSelect.appendChild(option);
-            }
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, `UsersList/${username}`));
+            return snapshot.exists() ? snapshot.val() : null;
         } catch (error) {
-            console.error("Error fetching wallets:", error);
-            alert('Failed to load wallet addresses. Please try again.');
+            console.error("Error fetching user data:", error);
+            return null;
         }
-    };
+    }
 
-    // Update user deposit and history
+    // Update user deposit and balance
     async function updateUserDeposit(username, depositAmount) {
-        const dbRef = ref(db);
         try {
-            const userSnapshot = await get(child(dbRef, "UsersList/" + username));
+            const dbRef = ref(db);
+            const userSnapshot = await get(child(dbRef, `UsersList/${username}`));
             if (!userSnapshot.exists()) {
                 alert("User not found.");
                 return;
@@ -387,7 +310,7 @@
                 date: new Date().toISOString(),
             });
 
-            await update(ref(db, "UsersList/" + username), {
+            await update(ref(db, `UsersList/${username}`), {
                 deposit: updatedDeposit,
                 balance: updatedBalance,
                 depositHistory: depositHistory,
@@ -400,14 +323,45 @@
         }
     }
 
-    // Handle deposit submission
-    async function handleDeposit(event) {
-        event.preventDefault(); // Prevent default form submission
+    // Toggle cryptocurrency options
+    async function toggleCryptoOptions() {
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const cryptoOptions = document.getElementById('cryptoOptions');
+        if (paymentMethod === 'crypto') {
+            cryptoOptions.style.display = 'block';
+            await fetchWallets();
+        } else {
+            cryptoOptions.style.display = 'none';
+        }
+    }
 
-        const spinner = document.getElementById('spinner'); // Assume a spinner element exists
-        spinner.style.display = 'block';
-
+    // Fetch wallet addresses
+    async function fetchWallets() {
         try {
+            const walletsRef = ref(db, 'Wallets');
+            const snapshot = await get(walletsRef);
+            const walletsData = snapshot.val();
+
+            const cryptoSelect = document.getElementById('cryptoCurrency');
+            cryptoSelect.innerHTML = '';
+            for (const walletKey in walletsData) {
+                const walletValue = walletsData[walletKey];
+                const option = document.createElement('option');
+                option.value = walletKey;
+                option.textContent = `${walletKey} (${walletValue})`;
+                cryptoSelect.appendChild(option);
+            }
+        } catch (error) {
+            console.error("Error fetching wallets:", error);
+            alert('Failed to load wallet addresses. Please try again.');
+        }
+    }
+
+    // Handle deposit form submission
+    async function handleDeposit(event) {
+        event.preventDefault();
+        try {
+            showElement('spinner');
             const user = auth.currentUser;
             if (!user) throw new Error("No authenticated user found.");
 
@@ -434,36 +388,64 @@
             console.error("Error submitting deposit:", error);
             alert(`Error: ${error.message}`);
         } finally {
-            spinner.style.display = 'none';
+            hideElement('spinner');
         }
     }
 
-    // Open deposit form
+    // Open and close deposit form
     function openDepositForm(planName, minAmount, maxAmount) {
         document.getElementById('plan').value = planName;
         document.getElementById('amount').setAttribute('min', minAmount);
         document.getElementById('amount').setAttribute('max', maxAmount);
-        document.getElementById('depositForm').style.display = 'block';
+        showElement('depositForm');
     }
 
-    // Close deposit form
     function closeDepositForm() {
-        document.getElementById('depositForm').style.display = 'none';
+        hideElement('depositForm');
     }
 
-    // Initialize user data
-    auth.onAuthStateChanged((user) => {
-        const userLink = document.getElementById('userlink'); // Ensure this element exists
-        if (user) {
-            userLink.textContent = user.displayName || 'User';
-        } else {
-            alert('No user logged in. Redirecting to login page.');
-            window.location.href = '/signin.html';
-        }
-    });
+    // Page load event handler
+    window.onload = async function () {
+        showElement('spinner');
+        hideElement('accountContent');
 
-    // Event Listeners
-    document.getElementById('update-deposit-btn').addEventListener("click", async (event) => {
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            alert("Invalid user data. Please log in again.");
+            window.location = "/signin.html";
+            return;
+        }
+
+        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+        if (updatedUserData) {
+            currentUser = updatedUserData;
+
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            if (userlink) {
+                userlink.innerText = currentUser.username;
+                userlink.href = "#";
+            }
+
+            if (signoutlink) {
+                signoutlink.innerText = "Sign Out";
+                signoutlink.href = "javascript:signout()";
+            }
+        } else {
+            alert("Error: Could not fetch user data.");
+        }
+
+        hideElement('spinner');
+        showElement('accountContent');
+    };
+
+    // Event listeners
+    document.getElementById('update-deposit-btn').addEventListener("click", async () => {
         const username = document.getElementById('userInp').value;
         const depositValue = parseFloat(document.getElementById('depositValue').value);
         if (!username || isNaN(depositValue) || depositValue <= 0) {
@@ -474,7 +456,7 @@
     });
 
     document.getElementById('paymentMethod').addEventListener("change", toggleCryptoOptions);
-    document.getElementById('depositFormSubmit').addEventListener("click", handleDeposit); // Assume a button with ID exists
+    document.getElementById('depositFormSubmit').addEventListener("click", handleDeposit);
 </script>
 
 
