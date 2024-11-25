@@ -272,6 +272,25 @@
         }
     }
 
+     async function fetchUserDataFromDatabase(userId) {
+        console.log("Fetching user data from database for ID:", userId);
+        try {
+            const dbRef = ref(getDatabase()); // Create database reference
+            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
+            if (snapshot.exists()) {
+                console.log("User data fetched successfully:", snapshot.val());
+                return snapshot.val();
+            } else {
+                console.warn("No user data found for ID:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from database:", error);
+            return null;
+        }
+    }
+
+
     // Toggle cryptocurrency options
     const toggleCryptoOptions = async () => {
         const paymentMethod = document.getElementById('paymentMethod').value;
