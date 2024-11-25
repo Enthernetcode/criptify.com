@@ -272,23 +272,6 @@
         }
     }
 
-     async function fetchUserDataFromDatabase(userId) {
-        console.log("Fetching user data from database for ID:", userId);
-        try {
-            const dbRef = ref(getDatabase()); // Create database reference
-            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
-            if (snapshot.exists()) {
-                console.log("User data fetched successfully:", snapshot.val());
-                return snapshot.val();
-            } else {
-                console.warn("No user data found for ID:", userId);
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching data from database:", error);
-            return null;
-        }
-    }
 
       // Page load event handler
     window.onload = async function () {
@@ -306,6 +289,48 @@
             window.location = "/signin.html";
             return;
         }
+
+         // Fetch updated user data from database
+        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+        if (updatedUserData) {
+            console.log("Updated user data:", updatedUserData);
+            currentUser = updatedUserData;
+
+            // Update localStorage or sessionStorage
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            // Update UI
+            if (userlink) {
+                userlink.innerText = currentUser.username;
+                userlink.href = "#";
+            }
+
+            /*document.getElementById('usernam').innerText = currentUser.username ?? 'N/A';
+            document.getElementById('userbal').innerText = currentUser.balance ?? 'N/A';
+            document.getElementById('userwal').innerText = currentUser.withdrawal ?? 'N/A';
+            document.getElementById('userdep').innerText = currentUser.deposit ?? 'N/A';
+            document.getElementById('userdate').innerText = currentUser.date ?? 'N/A';
+            document.getElementById('userldate').innerText = currentUser.lastDate ?? 'N/A';
+            document.getElementById('userbon').innerText = currentUser.bonus ?? 'N/A'; */
+
+            if (signoutlink) {
+                signoutlink.innerText = "Sign Out";
+                signoutlink.href = "javascript:signout()";
+            }
+        } else {
+            console.error("Failed to fetch updated user data.");
+            alert("Error: Could not fetch user data.");
+        }
+
+        // Hide spinner
+        if (spinner) spinner.style.display = 'none';
+        if (accountContent) accountContent.style.display = 'block';
+    };
 
 
     // Toggle cryptocurrency options
