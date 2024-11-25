@@ -290,6 +290,23 @@
         }
     }
 
+      // Page load event handler
+    window.onload = async function () {
+        console.log("Page loaded. Initializing...");
+
+        // Show spinner
+        if (spinner) spinner.style.display = 'block';
+        if (accountContent) accountContent.style.display = 'none';
+
+        // Get the current user
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            console.error("No valid user found. Redirecting to login...");
+            alert("Invalid user data. Please log in again.");
+            window.location = "/signin.html";
+            return;
+        }
+
 
     // Toggle cryptocurrency options
     const toggleCryptoOptions = async () => {
