@@ -1,0 +1,580 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<!-- font-family: 'Open Sans', sans-serif; -->
+<link href='style/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="" />
+<link href='style/custom.css' rel='stylesheet' type='text/css'>
+<link href='style/default.css' rel='stylesheet' type='text/css'>
+<link href='style/tab.css' rel='stylesheet' type='text/css'>
+<link rel="icon" href="../styles/images/favicon.png">
+<script defer src='style/jquery.js' type='text/javascript'></script>
+<script defer src='style/setting2.js' type='text/javascript'></script>
+<script defer src='style/tab.js' type='text/javascript'></script>
+<script defer src='style/bootstrap.min.js' type='text/javascript'></script>
+<script defer src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script defer src="restrict.js" type='text/javascript'></script>
+<style>
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .inside_inner_account {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="loginarea" style="zoom: 1;">
+<div class="wrapper-account">
+  <div class="headerContainer">
+    <div class="headerInner"> 
+      <div class="hdRight">
+        <div class="mainNavRight">
+          <div class="navbar">
+            <div class="navbar-inner">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Withdrawal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+body {
+  font-family: Arial;
+  font-size: 17px;
+  padding: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  margin: 0 -16px;
+}
+
+.col-25 {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+}
+
+.col-50 {
+  -ms-flex: 50%; /* IE10 */
+  flex: 50%;
+}
+
+.col-75 {
+  -ms-flex: 75%; /* IE10 */
+  flex: 75%;
+}
+
+.col-25,
+.col-50,
+.col-75 {
+  padding: 0 16px;
+}
+
+.container {
+  background-color: #f2f2f2;
+  padding: 5px 20px 15px 20px;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+}
+
+input[type=text] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+input[type=number] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+label {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.icon-container {
+  margin-bottom: 20px;
+  padding: 7px 0;
+  font-size: 24px;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  width: 100%;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+
+a {
+  color: #2196F3;
+}
+
+hr {
+  border: 1px solid lightgrey;
+}
+
+span.price {
+  float: right;
+  color: grey;
+}
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other (also change the direction - make the "cart" column go on top) */
+@media (max-width: 800px) {
+  .row {
+    flex-direction: column-reverse;
+  }
+  .col-25 {
+    margin-bottom: 20px;
+  }
+}
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<h2 align="center" style="color:white;"><b>Make a Withdrawal Request.</b></h2>
+<h6 align="center" style="color:white;">Available Balance: <span id="userbal">$0.00</span></h6>
+<h6 align="center" style="color:white;">Withdrawal: <span id="userwal" href="#">$0.00 </span></h6>
+<br>
+
+<p align="center" style="color:white;">Withdrawal/<a href="customer.html"style="color:yellow;">Home</a></p><br>
+    
+     <h4 style="color: red;">    </h4>
+a
+<div class="row">
+  <div class="col-75">
+    <div class="container">
+      
+        <div class="row">
+         
+
+          <div class="col-50">
+             
+            <h3>Select your preferred withdrawal payment option :</h3>
+ <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo"><img src="b.png" width="50px"> Bitcoin (recommended)</button>
+  <div id="demo" class="collapse"><br>
+  <br>
+  
+  
+     <form>
+         
+         
+        <input type="hidden" name="id" value="340">
+        <input type="hidden" name="des" value="Bitcoin Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+            <label for="fname"><i class="fa fa-amount"></i> Input Amount</label>
+            <input type="number" id="fname" name="amt" placeholder="Amount" required="">
+<label for="fname"><i class="fa fa-wallet"></i> Wallet Address</label>
+            <input type="text" id="fname" name="wallet" placeholder="Wallet Address" required="">
+          </div>
+          
+        </div>
+      
+        <input type="submit" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+  <hr>
+   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo2"><img src="trans.png" width="60px">  Transfer</button>
+  <div id="demo2" class="collapse"><br>
+  <br>
+     <form action="withdraw.html" method="POST" name="frank" onsubmit="return validateForm()">
+            <input type="hidden" name="id" value="340">
+            <input type="hidden" name="des" value="Transfer Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+              
+            <label for="cname">Name</label>
+            <input type="text" id="cname" name="name" placeholder="Name" required="">
+            <label for="ccnum">Account number</label>
+            <input type="number" id="ccnum" name="num" placeholder="Account Number" required="">
+            <label for="ccnum">Bank</label>
+            <input type="text" id="ccnum" name="bnk" placeholder="Bank" required="">
+            <label for="ccnum">Amount</label>
+            <input type="text" id="ccnum" name="amt" placeholder="Input Amount" required="">
+          </div>
+          
+        </div>
+      
+        <input type="submit" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+  
+   <hr>
+   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo3"><img src="cash.png" width="60px">Cashapp</button>
+  <div id="demo3" class="collapse"><br>
+  <br>
+     <form action="withdraw.html" method="POST" name="franks" onsubmit="return validateForm()">
+    <input type="hidden" name="id" value="340">
+    <input type="hidden" name="des" value="Cashapp Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+            
+            <label for="cname">Amount</label>
+            <input type="text" id="cname" name="amt" placeholder="Amount" required="">
+            <label for="ccnum">Cashapp Tag</label>
+            <input type="text" id="ccnum" name="wallet" placeholder="Cashapp Tag" required="">
+           
+            
+          </div>
+          
+        </div>
+      
+        <input type="submit" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+  <form action="withdraw.html" method="POST" name="franks" onsubmit="return validateForm()">
+  <hr>
+   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo4"><img src="s.png" width="50px"> Skrill</button>
+  <div id="demo4" class="collapse"><br>
+  <br>
+    
+          <input type="hidden" name="id" value="340">
+          <input type="hidden" name="des" value="Skrill Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+            <label for="fname"><i class="fa fa-amount"></i> Input Amount</label>
+            <input type="number" id="fname" name="amt" placeholder="Amount" required="">
+
+          </div>
+          
+        </div>
+      
+        <input type="submit" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+   <hr>
+   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo5"><img src="west.png" width="50px"> Western Union</button>
+  <div id="demo5" class="collapse"><br>
+  <br>
+     <form action="withdraw.html" method="POST" name="myForm" onsubmit="return validateForm()">
+      
+      <input type="hidden" name="id" value="340">
+      <input type="hidden" name="des" value="Western Union Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+            <label for="fname"><i class="fa fa-amount"></i> Input Amount</label>
+            <input type="number" id="fname" name="amt" placeholder="Amount" required="">
+
+          </div>
+          
+        </div>
+      
+        <input type="submit" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+  <hr>
+   <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo6"><img src="p.png" width="50px"> Paypal</button>
+  <div id="demo6" class="collapse"><br>
+  <br>
+     <form action="withdraw.html" method="POST" name="myForm" onsubmit="return validateForm()">
+    
+       <input type="hidden" name="id" value="340">
+       <input type="hidden" name="des" value="Paypal Withdrawal">
+          <input name="deposit" type="hidden" value="0.00">
+         <input name="email" type="hidden" value="test@gmail.com"> 
+         <input name="balance" type="hidden" value="0.00">
+        <div class="row">
+          <div class="col-50">
+            <label for="fname"><i class="fa fa-amount"></i> Input Amount</label>
+            <input type="number" id="fname" name="amt" placeholder="Amount" required="">
+
+          </div>
+          
+        </div>
+      
+        <input type="submit" id="withdrawBtn" value="Proceed" class="btn" name="submit">
+      </form>
+  </div>
+  
+  
+  
+ 
+          </div>
+          
+        </div>
+
+    </div>
+  </div>
+  
+</div>
+<hr>
+<br>
+<p align="center" style="color:white;">
+"If you are interested in learning more about the withdrawal process or have an issue please contact support; info@legalforexbroker.com to get a detailed description of the process."</p><br>
+
+
+
+<script defer src="//code.tidio.co/ky9hiws6anwirgof78lvnjeolcf38sau.js" async></script>
+
+<script defer type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, child, get, update, push } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+
+    console.log("Starting script...");
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
+
+    // Initialize Firebase
+    try {
+        console.log("Initializing Firebase...");
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase initialized successfully:", app);
+        const db = getDatabase(app);
+        console.log("Database initialized successfully:", db);
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
+
+    // References to DOM elements
+    console.log("Setting up DOM references...");
+    const userlink = document.getElementById('userlink');
+    const signoutlink = document.getElementById('signoutlink');
+    const spinner = document.querySelector('.loading-spinner');
+    const accountContent = document.querySelector('.inside_inner_account');
+    let currentUser = null;
+
+    // Function to get username from localStorage or sessionStorage
+    function getUsername() {
+        console.log("Getting username...");
+        try {
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            const userData = keepLoggedIn === 'yes' 
+                ? localStorage.getItem('user') 
+                : sessionStorage.getItem('user');
+
+            currentUser = JSON.parse(userData);
+            console.log("Current user data parsed:", currentUser);
+        } catch (error) {
+            console.error("Failed to parse user data:", error);
+            currentUser = null;
+        }
+    }
+
+    // Function to fetch user data from the Firebase database
+    async function fetchUserDataFromDatabase(userId) {
+        console.log("Fetching user data from database for ID:", userId);
+        try {
+            const dbRef = ref(getDatabase());
+            const snapshot = await get(child(dbRef, `UsersList/${userId}`));
+            if (snapshot.exists()) {
+                console.log("User data fetched successfully:", snapshot.val());
+                return snapshot.val();
+            } else {
+                console.warn("No user data found for ID:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching data from database:", error);
+            return null;
+        }
+    }
+
+    // Sign-out function
+    function signout() {
+        console.log("Signing out user...");
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
+        localStorage.removeItem('keepLoggedIn');
+        console.log("User signed out. Redirecting to login page...");
+        window.location = "login.html";
+    }
+
+    // Handle Withdrawal Logic
+    async function handleWithdrawal(amount) {
+        console.log("Processing withdrawal for amount:", amount);
+
+        if (!currentUser || !currentUser.username) {
+            alert("User not logged in. Please log in to proceed.");
+            return;
+        }
+
+        const userData = await fetchUserDataFromDatabase(currentUser.username);
+        if (!userData) {
+            alert("Failed to fetch user data.");
+            return;
+        }
+
+        if (amount <= 0) {
+            alert("Please enter a valid amount to withdraw.");
+            return;
+        }
+
+        const currentBalance = parseFloat(userData.balance);
+        if (amount > currentBalance) {
+            alert("Insufficient funds.");
+            return;
+        }
+
+        const updatedBalance = currentBalance - amount;
+        const withdrawalHistoryRef = ref(db, `UsersList/${currentUser.username}/withdrawalHistory`);
+
+        try {
+            // Update the user's balance in the database
+            await update(ref(db, `UsersList/${currentUser.username}`), { balance: updatedBalance });
+
+            // Push the withdrawal to the withdrawal history
+            const newWithdrawal = {
+                amount: amount,
+                date: new Date().toISOString(),
+                balanceAfter: updatedBalance
+            };
+            await push(withdrawalHistoryRef, newWithdrawal);
+
+            // Update currentUser locally
+            currentUser.balance = updatedBalance;
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            // Update UI with new balance and withdrawal amount
+            document.getElementById('userbal').innerText = updatedBalance.toFixed(2);
+            document.getElementById('userwal').innerText = (parseFloat(userData.withdrawal || 0) + amount).toFixed(2);
+
+            alert("Withdrawal successful!");
+        } catch (error) {
+            console.error("Error processing withdrawal:", error);
+            alert("An error occurred while processing your withdrawal.");
+        }
+    }
+
+    // Page load event handler
+    window.onload = async function () {
+        console.log("Page loaded. Initializing...");
+
+        // Show spinner
+        if (spinner) spinner.style.display = 'block';
+        if (accountContent) accountContent.style.display = 'none';
+
+        // Get the current user
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            console.error("No valid user found. Redirecting to login...");
+            alert("Invalid user data. Please log in again.");
+            window.location = "login.html";
+            return;
+        }
+
+        // Fetch updated user data from the database
+        const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
+        if (updatedUserData) {
+            console.log("Updated user data:", updatedUserData);
+            currentUser = updatedUserData;
+
+            // Update localStorage or sessionStorage
+            let keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            if (keepLoggedIn === 'yes') {
+                localStorage.setItem('user', JSON.stringify(currentUser));
+            } else {
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+            }
+
+            // Update UI
+            if (userlink) {
+                userlink.innerText = currentUser.username;
+                userlink.href = "#";
+            }
+
+           // document.getElementById('usernam').innerText = currentUser.username ?? 'N/A';
+            document.getElementById('userbal').innerText = currentUser.balance ?? 'N/A';
+            document.getElementById('userwal').innerText = currentUser.withdrawal ?? 'N/A';
+           // document.getElementById('userdep').innerText = currentUser.deposit ?? 'N/A';
+           // document.getElementById('userdate').innerText = currentUser.date ?? 'N/A';
+           // document.getElementById('userldate').innerText = currentUser.lastDate ?? 'N/A';
+           // document.getElementById('userbon').innerText = currentUser.bonus ?? 'N/A';
+
+            if (signoutlink) {
+                signoutlink.innerText = "Sign Out";
+                signoutlink.href = "javascript:signout()";
+            }
+        } else {
+            console.error("Failed to fetch updated user data.");
+            alert("Error: Could not fetch user data.");
+        }
+
+        // Hide spinner
+        if (spinner) spinner.style.display = 'none';
+        if (accountContent) accountContent.style.display = 'block';
+    };
+
+    // Event listener for the withdraw button
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+        const amount = parseFloat(prompt("Enter amount to withdraw:"));
+        if (!isNaN(amount) && amount > 0) {
+            handleWithdrawal(amount);
+        } else {
+            alert("Invalid amount entered.");
+        }
+    });
+</script>
+
+</body>
+   </html>

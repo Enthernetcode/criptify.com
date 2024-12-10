@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cooperate Finance</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Page Styling */
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Admin Panel Container */
+        .admin-panel {
+            width: 100%;
+            max-width: 900px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e1f26;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1e1f26;
+            color: #fff;
+        }
+
+        /* Button Styling */
+        .update-button, .delete-button, .edit-button, .logout-button {
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .update-button {
+            background-color: #ff5050;
+        }
+
+        .edit-button {
+            background-color: #ff9900;
+        }
+
+        .delete-button {
+            background-color: #c0392b;
+        }
+
+        .logout-button {
+            background-color: #333;
+            float: right;
+            margin-bottom: 10px;
+        }
+
+        .update-button:hover {
+            background-color: #e64545;
+        }
+
+        .edit-button:hover {
+            background-color: #e68a00;
+        }
+
+        .delete-button:hover {
+            background-color: #e74c3c;
+        }
+
+        .logout-button:hover {
+            background-color: #555;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, th, td {
+                display: block;
+                width: 100%;
+            }
+
+            th, td {
+                text-align: right;
+                padding: 10px;
+                position: relative;
+            }
+
+            th::before, td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+
+            th, td[data-label]:before {
+                content: attr(data-label);
+            }
+        }
+    </style>
+    <script>
+        // Function to check admin login status
+        function checkAdminAuth() {
+            const isAdminLoggedIn = sessionStorage.getItem("adminLoggedIn");
+
+            // Redirect to login page if not logged in
+            if (isAdminLoggedIn !== "true") {
+                window.location.href = "admin_login.html";
+            }
+        }
+
+        // Function to log out admin
+        function logoutAdmin() {
+            sessionStorage.removeItem("adminLoggedIn");
+            window.location.href = "admin_login.html";
+        }
+
+        // Run the check function on page load
+        window.onload = checkAdminAuth;
+    </script>
+</head>
+<body>
+    <div class="admin-panel">
+        <button class="logout-button" data-onclick="logoutAdmin()">Logout</button>
+        <h1>Welcome to the Admin Dashboard</h1>
+        
+        <h2>User Information</h2>
+        <table id="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Account Type</th>
+                    <th>Country</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-list">
+                <!-- User data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+
+        <h2>Signup Codes</h2>
+        <table id="signup-code-table">
+            <thead>
+                <tr>
+                    <th>Signup Code</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="signup-code-list">
+                <!-- Signup code data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+
+        <h2>Wallet Information</h2>
+        <table id="wallet-table">
+            <thead>
+                <tr>
+                    <th>Wallet</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="wallet-list">
+                <!-- Wallet data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+   <script defer type="module">
+    // Firebase setup
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+     const usersRef = ref(db, 'UsersList');
+        
+        const fetchUsersData = async () => {
+            try {
+                const snapshot = await get(usersRef);
+                const usersData = snapshot.val();
+                const userListContainer = document.getElementById('user-list');
+                userListContainer.innerHTML = ''; // Clear previous entries
+                
+                // Iterate through users and create user table rows
+                for (const username in usersData) {
+                    if (usersData.hasOwnProperty(username)) {
+                        const userData = usersData[username];
+                        
+                        // Define row with data
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td data-label="Username">${username}</td>
+                            <td data-label="Email">${userData.email || 'N/A'}</td>
+                            <td data-label="Phone">${userData.phoneNumber || 'N/A'}</td>
+                            <td data-label="Account Type">${userData.invest || 'Standard'}</td>
+                            <td data-label="Country">${userData.country || 'N/A'}</td>
+                            <td data-label="Actions">
+                                <button class="update-button">Update User</button>
+                                <button class="delete-button">Delete User</button>
+                            </td>
+                        `;
+                        userListContainer.appendChild(row);
+
+                        // Add event listener to the update button
+                        const updateButton = row.querySelector('.update-button');
+                        updateButton.addEventListener('click', function() {
+                            window.location.href = `updateUser.html?username=${encodeURIComponent(username)}`;
+                        });
+
+                        // Add event listener to the delete button
+                        const deleteButton = row.querySelector('.delete-button');
+                        deleteButton.addEventListener('click', async function() {
+                            const confirmation = confirm(`Are you sure you want to delete user ${username}?`);
+                            if (confirmation) {
+                                try {
+                                    await remove(ref(db, `UsersList/${username}`));
+                                    alert(`User ${username} deleted successfully.`);
+                                    fetchUsersData(); // Refresh the user list
+                                } catch (error) {
+                                    console.error('Error deleting user:', error);
+                                    alert('Error deleting user. Please try again.');
+                                }
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+
+    // Function to handle fetching data and displaying errors
+    const fetchData = async (refPath, callback) => {
+        try {
+            const snapshot = await get(ref(db, refPath));
+            const data = snapshot.val();
+            if (data) {
+                callback(data);  // Call the callback function with fetched data
+            } else {
+                console.log(`No data available at ${refPath}`);
+            }
+        } catch (error) {
+            console.error(`Error fetching data from ${refPath}:`, error);
+        }
+    };
+
+    // Fetch and display Signup Codes
+    const fetchSignupCodes = () => {
+        fetchData('SignupCode', (signupCodeData) => {
+            const signupCodeListContainer = document.getElementById('signup-code-list');
+            signupCodeListContainer.innerHTML = ''; // Clear previous entries
+            for (const code in signupCodeData) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${signupCodeData[code]}</td>
+                    <td>
+                        <button class="edit-button">Edit Code</button>
+                    </td>
+                `;
+                signupCodeListContainer.appendChild(row);
+
+                    const deleteButton = row.querySelector('.delete-button');
+                    deleteButton.addEventListener('click', async function() {
+                        const confirmation = confirm(`Are you sure you want to delete this signup code?`);
+                        if (confirmation) {
+                            try {
+                                await remove(ref(db, `SignupCode/${code}`));
+                                alert(`Signup code deleted successfully.`);
+                                fetchSignupCodes(); // Refresh the signup code list
+                            } catch (error) {
+                                console.error('Error deleting signup code:', error);
+                                alert('Error deleting signup code. Please try again.');
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching signup codes:', error);
+            }
+        };
+
+    const walletsRef = ref(db, 'Wallets');
+
+        const fetchWallets = async () => {
+            try {
+                const snapshot = await get(walletsRef);
+                const walletsData = snapshot.val();
+                const walletListContainer = document.getElementById('wallet-list');
+                walletListContainer.innerHTML = '';
+
+                for (const walletKey in walletsData) {
+                    const walletValue = walletsData[walletKey];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="Wallet Type">${walletKey}</td>
+                        <td data-label="Wallet Value">${walletValue}</td>
+                        <td data-label="Actions">
+                            <button class="edit-button">Edit</button>
+                        </td>
+                    `;
+                    walletListContainer.appendChild(row);
+
+                    row.querySelector('.edit-button').addEventListener('click', async () => {
+                        const newWalletValue = prompt(`Enter new value for "${walletKey}":`, walletValue);
+                        if (newWalletValue && newWalletValue.trim() !== "") {
+                            try {
+                                await set(ref(db, `Wallets/${walletKey}`), newWalletValue.trim());
+                                alert(`Wallet "${walletKey}" updated successfully.`);
+                                fetchWallets();
+                            } catch (error) {
+                                console.error('Error updating wallet:', error);
+                                alert('Failed to update wallet.');
+                            }
+                        }
+                    });
+
+                   
+                }
+            } catch (error) {
+                console.error('Error fetching wallet data:', error);
+            }
+        };
+
+   
+    // Initialize data loading
+    fetchSignupCodes();
+    fetchWallets();
+    fetchUsersData();
+</script>
+
+</body>
+</html>

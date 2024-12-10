@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Centering form on page */
+        body, html { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f4f4f4; }
+        .login-container { background-color: #fff; padding: 20px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 8px; width: 300px; text-align: center; }
+        .login-container h2 { margin-bottom: 20px; font-size: 24px; color: #333; }
+        .login-container input { width: 100%; margin-bottom: 15px; padding: 10px; border-radius: 4px; border: 1px solid #ddd; }
+        .login-container button { width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .login-container button:hover { background-color: #0056b3; }
+        .error-message { color: red; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Admin Login</h2>
+    <input type="password" id="password" placeholder="Enter Password" required>
+    <button onclick="validateAdmin()">Login</button>
+    <p class="error-message" id="error-message">Incorrect password. Please try again.</p>
+</div>
+
+<script>
+    // Hardcoded password for admin
+    const adminPassword = "admin123";
+
+    function validateAdmin() {
+        const passwordInput = document.getElementById("password").value;
+        const errorMessage = document.getElementById("error-message");
+
+        if (passwordInput === adminPassword) {
+            // Redirect to admin dashboard if password is correct
+            window.location.href = "admin_dashboard.html";
+        } else {
+            // Show error message if password is incorrect
+            errorMessage.style.display = "block";
+        }
+    }
+    function validateAdmin() {
+    const passwordInput = document.getElementById("password").value;
+    const errorMessage = document.getElementById("error-message");
+
+    if (passwordInput === adminPassword) {
+        // Save login status to sessionStorage
+        sessionStorage.setItem("adminLoggedIn", "true");
+
+        // Redirect to admin dashboard if password is correct
+        window.location.href = "admin.html";
+    } else {
+        // Show error message if password is incorrect
+        errorMessage.style.display = "block";
+    }
+}
+
+</script>
+</body>
+</html>
+
