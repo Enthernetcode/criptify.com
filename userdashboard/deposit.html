@@ -201,283 +201,182 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-      import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-      import { emailjs } from "https://cdn.emailjs.com/dist/email.min.js";
+    // Import Firebase and EmailJS
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    import emailjs from "https://cdn.emailjs.com/dist/email.min.js";
 
-// Initialize emailjs
-(function () {
+    // Initialize emailjs
     emailjs.init("BVUOlzj2CdQNf6Gsp");
-})();
 
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAzK2xnwpUZVPSXTQPscOphtf-9PSyps04",
-    authDomain: "cooperate-finance.firebaseapp.com",
-    databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-    projectId: "cooperate-finance",
-    storageBucket: "cooperate-finance.appspot.com",
-    messagingSenderId: "785120987896",
-    appId: "1:785120987896:web:9c97861dfd6f908112c90d"
-};
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
+        authDomain: "cooperate-finance.firebaseapp.com",
+        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
+        projectId: "cooperate-finance",
+        storageBucket: "cooperate-finance.appspot.com",
+        messagingSenderId: "1017369894509",
+        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-// DOM References
-const userlink = document.getElementById('userlink');
-const signoutlink = document.getElementById('signoutlink');
-const spinner = document.getElementById('spinner');
-const accountContent = document.getElementById('accountContent');
+    // Helper Functions
+    const showElement = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'block';
+    };
 
-// Helper functions to show/hide elements
-const showElement = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-};
+    const hideElement = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    };
 
-const hideElement = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-};
-
-// Fetch user data from storage
-let currentUser = null;
-function getUsername() {
-    try {
-        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-        const userData = keepLoggedIn === 'yes'
-            ? localStorage.getItem('user')
-            : sessionStorage.getItem('user');
-        currentUser = userData ? JSON.parse(userData) : null;
-    } catch (error) {
-        console.error("Failed to parse user data:", error);
-        currentUser = null;
+    // Get User Data
+    let currentUser = null;
+    function getUsername() {
+        try {
+            const keepLoggedIn = localStorage.getItem('keepLoggedIn');
+            const userData = keepLoggedIn === 'yes'
+                ? localStorage.getItem('user')
+                : sessionStorage.getItem('user');
+            currentUser = userData ? JSON.parse(userData) : null;
+        } catch (error) {
+            console.error("Failed to parse user data:", error);
+        }
     }
-}
 
-// Fetch updated user data from database
-async function fetchUserDataFromDatabase(username) {
-    try {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, `UsersList/${username}`));
-        return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        return null;
+    // Fetch User Data from Firebase
+    async function fetchUserDataFromDatabase(username) {
+        try {
+            const snapshot = await get(child(ref(db), `UsersList/${username}`));
+            return snapshot.exists() ? snapshot.val() : null;
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            return null;
+        }
     }
-}
 
-// Update user deposit and balance
-async function updateUserDeposit(username, depositAmount) {
-    try {
-        const dbRef = ref(db);
-        const userSnapshot = await get(child(dbRef, `UsersList/${username}`));
-        if (!userSnapshot.exists()) {
-            alert("User not found.");
+    // Update User Deposit
+    async function updateUserDeposit(username, depositAmount) {
+        try {
+            const snapshot = await get(child(ref(db), `UsersList/${username}`));
+            if (!snapshot.exists()) {
+                alert("User not found.");
+                return;
+            }
+
+            const userData = snapshot.val();
+            const updatedDeposit = (userData.deposit || 0) + depositAmount;
+            const updatedBalance = (userData.balance || 0) + depositAmount;
+
+            await update(ref(db, `UsersList/${username}`), {
+                deposit: updatedDeposit,
+                balance: updatedBalance
+            });
+
+            alert("Deposit updated successfully.");
+        } catch (error) {
+            console.error("Error updating deposit:", error);
+        }
+    }
+
+    // Fetch Wallet Data
+    async function fetchWallets() {
+        try {
+            const walletsRef = ref(db, 'Wallets');
+            const snapshot = await get(walletsRef);
+            const walletsData = snapshot.val();
+
+            const cryptoSelect = document.getElementById('cryptoCurrency');
+            if (!cryptoSelect) return;
+
+            cryptoSelect.innerHTML = '';
+            for (const walletKey in walletsData) {
+                const option = document.createElement('option');
+                option.value = walletKey;
+                option.textContent = `${walletKey} (${walletsData[walletKey]})`;
+                cryptoSelect.appendChild(option);
+            }
+        } catch (error) {
+            console.error("Error fetching wallets:", error);
+        }
+    }
+
+    // Handle Deposit Form Submission
+    async function handleDeposit(event) {
+        event.preventDefault();
+        try {
+            showElement('spinner');
+            const user = auth.currentUser;
+            if (!user) throw new Error("No authenticated user found.");
+
+            const depositData = {
+                plan: document.getElementById('plan').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                paymentMethod: document.getElementById('paymentMethod').value,
+                cryptoCurrency: document.getElementById('cryptoCurrency')?.value || null,
+                timestamp: new Date().toISOString(),
+                userId: user.uid
+            };
+
+            await push(ref(db, `Users/${user.uid}/depositHistory`), depositData);
+
+            const userBalanceRef = ref(db, `Users/${user.uid}/totalDeposits`);
+            const balanceSnapshot = await get(userBalanceRef);
+            const currentBalance = balanceSnapshot.exists() ? balanceSnapshot.val() : 0;
+            await set(userBalanceRef, currentBalance + depositData.amount);
+
+            alert("Deposit submitted successfully!");
+            closeDepositForm();
+        } catch (error) {
+            console.error("Error submitting deposit:", error);
+            alert(error.message);
+        } finally {
+            hideElement('spinner');
+        }
+    }
+
+    // Open/Close Deposit Form
+    function openDepositForm(planName, minAmount, maxAmount) {
+        document.getElementById('plan').value = planName;
+        const amountInput = document.getElementById('amount');
+        amountInput.setAttribute('min', minAmount);
+        amountInput.setAttribute('max', maxAmount);
+        showElement('depositForm');
+    }
+
+    function closeDepositForm() {
+        hideElement('depositForm');
+    }
+
+    // Initialize Page
+    window.addEventListener("load", async () => {
+        showElement('spinner');
+        getUsername();
+        if (!currentUser || !currentUser.username) {
+            alert("Invalid user data. Please log in.");
+            window.location.href = "/signin.html";
             return;
         }
 
-        const userData = userSnapshot.val();
-        const updatedDeposit = (userData.deposit || 0) + depositAmount;
-        const updatedBalance = (userData.balance || 0) + depositAmount;
-
-        const depositHistory = userData.depositHistory || [];
-        depositHistory.push({
-            amount: depositAmount,
-            date: new Date().toISOString(),
-        });
-
-        await update(ref(db, `UsersList/${username}`), {
-            deposit: updatedDeposit,
-            balance: updatedBalance,
-            depositHistory: depositHistory,
-        });
-
-        alert("Deposit updated successfully.");
-    } catch (error) {
-        console.error("Error updating deposit:", error);
-        alert("An error occurred while updating the deposit.");
-    }
-}
-
-// Toggle cryptocurrency options
-async function toggleCryptoOptions() {
-    const paymentMethod = document.getElementById('paymentMethod').value;
-    const cryptoOptions = document.getElementById('cryptoOptions');
-    if (paymentMethod === 'crypto') {
-        cryptoOptions.style.display = 'block';
-        await fetchWallets();
-    } else {
-        cryptoOptions.style.display = 'none';
-    }
-}
-
-// Fetch wallet addresses
-async function fetchWallets() {
-    try {
-        const walletsRef = ref(db, 'Wallets');
-        const snapshot = await get(walletsRef);
-        const walletsData = snapshot.val();
-
-        const cryptoSelect = document.getElementById('cryptoCurrency');
-        cryptoSelect.innerHTML = '';
-        for (const walletKey in walletsData) {
-            const walletValue = walletsData[walletKey];
-            const option = document.createElement('option');
-            option.value = walletKey;
-            option.textContent = `${walletKey} (${walletValue})`;
-            cryptoSelect.appendChild(option);
+        const userData = await fetchUserDataFromDatabase(currentUser.username);
+        if (userData) {
+            currentUser = userData;
+            localStorage.setItem('user', JSON.stringify(userData));
+            document.getElementById('userlink').innerText = userData.username;
         }
-    } catch (error) {
-        console.error("Error fetching wallets:", error);
-        alert('Failed to load wallet addresses. Please try again.');
-    }
-}
 
-// Handle deposit form submission
-async function handleDeposit(event) {
-    event.preventDefault();
-    try {
-        showElement('spinner');
-        const user = auth.currentUser;
-        if (!user) throw new Error("No authenticated user found.");
-
-        const depositData = {
-            plan: document.getElementById('plan').value,
-            amount: parseFloat(document.getElementById('amount').value),
-            paymentMethod: document.getElementById('paymentMethod').value,
-            cryptoCurrency: document.getElementById('cryptoCurrency')?.value || null,
-            timestamp: new Date().toISOString(),
-            userId: user.uid
-        };
-
-        const userDepositsRef = ref(db, `Users/${user.uid}/depositHistory`);
-        await push(userDepositsRef, depositData);
-
-        const userBalanceRef = ref(db, `Users/${user.uid}/totalDeposits`);
-        const balanceSnapshot = await get(userBalanceRef);
-        const currentBalance = balanceSnapshot.exists() ? balanceSnapshot.val() : 0;
-        await set(userBalanceRef, currentBalance + depositData.amount);
-
-        // Send Email Notification to the User
-        const emailTemplateParams = {
-            user_email: user.email,
-            username: user.displayName,
-            amount: `$${depositData.amount.toFixed(2)}`,
-            plan: depositData.plan,
-            paymentMethod: depositData.paymentMethod,
-            date: new Date().toLocaleString()
-        };
-
-        emailjs.send("service_1vvxdzj", "template_reknzmy", emailTemplateParams)
-            .then(() => {
-                console.log("Email sent successfully to user.");
-            })
-            .catch((error) => {
-                console.error("Failed to send email:", error);
-            });
-
-        // Send Email Notification to the Admin
-        const adminEmailTemplateParams = {
-            admin_email: "cooperatefinances@gmail.com", // Replace with actual admin email
-            userId: user.displayName,
-            amount: `$${depositData.amount.toFixed(2)}`,
-            plan: depositData.plan,
-            paymentMethod: depositData.paymentMethod,
-            date: new Date().toLocaleString()
-        };
-
-        emailjs.send("service_1vvxdzj", "template_admin_notification", adminEmailTemplateParams)
-            .then(() => {
-                console.log("Admin notified of the deposit.");
-            })
-            .catch((error) => {
-                console.error("Failed to notify admin:", error);
-            });
-
-        alert('Deposit submitted successfully! Awaiting admin approval.');
-        closeDepositForm();
-    } catch (error) {
-        console.error("Error submitting deposit:", error);
-        alert(`Error: ${error.message}`);
-    } finally {
         hideElement('spinner');
-    }
-}
-
-// Open and close deposit form
-function openDepositForm(planName, minAmount, maxAmount) {
-    document.getElementById('plan').value = planName;
-    document.getElementById('amount').setAttribute('min', minAmount);
-    document.getElementById('amount').setAttribute('max', maxAmount);
-    showElement('depositForm');
-}
-
-function closeDepositForm() {
-    hideElement('depositForm');
-}
-
-// Page load event handler
-window.onload = async function () {
-    showElement('spinner');
-    hideElement('accountContent');
-
-    getUsername();
-    if (!currentUser || !currentUser.username) {
-        alert("Invalid user data. Please log in again.");
-        window.location = "/signin.html";
-        return;
-    }
-
-    const updatedUserData = await fetchUserDataFromDatabase(currentUser.username);
-    if (updatedUserData) {
-        currentUser = updatedUserData;
-
-        let keepLoggedIn = localStorage.getItem('keepLoggedIn');
-        if (keepLoggedIn === 'yes') {
-            localStorage.setItem('user', JSON.stringify(currentUser));
-        } else {
-            sessionStorage.setItem('user', JSON.stringify(currentUser));
-        }
-
-        if (userlink) {
-            userlink.innerText = currentUser.username;
-            userlink.href = "#";
-        }
-
-        if (signoutlink) {
-            signoutlink.innerText = "Sign Out";
-            signoutlink.href = "javascript:signout()";
-        }
-    } else {
-        alert("Error: Could not fetch user data.");
-    }
-
-    hideElement('spinner');
-    showElement('accountContent');
-};
-
-// Event listeners
-window.onload = () => {
-    document.getElementById('paymentMethod')?.addEventListener("change", toggleCryptoOptions);
-    document.getElementById('depositFormSubmit')?.addEventListener("click", handleDeposit);
-};
-
-document.getElementById('update-deposit-btn').addEventListener("click", async () => {
-    const username = document.getElementById('userInp').value;
-    const depositValue = parseFloat(document.getElementById('depositValue').value);
-    if (!username || isNaN(depositValue) || depositValue <= 0) {
-        alert("Invalid username or deposit amount.");
-        return;
-    }
-    await updateUserDeposit(username, depositValue);
-});
-
+        showElement('accountContent');
+    });
 </script>
+
 
 
   </body>
