@@ -1,383 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Plans</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="style/custom.css" rel="stylesheet">
     <link rel="icon" href="../styles/images/favicon.png">
-    <style>
-      /* Loading Spinner */
-      .loading-spinner {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: none;
-      }
-
-      /* Modal Styling */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-        padding-top: 60px;
-      }
-      .modal-content {
-        background-color: white;
-        margin: 5% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
-      }
-
-      .close {
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-        position: absolute;
-        right: 20px;
-        top: 20px;
-      }
-
-      .close:hover,
-      .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      /* Plan section styling */
-      .pack {
-        margin: 20px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        text-align: center;
-      }
-
-      .pack button {
-        margin-top: 10px;
-      }
-
-      p {
-        color: white;
-      }
-
-      /* Media Queries for Responsive Design */
-      @media (max-width: 576px) {
-        .pack {
-          margin-bottom: 20px;
-        }
-
-        .modal-content {
-          width: 90%;
-        }
-      }
-
-      @media (min-width: 577px) and (max-width: 768px) {
-        .pack {
-          margin-bottom: 20px;
-        }
-      }
-
-      @media (min-width: 768px) {
-        .pack {
-          margin-bottom: 20px;
-        }
-      }
-    </style>
-  </head>
-
-  <body class="loginarea" style="zoom: 1;">
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="spinner">
-      <img src="styles/images/spinner.gif" alt="Loading...">
+</head>
+<body>
+    <!-- Content Sections -->
+    <div class="inside_inner_account">
+        <div class="member_wrap">
+            <div class="membersidebar">
+                <ul>
+                    <li><a href="customer.html">My Account</a></li>
+                    <li><a href="deposit.html">Deposit</a></li>
+                    <li><a href="deposit_history.html">Deposits History</a></li>
+                    <li><a href="withdraw.html">Withdraw</a></li>
+                    <li><a href="plans.html">Plans</a></li>
+                    <li><a id="signoutlink" href="#">Logout</a></li>
+                </ul>
+            </div>
+            <div class="member-container" id="accountContent">
+                <h2>Welcome, <span id="userlink">User</span></h2>
+                <!-- Plans -->
+                <div class="row">
+                    <div class="col-md-3 pack starter">
+                        <h3>Starter Pack</h3>
+                        <p>$500 - $5,999</p>
+                        <p>6% weekly ROI</p>
+                        <button class="btn btn-primary" onclick="openDepositForm('Starter Pack', 500, 5999)">Invest</button>
+                    </div>
+                    <!-- Other Packs can be added similarly -->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="inside_inner_account">
-      <div class="member_wrap">
-        <div class="membersidebar">
-          <ul>
-            <li><a href="customer.html">My Account</a></li>
-            <li><a href="deposit.html">Deposit</a></li>
-            <li><a href="deposit_history.html">Deposits History</a></li>
-            <li><a href="withdraw.html">Withdraw</a></li>
-            <li><a href="plans.html">Plans</a></li>
-            <li><a id="signoutlink" href="#">Logout</a></li>
-          </ul>
-        </div>
-        <div class="member-container" id="accountContent">
-          <div class="account_top">
-            <div class="user_left">
-              <h2>Welcome, <span id="userlink" href="#">User</span></h2>
-            </div>
-          </div>
-          <!-- Deposit Section -->
-          <div class="col-md-9">
-            <div class="row">
-              <!-- Investment Plans -->
-              <div class="col-12 col-sm-6 col-md-3 pack starter">
-                <h3>Starter Pack</h3>
-                <p>$500 - $5,999</p>
-                <p>6% weekly ROI</p>
-                <p>8% compounding</p>
-                <p>6% referral bonus</p>
-                <button class="btn btn-primary" onclick="openDepositForm('Starter Pack', 500, 5999)">Invest</button>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 pack silver">
-                <h3>Silver Pack</h3>
-                <p>$6,000 - $18,999</p>
-                <p>8% weekly ROI</p>
-                <p>10% compounding</p>
-                <p>6% referral bonus</p>
-                <button class="btn btn-primary" onclick="openDepositForm('Silver Pack', 6000, 18999)">Invest</button>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 pack gold">
-                <h3>Gold Pack</h3>
-                <p>$19,000 - $49,999</p>
-                <p>10% weekly ROI</p>
-                <p>12% compounding</p>
-                <p>6% referral bonus</p>
-                <button class="btn btn-primary" onclick="openDepositForm('Gold Pack', 19000, 49999)">Invest</button>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 pack diamond">
-                <h3>Diamond Pack</h3>
-                <p>$50,000 - Unlimited</p>
-                <p>12% weekly ROI</p>
-                <p>14% compounding</p>
-                <p>6% referral bonus</p>
-                <button class="btn btn-primary" onclick="openDepositForm('Diamond Pack', 50000, Infinity)">Invest</button>
-              </div>
-            </div>
-
-            <!-- Deposit Form Modal -->
-            <div id="depositForm" class="modal">
-              <div class="modal-content">
-                <span class="close" onclick="closeDepositForm()">&times;</span>
-                <h3>Deposit</h3>
-                <form id="depositFormContent" onsubmit="handleDeposit(event)">
-                  <label for="plan">Selected Plan:</label>
-                  <input type="text" id="plan" name="plan" class="form-control" readonly required>
-
-                  <label for="amount" class="mt-3">Deposit Amount (USD):</label>
-                  <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter Amount" required>
-
-                  <label for="paymentMethod" class="mt-3">Payment Method:</label>
-                  <select id="paymentMethod" name="paymentMethod" class="form-control" onchange="toggleCryptoOptions()">
+    <!-- Deposit Modal -->
+    <div id="depositForm" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDepositForm()">&times;</span>
+            <form id="depositFormContent" onsubmit="handleDeposit(event)">
+                <label for="plan">Selected Plan:</label>
+                <input type="text" id="plan" class="form-control" readonly>
+                <label for="amount" class="mt-3">Amount:</label>
+                <input type="number" id="amount" class="form-control" required>
+                <label for="paymentMethod">Payment Method:</label>
+                <select id="paymentMethod" onchange="toggleCryptoOptions()">
                     <option value="bank">Bank Transfer</option>
                     <option value="crypto">Cryptocurrency</option>
-                  </select>
-
-                  <div id="cryptoOptions" class="mt-3" style="display: none;">
-                    <label for="cryptoCurrency">Select Cryptocurrency:</label>
-                    <select id="cryptoCurrency" name="cryptoCurrency" class="form-control"></select>
-                  </div>
-
-                  <button type="submit" class="btn btn-success mt-3">Submit Deposit</button>
-                </form>
-              </div>
-            </div>
-          </div>
+                </select>
+                <div id="cryptoOptions" style="display:none;">
+                    <label>Select Crypto:</label>
+                    <select id="cryptoCurrency"></select>
+                </div>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
         </div>
-      </div>
     </div>
 
-    <!-- Footer Section -->
-    <div class="footerContainer mt-5">
-      <div class="footerInner text-center">
-        <p>&copy; 2022 cooperatefinance.com All Rights Reserved.</p>
-      </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript -->
     <script type="module">
-    // Import Firebase and EmailJS
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, set, update, push, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-    import emailjs from "https://cdn.emailjs.com/dist/email.min.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+        import emailjs from "https://cdn.emailjs.com/dist/email.min.js";
 
-    // Initialize emailjs
-    emailjs.init("BVUOlzj2CdQNf6Gsp");
+        // Initialize emailjs
+        emailjs.init("BVUOlzj2CdQNf6Gsp");
 
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAtgrdQIt6QbTM1VHuY540BP55FeYYBsh0",
-        authDomain: "cooperate-finance.firebaseapp.com",
-        databaseURL: "https://cooperate-finance-default-rtdb.firebaseio.com",
-        projectId: "cooperate-finance",
-        storageBucket: "cooperate-finance.appspot.com",
-        messagingSenderId: "1017369894509",
-        appId: "1:1017369894509:web:c2bd48fde0a49c89e12964"
-    };
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth(app);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-    // Helper Functions
-    const showElement = (id) => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'block';
-    };
+        const toggleCryptoOptions = () => {
+            const method = document.getElementById("paymentMethod").value;
+            document.getElementById("cryptoOptions").style.display =
+                method === "crypto" ? "block" : "none";
+        };
 
-    const hideElement = (id) => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    };
-
-    // Get User Data
-    let currentUser = null;
-    function getUsername() {
-        try {
-            const keepLoggedIn = localStorage.getItem('keepLoggedIn');
-            const userData = keepLoggedIn === 'yes'
-                ? localStorage.getItem('user')
-                : sessionStorage.getItem('user');
-            currentUser = userData ? JSON.parse(userData) : null;
-        } catch (error) {
-            console.error("Failed to parse user data:", error);
-        }
-    }
-
-    // Fetch User Data from Firebase
-    async function fetchUserDataFromDatabase(username) {
-        try {
-            const snapshot = await get(child(ref(db), `UsersList/${username}`));
-            return snapshot.exists() ? snapshot.val() : null;
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-            return null;
-        }
-    }
-
-    // Update User Deposit
-    async function updateUserDeposit(username, depositAmount) {
-        try {
-            const snapshot = await get(child(ref(db), `UsersList/${username}`));
-            if (!snapshot.exists()) {
-                alert("User not found.");
-                return;
+        const fetchUserEmail = async (username) => {
+            try {
+                const snapshot = await get(child(ref(db), `UsersList/${username}`));
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    return userData.email || null;
+                }
+                return null;
+            } catch (error) {
+                console.error("Error fetching user email:", error);
+                return null;
             }
+        };
 
-            const userData = snapshot.val();
-            const updatedDeposit = (userData.deposit || 0) + depositAmount;
-            const updatedBalance = (userData.balance || 0) + depositAmount;
 
-            await update(ref(db, `UsersList/${username}`), {
-                deposit: updatedDeposit,
-                balance: updatedBalance
-            });
+        const handleDeposit = async (event) => {
+            event.preventDefault();
+            try {
+                const depositData = {
+                    plan: document.getElementById("plan").value,
+                    amount: parseFloat(document.getElementById("amount").value),
+                    paymentMethod: document.getElementById("paymentMethod").value,
+                    cryptoCurrency: document.getElementById("cryptoCurrency")?.value || null,
+                    timestamp: new Date().toISOString(),
+                };
 
-            alert("Deposit updated successfully.");
-        } catch (error) {
-            console.error("Error updating deposit:", error);
-        }
-    }
+                // Save deposit to Firebase
+                await push(ref(db, "Deposits"), depositData);
 
-    // Fetch Wallet Data
-    async function fetchWallets() {
-        try {
-            const walletsRef = ref(db, 'Wallets');
-            const snapshot = await get(walletsRef);
-            const walletsData = snapshot.val();
+                // Send notification emails
+                const userEmailParams = {
+                    user_email: "user@example.com", // Replace with actual user email
+                    username: "User", // Replace with actual user name
+                    amount: `$${depositData.amount.toFixed(2)}`,
+                    plan: depositData.plan,
+                    paymentMethod: depositData.paymentMethod,
+                    date: new Date().toLocaleString(),
+                };
 
-            const cryptoSelect = document.getElementById('cryptoCurrency');
-            if (!cryptoSelect) return;
+                const adminEmailParams = {
+                    admin_email: "admin@example.com", // Replace with actual admin email
+                    user_name: "User", // Replace with actual user name
+                    amount: `$${depositData.amount.toFixed(2)}`,
+                    plan: depositData.plan,
+                    paymentMethod: depositData.paymentMethod,
+                    date: new Date().toLocaleString(),
+                };
 
-            cryptoSelect.innerHTML = '';
-            for (const walletKey in walletsData) {
-                const option = document.createElement('option');
-                option.value = walletKey;
-                option.textContent = `${walletKey} (${walletsData[walletKey]})`;
-                cryptoSelect.appendChild(option);
+                // Email to User
+                emailjs.send("service_id", "template_user", userEmailParams)
+                    .then(() => console.log("User notified via email"))
+                    .catch((error) => console.error("Error notifying user:", error));
+
+                // Email to Admin
+                emailjs.send("service_id", "template_admin", adminEmailParams)
+                    .then(() => console.log("Admin notified via email"))
+                    .catch((error) => console.error("Error notifying admin:", error));
+
+                alert("Deposit submitted! Awaiting admin approval.");
+                closeDepositForm();
+            } catch (error) {
+                console.error("Error submitting deposit:", error);
+                alert(error.message);
             }
-        } catch (error) {
-            console.error("Error fetching wallets:", error);
-        }
-    }
+        };
 
-    // Handle Deposit Form Submission
-    async function handleDeposit(event) {
-        event.preventDefault();
-        try {
-            showElement('spinner');
-            const user = auth.currentUser;
-            if (!user) throw new Error("No authenticated user found.");
+        const openDepositForm = (plan, min, max) => {
+            document.getElementById("plan").value = plan;
+            const amountInput = document.getElementById("amount");
+            amountInput.min = min;
+            amountInput.max = max;
+            document.getElementById("depositForm").style.display = "block";
+        };
 
-            const depositData = {
-                plan: document.getElementById('plan').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                paymentMethod: document.getElementById('paymentMethod').value,
-                cryptoCurrency: document.getElementById('cryptoCurrency')?.value || null,
-                timestamp: new Date().toISOString(),
-                userId: user.uid
-            };
-
-            await push(ref(db, `Users/${user.uid}/depositHistory`), depositData);
-
-            const userBalanceRef = ref(db, `Users/${user.uid}/totalDeposits`);
-            const balanceSnapshot = await get(userBalanceRef);
-            const currentBalance = balanceSnapshot.exists() ? balanceSnapshot.val() : 0;
-            await set(userBalanceRef, currentBalance + depositData.amount);
-
-            alert("Deposit submitted successfully!");
-            closeDepositForm();
-        } catch (error) {
-            console.error("Error submitting deposit:", error);
-            alert(error.message);
-        } finally {
-            hideElement('spinner');
-        }
-    }
-
-    // Open/Close Deposit Form
-    function openDepositForm(planName, minAmount, maxAmount) {
-        document.getElementById('plan').value = planName;
-        const amountInput = document.getElementById('amount');
-        amountInput.setAttribute('min', minAmount);
-        amountInput.setAttribute('max', maxAmount);
-        showElement('depositForm');
-    }
-
-    function closeDepositForm() {
-        hideElement('depositForm');
-    }
-
-    // Initialize Page
-    window.addEventListener("load", async () => {
-        showElement('spinner');
-        getUsername();
-        if (!currentUser || !currentUser.username) {
-            alert("Invalid user data. Please log in.");
-            window.location.href = "/signin.html";
-            return;
-        }
-
-        const userData = await fetchUserDataFromDatabase(currentUser.username);
-        if (userData) {
-            currentUser = userData;
-            localStorage.setItem('user', JSON.stringify(userData));
-            document.getElementById('userlink').innerText = userData.username;
-        }
-
-        hideElement('spinner');
-        showElement('accountContent');
-    });
-</script>
-
-
-
-  </body>
+        const closeDepositForm = () => {
+            document.getElementById("depositForm").style.display = "none";
+        };
+    </script>
+</body>
 </html>
