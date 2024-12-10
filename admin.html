@@ -275,38 +275,41 @@
     };
 
     // Fetch Signup Codes
-    const fetchSignupCodes = () => {
-        fetchData("SignupCode", (signupCodeData) => {
-            const signupCodeListContainer = document.getElementById("signup-code-list");
-            if (!signupCodeListContainer) return console.error("Signup code list container not found.");
-            signupCodeListContainer.innerHTML = ""; // Clear previous entries
+    // Fetch Signup Codes with Edit Button
+const fetchSignupCodes = () => {
+    fetchData("SignupCode", (signupCodeData) => {
+        const signupCodeListContainer = document.getElementById("signup-code-list");
+        if (!signupCodeListContainer) return console.error("Signup code list container not found.");
+        signupCodeListContainer.innerHTML = ""; // Clear previous entries
 
-            Object.entries(signupCodeData).forEach(([code, value]) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${value}</td>
-                    <td>
-                        <button class="delete-button">Delete</button>
-                    </td>
-                `;
-                signupCodeListContainer.appendChild(row);
+        Object.entries(signupCodeData).forEach(([code, value]) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${value}</td>
+                <td>
+                    <button class="edit-button">Edit</button>
+                </td>
+            `;
+            signupCodeListContainer.appendChild(row);
 
-                // Add Event Listener
-                row.querySelector(".delete-button").addEventListener("click", async () => {
-                    const confirmation = confirm(`Are you sure you want to delete this signup code?`);
-                    if (confirmation) {
-                        try {
-                            await remove(ref(db, `SignupCode/${code}`));
-                            alert("Signup code deleted successfully.");
-                            fetchSignupCodes();
-                        } catch (error) {
-                            console.error("Error deleting signup code:", error);
-                        }
+            // Add Event Listener for Edit Button
+            row.querySelector(".edit-button").addEventListener("click", async () => {
+                const newValue = prompt(`Enter new value for the signup code "${value}":`, value);
+                if (newValue && newValue.trim() !== "") {
+                    try {
+                        await set(ref(db, `SignupCode/${code}`), newValue.trim());
+                        alert(`Signup code "${value}" updated to "${newValue}".`);
+                        fetchSignupCodes(); // Refresh the signup code list
+                    } catch (error) {
+                        console.error("Error updating signup code:", error);
+                        alert("Failed to update signup code.");
                     }
-                });
+                }
             });
         });
-    };
+    });
+};
+
 
     // Fetch Wallet Data
     const fetchWallets = () => {
